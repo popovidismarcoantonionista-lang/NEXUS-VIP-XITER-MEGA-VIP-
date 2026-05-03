@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>NEXUS MEGA MENU</title>
     <style>
         :root {
             --neon: #00f2ff;
@@ -11,7 +12,7 @@
             --card: rgba(25, 25, 25, 0.7);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
         
         body {
             background: transparent; margin: 0; padding: 0;
@@ -19,9 +20,8 @@
             height: 100vh; font-family: 'Segoe UI', sans-serif; overflow: hidden;
         }
 
-        #canvas { position: absolute; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; }
+        #canvas { position: absolute; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; filter: blur(1px); }
 
-        /* Container Principal */
         .container {
             width: 90%; max-width: 340px;
             background: var(--bg);
@@ -30,18 +30,18 @@
             padding: 25px;
             box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
             backdrop-filter: blur(12px);
-            display: none; /* Escondido por padrão */
+            display: none; 
             animation: zoomIn 0.4s ease;
         }
 
-        .active { display: block; } /* Classe que mostra a tela atual */
+        .active { display: block; } 
 
         @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
 
-        h1 { color: var(--neon); text-align: center; margin: 0; font-size: 1.5rem; text-shadow: 0 0 10px var(--neon); }
-        .sub { color: var(--matrix); text-align: center; font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }
+        h1 { color: var(--neon); text-align: center; margin: 0; font-size: 1.5rem; text-shadow: 0 0 10px var(--neon); font-weight: 900; }
+        .sub { color: var(--matrix); text-align: center; font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; font-weight: bold; }
 
-        /* Estilo Login */
+        /* Login */
         .input-key {
             width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--neon);
             background: rgba(255,255,255,0.05); color: #fff; text-align: center; margin-bottom: 15px; outline: none;
@@ -54,13 +54,13 @@
             box-shadow: 0 5px 15px rgba(0, 242, 255, 0.4);
         }
 
-        /* Estilo Menu */
+        /* Menu */
         .option {
             background: var(--card); border-radius: 12px; padding: 12px 15px;
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.05);
         }
-        .option span { color: #fff; font-size: 0.9rem; }
+        .option span { color: #fff; font-size: 0.9rem; font-weight: 500; }
 
         .switch { position: relative; width: 44px; height: 22px; }
         .switch input { display: none; }
@@ -69,8 +69,7 @@
         input:checked + .slider { background: var(--neon); }
         input:checked + .slider:before { transform: translateX(22px); }
 
-        .status { text-align: center; font-size: 0.8rem; margin-top: 15px; height: 20px; }
-        .err { color: #ff4444; } .ok { color: var(--matrix); }
+        .status { text-align: center; font-size: 0.8rem; margin-top: 15px; height: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -79,9 +78,9 @@
 
 <div id="login-screen" class="container active">
     <h1>NEXUS MEGA</h1>
-    <p class="sub">Sistema de Licença</p>
-    <input type="text" id="key-input" class="input-key" placeholder="SUA KEY AQUI">
-    <button class="btn-main" onclick="autenticar()">Entrar no Menu</button>
+    <p class="sub">Autenticação HWID</p>
+    <input type="text" id="key-input" class="input-key" placeholder="INSIRA SUA KEY">
+    <button class="btn-main" onclick="autenticar()">Validar Acesso</button>
     <div id="msg" class="status"></div>
 </div>
 
@@ -98,41 +97,51 @@
 </div>
 
 <script>
-    // URL da sua função Vercel que tem o Supabase
-    const API_URL = "https://SEU-PROJETO.vercel.app/api/handler";
+    // --- CONFIGURAÇÃO DA TUA API VERCEL ---
+    // Substitui pelo link real que a Vercel te deu
+    const API_URL = "https://tua-api-no-supabase.vercel.app/api/handler";
 
     async function autenticar() {
         const key = document.getElementById('key-input').value;
         const msg = document.getElementById('msg');
         
-        // Pega o HWID real do Java
-        const hwid = window.Android ? window.Android.getDeviceID() : "PC_TEST";
+        // Pega o ID do celular através da ponte Java que criamos
+        const hwid = window.Android ? window.Android.getDeviceID() : "TESTE_NAVEGADOR";
 
-        if(!key) { msg.innerHTML = '<span class="err">Digite a Key!</span>'; return; }
+        if(!key) { 
+            msg.innerHTML = '<span style="color:#ff4444">Digite a Key!</span>'; 
+            return; 
+        }
 
-        msg.innerHTML = "Verificando...";
+        msg.innerHTML = '<span style="color:#00f2ff">A verificar licença...</span>';
 
         try {
+            // Chamada para o teu backend que usa Supabase
             const res = await fetch(`${API_URL}?key=${key}&hwid=${hwid}`);
             const data = await res.json();
 
             if(data.success) {
-                msg.innerHTML = '<span class="ok">Sucesso!</span>';
+                msg.innerHTML = '<span style="color:#00ff41">Acesso Permitido!</span>';
                 setTimeout(() => {
                     document.getElementById('login-screen').classList.remove('active');
                     document.getElementById('menu-screen').classList.add('active');
                 }, 1000);
             } else {
-                msg.innerHTML = `<span class="err">${data.message}</span>`;
+                msg.innerHTML = `<span style="color:#ff4444">${data.message}</span>`;
             }
         } catch (e) {
-            msg.innerHTML = '<span class="err">Erro de conexão!</span>';
+            msg.innerHTML = '<span style="color:#ff4444">Erro de conexão com a Vercel!</span>';
         }
     }
 
-    function send(f, s) { if(window.Android) window.Android.onFeatureToggle(f, s); }
+    // Comunicação com o Java para ativar os cheats
+    function send(feature, state) {
+        if(window.Android) {
+            window.Android.onFeatureToggle(feature, state);
+        }
+    }
 
-    // Matrix Background
+    // Efeito Matrix de fundo
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
