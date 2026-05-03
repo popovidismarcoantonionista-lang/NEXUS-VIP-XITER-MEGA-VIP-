@@ -1,41 +1,236 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS VIP MENU</title>
     <style>
-        :root { --neon: #00ff41; --bg: #0a0a0a; }
-        body { background: var(--bg); color: white; font-family: sans-serif; text-align: center; padding: 20px; }
-        .panel { border: 1px solid var(--neon); padding: 20px; border-radius: 10px; box-shadow: 0 0 15px var(--neon); max-width: 300px; margin: auto; }
-        input { width: 80%; padding: 10px; margin: 10px 0; background: #111; border: 1px solid #333; color: var(--neon); text-align: center; }
-        button { width: 85%; padding: 10px; background: var(--neon); border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .row { display: flex; justify-content: space-between; padding: 15px 5px; border-bottom: 1px solid #222; }
+        :root {
+            --neon: #00ff41;
+            --neon-dim: #003b00;
+            --bg: #050505;
+            --card-bg: rgba(10, 10, 10, 0.9);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            text-transform: uppercase;
+        }
+
+        /* Efeito de Fundo Matrix */
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 350px;
+            background: var(--card-bg);
+            border: 2px solid var(--neon);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 0 20px var(--neon-dim), inset 0 0 10px var(--neon-dim);
+            backdrop-filter: blur(5px);
+            position: relative;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--neon);
+            text-shadow: 0 0 10px var(--neon);
+            letter-spacing: 3px;
+            font-size: 1.5rem;
+        }
+
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            background-color: var(--neon);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px var(--neon);
+            margin-right: 5px;
+        }
+
+        /* Inputs e Botões */
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            background: #000;
+            border: 1px solid var(--neon-dim);
+            border-radius: 5px;
+            color: var(--neon);
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--neon);
+            box-shadow: 0 0 10px var(--neon-dim);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--neon);
+            border: none;
+            border-radius: 5px;
+            color: black;
+            font-weight: 900;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 15px var(--neon-dim);
+        }
+
+        button:active {
+            transform: scale(0.95);
+            filter: brightness(0.8);
+        }
+
+        /* Menu de Funções */
+        .feature-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.1);
+        }
+
+        .feature-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #ddd;
+        }
+
+        /* Switch Customizado */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 45px;
+            height: 22px;
+        }
+
+        .switch input { display: none; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #222;
+            transition: .4s;
+            border-radius: 34px;
+            border: 1px solid var(--neon-dim);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 4px;
+            bottom: 3px;
+            background-color: #555;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: var(--neon-dim); border-color: var(--neon); }
+        input:checked + .slider:before { transform: translateX(22px); background-color: var(--neon); box-shadow: 0 0 10px var(--neon); }
+
         #menu { display: none; }
+        
+        .footer-text {
+            font-size: 0.7rem;
+            color: #555;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
 
-    <div id="login" class="panel">
-        <h2 style="color: var(--neon)">NEXUS VIP</h2>
-        <input type="text" id="keyInput" placeholder="SUA CHAVE">
-        <button onclick="fazerLogin()">ENTRAR NO MENU</button>
-    </div>
+    <canvas id="matrix"></canvas>
 
-    <div id="menu" class="panel">
-        <h2 style="color: var(--neon)">MENU OB53</h2>
-        <div class="row"><span>AIMBOT ASSIST</span><input type="checkbox" onchange="send('aim', this.checked)"></div>
-        <div class="row"><span>VELOCIDADE X10</span><input type="checkbox" onchange="send('speed', this.checked)"></div>
-        <button onclick="location.reload()" style="background: red; color: white;">SAIR / DESLOGAR</button>
+    <div class="container">
+        <div id="login">
+            <h2>NEXUS <span style="font-weight: 200;">LOGIN</span></h2>
+            <p style="font-size: 0.8rem; color: #888;"><span class="status-dot"></span> SERVIDOR ONLINE</p>
+            <input type="text" id="keyInput" placeholder="INSIRA SUA LICENÇA">
+            <button onclick="fazerLogin()">AUTENTICAR SISTEMA</button>
+            <p class="footer-text">v2.0 - BY POPOVIDIS</p>
+        </div>
+
+        <div id="menu">
+            <h2>NEXUS <span style="font-weight: 200;">MODS</span></h2>
+            
+            <div class="feature-row">
+                <span class="feature-name">AIMBOT ASSISTANT</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="send('aim', this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="feature-row">
+                <span class="feature-name">SPEED HACK X10</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="send('speed', this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <button onclick="location.reload()" style="background: transparent; border: 1px solid red; color: red; margin-top: 20px;">DESCONECTAR</button>
+        </div>
     </div>
 
     <script>
-        // Captura o HWID vindo da URL do Android
+        // Efeito Matrix de fundo
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const letters = "0101010101010101";
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#00ff41";
+            ctx.font = fontSize + "px monospace";
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 50);
+
+        // Lógica de Login
         const params = new URLSearchParams(window.location.search);
-        const hwid = params.get('hwid') || 'SEM_ID';
+        const hwid = params.get('hwid') || 'DEVICE_NULL';
 
         async function fazerLogin() {
             const k = document.getElementById('keyInput').value;
-            if(!k) return alert("Digite a Key!");
+            if(!k) return;
+
+            const btn = document.querySelector('button');
+            btn.innerText = "VERIFICANDO...";
 
             try {
                 const res = await fetch(`/api/verify?key=${k.trim()}&hwid=${hwid}`);
@@ -46,14 +241,16 @@
                     document.getElementById('menu').style.display = 'block';
                 } else {
                     alert(data.message);
+                    btn.innerText = "AUTENTICAR SISTEMA";
                 }
             } catch(e) {
-                alert("Erro ao conectar com a Vercel!");
+                alert("ERRO DE REDE!");
+                btn.innerText = "AUTENTICAR SISTEMA";
             }
         }
 
-        function send(feature, status) {
-            if(window.Android) window.Android.onFeatureToggle(feature, status);
+        function send(f, s) {
+            if(window.Android) window.Android.onFeatureToggle(f, s);
         }
     </script>
 </body>
