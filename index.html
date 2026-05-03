@@ -6,27 +6,27 @@
     <title>NEXUS MEGA MENU</title>
     <style>
         :root { --neon: #00ffff; --bg: #050505; }
-        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .box { width: 85%; max-width: 330px; padding: 30px; border: 2px solid var(--neon); border-radius: 15px; box-shadow: 0 0 20px var(--neon); text-align: center; background: #000; }
-        h2 { text-shadow: 0 0 15px var(--neon); margin: 0 0 10px; letter-spacing: 3px; }
+        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        .box { width: 85%; max-width: 320px; padding: 30px; border: 2px solid var(--neon); border-radius: 15px; box-shadow: 0 0 20px var(--neon); text-align: center; background: #000; position: relative; }
+        h2 { text-shadow: 0 0 10px var(--neon); margin: 0 0 15px; letter-spacing: 3px; font-size: 22px; }
         input { width: 100%; padding: 12px; margin: 15px 0; background: #111; border: 1px solid var(--neon); color: #fff; border-radius: 5px; text-align: center; box-sizing: border-box; outline: none; }
-        button { width: 100%; padding: 12px; background: transparent; border: 2px solid var(--neon); color: var(--neon); font-weight: bold; cursor: pointer; border-radius: 5px; transition: 0.3s; }
+        button { width: 100%; padding: 12px; background: transparent; border: 2px solid var(--neon); color: var(--neon); font-weight: bold; cursor: pointer; border-radius: 5px; transition: 0.3s; text-transform: uppercase; }
         button:hover { background: var(--neon); color: #000; box-shadow: 0 0 25px var(--neon); }
-        #status { margin-top: 20px; font-size: 11px; font-weight: bold; min-height: 15px; }
-        .buy-link { margin-top: 20px; font-size: 10px; opacity: 0.6; text-decoration: none; color: #fff; display: block; }
+        #status { margin-top: 15px; font-size: 11px; font-weight: bold; min-height: 15px; letter-spacing: 1px; }
+        .panel-link { display: block; margin-top: 20px; font-size: 10px; color: #666; text-decoration: none; }
     </style>
 </head>
 <body>
     <div class="box">
         <h2>NEXUS MEGA</h2>
-        <div style="font-size: 9px; margin-bottom: 15px; opacity: 0.8;">SECURITY SYSTEM V3</div>
+        <div style="font-size: 10px; opacity: 0.8;">SECURITY SYSTEM V3 - VERCEL</div>
         
         <input type="text" id="licenseKey" placeholder="INSIRA SUA CHAVE">
-        <button onclick="validar()">ATIVAR MENU</button>
+        <button onclick="validar()">AUTENTICAR</button>
         
-        <div id="status">AGUARDANDO...</div>
-
-        <a href="https://nexus-vip-key.vercel.app/" class="buy-link">NÃO TEM UMA KEY? ADQUIRA AQUI</a>
+        <div id="status">AGUARDANDO LOGIN...</div>
+        
+        <a href="https://nexus-vip-key.vercel.app/" class="panel-link">PAINEL DE LICENÇAS</a>
     </div>
 
     <script>
@@ -34,33 +34,33 @@
             const key = document.getElementById('licenseKey').value.trim();
             const status = document.getElementById('status');
             
-            if(!key) { status.innerText = "ERRO: CHAVE VAZIA!"; return; }
+            if(!key) { status.innerText = "ERRO: DIGITE A KEY!"; status.style.color = "#ff4444"; return; }
 
-            status.innerText = "CONECTANDO AO SERVIDOR...";
+            status.innerText = "CONECTANDO À VERCEL...";
             status.style.color = "#00ffff";
 
             try {
-                // Ponte Java do Sketchware para pegar o ID do aparelho
-                const hwid = window.Android ? window.Android.getDeviceId() : "TESTE_BROWSER";
+                // Puxa o ID do dispositivo via Sketchware
+                const hwid = window.Android ? window.Android.getDeviceId() : "PC_TEST_MODE";
                 
-                // IMPORTANTE: A verificação continua no Railway (onde está o seu index.js)
-                const url = `https://nexus-keys-system.up.railway.app/api/verify?key=${key}&hwid=${hwid}`;
+                // IMPORTANTE: Se você moveu a API para a Vercel, o link muda aqui:
+                const url = `https://nexus-vip-key.vercel.app/api/verify?key=${key}&hwid=${hwid}`;
 
                 const response = await fetch(url);
                 const data = await response.json();
 
                 if (data.success) {
-                    status.innerText = "SUCESSO! LIBERANDO MENU...";
+                    status.innerText = "ACESSO LIBERADO!";
                     status.style.color = "#00ff00";
                     setTimeout(() => { 
                         if(window.Android) window.Android.onLoginSuccess(); 
-                    }, 1500);
+                    }, 1200);
                 } else {
                     status.innerText = "ERRO: " + data.message.toUpperCase();
                     status.style.color = "#ff4444";
                 }
             } catch (err) {
-                status.innerText = "ERRO DE CONEXÃO COM O SERVIDOR!";
+                status.innerText = "ERRO DE COMUNICAÇÃO COM A VERCEL!";
                 status.style.color = "yellow";
             }
         }
