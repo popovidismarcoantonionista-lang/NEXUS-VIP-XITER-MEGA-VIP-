@@ -1,69 +1,94 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <style>
-        :root { --ciano: #00ffff; --matrix: #00ff41; }
-        body { background: transparent; margin: 0; padding: 10px; font-family: 'Courier New', monospace; overflow: hidden; }
+        :root { --neon: #00f2ff; --bg-card: rgba(18, 18, 18, 0.95); }
+        body { background: transparent; margin: 0; padding: 15px; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
         #matrix { position: absolute; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; }
         
-        .panel { 
-            background: rgba(0, 0, 0, 0.95); 
-            border: 2px solid var(--ciano); 
-            border-radius: 15px; 
-            padding: 20px; 
-            color: #eee;
-            box-shadow: 0 0 20px var(--ciano);
+        .container {
+            width: 100%; max-width: 340px;
+            background: var(--bg-card);
+            border: 1.5px solid rgba(0, 242, 255, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            box-sizing: border-box;
         }
 
-        h1 { color: var(--ciano); text-align: center; font-size: 1.4rem; text-shadow: 0 0 10px var(--ciano); margin: 0 0 15px; }
-        h3 { color: var(--matrix); font-size: 0.8rem; border-bottom: 1px solid rgba(0, 255, 65, 0.3); margin: 15px 0 5px; text-transform: uppercase; }
-        
-        .row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        h1 { color: var(--neon); text-align: center; font-size: 1.5rem; text-transform: uppercase; margin: 0 0 20px; text-shadow: 0 0 15px var(--neon); }
 
-        /* Estilo Switch Ciano */
-        .switch { position: relative; width: 44px; height: 22px; }
-        .switch input { display: none; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #444; border-radius: 22px; transition: .4s; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: #aaa; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background: var(--ciano); }
-        input:checked + .slider:before { transform: translateX(22px); background: #fff; }
+        .category { color: var(--neon); font-size: 0.75rem; font-weight: bold; margin: 15px 0 10px; display: flex; align-items: center; }
+        .category::before { content: ''; display: inline-block; width: 3px; height: 15px; background: var(--neon); margin-right: 8px; }
 
-        /* Botão VIP Abrir FF */
-        .btn-ff { 
-            width: 100%; 
-            padding: 15px; 
-            background: var(--ciano); 
-            border: none; 
-            color: #000; 
-            font-weight: bold; 
-            border-radius: 10px; 
-            margin-top: 20px; 
-            text-transform: uppercase; 
-            cursor: pointer;
-            box-shadow: 0 0 10px var(--ciano);
+        .option-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .option-box span { color: #e0e0e0; font-size: 0.95rem; }
+
+        /* Switch Estilo OB53 */
+        .switch { position: relative; width: 42px; height: 22px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 22px; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .4s; }
+        input:checked + .slider { background: var(--neon); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .btn-start {
+            width: 100%;
+            padding: 16px;
+            background: var(--neon);
+            border: none;
+            color: #000;
+            font-weight: 800;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 242, 255, 0.4);
         }
     </style>
 </head>
 <body>
     <canvas id="matrix"></canvas>
-    <div class="panel">
-        <h1>NEXUS MEGA MENU</h1>
-        
-        <h3>COMBATE (DUMP)</h3>
-        <div class="row"><span>AimLock 100%</span><label class="switch"><input type="checkbox" onchange="send('aim', this.checked)"><span class="slider"></span></label></div>
-        <div class="row"><span>Tiro Mágico</span><label class="switch"><input type="checkbox" onchange="send('magic', this.checked)"><span class="slider"></span></label></div>
+    <div class="container">
+        <h1>DUMP MENU OB53</h1>
 
-        <h3>MOVIMENTAÇÃO</h3>
-        <div class="row"><span>Velocidade</span><label class="switch"><input type="checkbox" onchange="send('speed', this.checked)"><span class="slider"></span></label></div>
-        
-        <button class="btn-ff" onclick="window.Android.openGame()">Abrir Free Fire</button>
+        <div class="category">COMBAT FUNCTIONS</div>
+        <div class="option-box">
+            <span>AimLock Camera</span>
+            <label class="switch"><input type="checkbox" onchange="send('aim', this.checked)"><span class="slider"></span></label>
+        </div>
+
+        <div class="category">MOVEMENT MODS</div>
+        <div class="option-box">
+            <span>Speed Multiplier</span>
+            <label class="switch"><input type="checkbox" onchange="send('speed', this.checked)"><span class="slider"></span></label>
+        </div>
+        <div class="option-box">
+            <span>Fast SkyDive</span>
+            <label class="switch"><input type="checkbox" onchange="send('dive', this.checked)"><span class="slider"></span></label>
+        </div>
+
+        <div class="category">VISUAL SETTINGS</div>
+        <div class="option-box">
+            <span>Field of View (FOV)</span>
+            <label class="switch"><input type="checkbox" onchange="send('fov', this.checked)"><span class="slider"></span></label>
+        </div>
+
+        <button class="btn-start" onclick="window.Android.openGame()">ABRIR FREE FIRE</button>
     </div>
 
     <script>
         function send(f, s) { if(window.Android) window.Android.onFeatureToggle(f, s); }
-        
-        // Efeito Matrix Binário
         const c = document.getElementById('matrix');
         const ctx = c.getContext('2d');
         c.width = window.innerWidth; c.height = window.innerHeight;
