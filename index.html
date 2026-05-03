@@ -3,21 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS MATRIX MENU</title>
     <style>
         :root {
             --matrix-green: #00ff41;
             --matrix-dark: #003b00;
-            --bg-solid: rgba(0, 0, 0, 0.95);
-            --border-neon: #00ff41;
+            --panel-bg: rgba(5, 5, 5, 0.98);
         }
 
         body {
-            background: transparent; /* Fundamental para a flutuação */
+            background: transparent;
             margin: 0;
             padding: 10px;
-            font-family: 'Courier New', Courier, monospace; /* Fonte estilo terminal */
-            user-select: none;
+            font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -25,258 +22,176 @@
             height: 100vh;
         }
 
-        /* O Canvas do efeito Matrix */
         #matrix-canvas {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; /* Fica atrás de tudo */
-            border-radius: 12px;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            border-radius: 15px;
         }
 
-        /* Container Principal (A Janela) */
-        .panel {
-            width: 280px;
-            background: var(--bg-solid);
-            border: 2px solid var(--border-neon);
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 0 20px var(--matrix-dark), inset 0 0 10px rgba(0, 255, 65, 0.2);
+        .container {
+            width: 290px;
+            background: var(--panel-bg);
+            border: 2px solid var(--matrix-green);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 20px var(--matrix-dark);
             text-align: center;
             position: relative;
-            overflow: hidden;
         }
 
-        /* Título Estilo Terminal */
-        .header h2 {
+        h2 {
             color: var(--matrix-green);
             font-size: 1.2rem;
-            margin: 0 0 15px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 8px var(--matrix-green);
+            text-shadow: 0 0 10px var(--matrix-green);
+            margin-bottom: 20px;
         }
 
-        .header h2::before {
-            content: "> "; /* Cursor de terminal */
-        }
-
-        /* Inputs e Botões */
         input {
             width: 90%;
-            padding: 10px;
-            margin-bottom: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
             background: #000;
             border: 1px solid var(--matrix-dark);
             color: var(--matrix-green);
-            border-radius: 4px;
+            border-radius: 5px;
             text-align: center;
             outline: none;
-            font-family: 'Courier New', monospace;
+            font-family: monospace;
         }
 
-        input:focus {
-            border-color: var(--matrix-green);
-            box-shadow: 0 0 5px var(--matrix-dark);
-        }
-
-        .btn-action {
+        .btn-main {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background: var(--matrix-dark);
             border: 1px solid var(--matrix-green);
             color: var(--matrix-green);
             font-weight: bold;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
-            text-transform: uppercase;
-            font-family: 'Courier New', monospace;
-            transition: 0.2s;
         }
 
-        .btn-action:hover {
-            background: var(--matrix-green);
-            color: #000;
-        }
+        .btn-main:active { background: var(--matrix-green); color: #000; }
 
-        /* Linhas de Opções (Cheats) */
+        /* Estilo das Funções */
         .row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 5px;
+            padding: 12px 5px;
             border-bottom: 1px solid rgba(0, 255, 65, 0.1);
         }
 
-        .row span {
-            color: var(--matrix-green);
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
+        .row span { color: var(--matrix-green); font-size: 0.85rem; font-weight: bold; }
 
-        /* Switch Customizado Matrix */
-        .switch {
-            position: relative;
-            width: 36px;
-            height: 18px;
-        }
-
+        /* Switches Matrix */
+        .switch { position: relative; width: 40px; height: 20px; }
         .switch input { display: none; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #111; border-radius: 20px; transition: .4s; border: 1px solid var(--matrix-dark); }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 2px; background: var(--matrix-dark); transition: .4s; border-radius: 50%; }
+        input:checked + .slider { border-color: var(--matrix-green); }
+        input:checked + .slider:before { transform: translateX(20px); background: var(--matrix-green); box-shadow: 0 0 8px var(--matrix-green); }
 
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: #000;
-            border-radius: 20px;
-            transition: .3s;
-            border: 1px solid var(--matrix-dark);
-        }
+        /* Botões de Jogo */
+        .game-grid { display: flex; gap: 8px; margin-bottom: 15px; }
+        .btn-game { flex: 1; padding: 10px; font-size: 10px; border: none; border-radius: 5px; color: white; font-weight: bold; cursor: pointer; }
 
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 12px;
-            width: 12px;
-            left: 3px;
-            bottom: 2px;
-            background: var(--matrix-dark);
-            transition: .3s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background: rgba(0, 255, 65, 0.1);
-            border-color: var(--matrix-green);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(18px);
-            background: var(--matrix-green);
-            box-shadow: 0 0 8px var(--matrix-green);
-        }
-
-        /* Telas */
+        /* Controle de Telas */
         #menu { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="panel">
+    <div class="container">
         <canvas id="matrix-canvas"></canvas>
 
-        <div id="login">
-            <div class="header"><h2>SYSTEM_LOGIN</h2></div>
-            <input type="text" id="keyInput" placeholder="ENTER_KEY_>">
-            <button class="btn-action" id="btn" onclick="fazerLogin()">ACCESS</button>
+        <div id="login-screen">
+            <h2>NEXUS LOGIN</h2>
+            <input type="text" id="keyInput" placeholder="SUA CHAVE AQUI">
+            <button class="btn-main" id="btn-login" onclick="fazerLogin()">CONECTAR</button>
         </div>
 
         <div id="menu">
-            <div class="header"><h2>MATRIX_MODS</h2></div>
+            <h2>NEXUS MODS</h2>
             
-            <div class="row">
-                <span>> AIMBOT.exe</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="send('aimbot', this.checked)">
-                    <span class="slider"></span>
-                </label>
+            <div class="game-grid">
+                <button class="btn-game" style="background: #e91e63;" onclick="window.Android.openGame('com.dts.freefireth')">FF NORMAL</button>
+                <button class="btn-game" style="background: #9c27b0;" onclick="window.Android.openGame('com.dts.freefiremax')">FF MAX</button>
             </div>
 
             <div class="row">
-                <span>> HEADSHOT.dat</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="send('hs', this.checked)">
-                    <span class="slider"></span>
-                </label>
+                <span>> AIMBOT</span>
+                <label class="switch"><input type="checkbox" onchange="send('aimbot', this.checked)"><span class="slider"></span></label>
             </div>
 
             <div class="row">
-                <span>> SPEED.dll</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="send('speed', this.checked)">
-                    <span class="slider"></span>
-                </label>
+                <span>> HEADSHOT</span>
+                <label class="switch"><input type="checkbox" onchange="send('hs', this.checked)"><span class="slider"></span></label>
             </div>
 
-            <button onclick="location.reload()" style="background:transparent; border: 1px solid red; color: red; margin-top: 15px; font-size: 9px; width: 100%; font-family: monospace;">TERMINATE_SESSION</button>
+            <div class="row">
+                <span>> SPEED X10</span>
+                <label class="switch"><input type="checkbox" onchange="send('speed', this.checked)"><span class="slider"></span></label>
+            </div>
+
+            <button onclick="location.reload()" style="background:transparent; border:none; color:red; margin-top:15px; font-size: 10px;">SAIR DO SISTEMA</button>
         </div>
     </div>
 
     <script>
-        // --- EFEITO MATRIX (Canvas) ---
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
-
-        // Define o tamanho do canvas baseado no painel
-        canvas.width = 310; // 280 + padding
-        canvas.height = 350; // Ajuste conforme a altura do seu menu
-
-        const letters = "01010101010101010101"; // Apenas binário para Matrix clássico
-        const fontSize = 10;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
-
-        function drawMatrix() {
-            // Fundo preto semi-transparente para criar o efeito de rasto
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Cor do texto Matrix
-            ctx.fillStyle = "#0f0"; // Verde Matrix puro
-            ctx.font = fontSize + "px monospace";
-
-            for (let i = 0; i < drops.length; i++) {
-                const text = letters.charAt(Math.floor(Math.random() * letters.length));
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-                // Reinicia o "pingo" quando chega ao fim ou aleatoriamente
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        }
-
-        // Roda a animação (ajuste o tempo para velocidade)
-        setInterval(drawMatrix, 60);
-
-
-        // --- LÓGICA DO MENU (Existente) ---
         const params = new URLSearchParams(window.location.search);
-        const hwid = params.get('hwid') || 'UNKNOWN_DEVICE';
+        const hwid = params.get('hwid') || 'UNKNOWN';
 
         async function fazerLogin() {
             const k = document.getElementById('keyInput').value.trim();
-            if(!k) return;
-            const btn = document.getElementById('btn');
-            btn.innerText = "VERIFYING...";
+            const btn = document.getElementById('btn-login');
+            if(!k) return alert("Digite a Key!");
+
+            btn.innerText = "VERIFICANDO...";
 
             try {
-                // CORREÇÃO: Removi a barra inicial '/' para funcionar no GitHub Pages se necessário
-                const res = await fetch(`api/verify?key=${k}&hwid=${hwid}`);
+                // Chamada da API na Vercel
+                const res = await fetch(`/api/verify?key=${k}&hwid=${hwid}`);
                 const data = await res.json();
+
                 if(data.success) {
-                    document.getElementById('login').style.display = 'none';
+                    document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('menu').style.display = 'block';
-                    // Redimensiona o canvas se o menu for maior que o login
-                    canvas.height = 400; 
                 } else {
-                    alert("❌ ERROR: " + data.message);
-                    btn.innerText = "ACCESS";
+                    alert("ERRO: " + data.message);
+                    btn.innerText = "CONECTAR";
                 }
             } catch(e) {
-                alert("📡 CONNECTION_ERROR");
-                btn.innerText = "ACCESS";
+                alert("ERRO DE CONEXÃO COM O SERVIDOR");
+                btn.innerText = "CONECTAR";
             }
         }
 
-        function send(f, s) { 
-            if(window.Android && window.Android.onFeatureToggle) {
-                window.Android.onFeatureToggle(f, s);
-            }
+        function send(f, s) {
+            if(window.Android) window.Android.onFeatureToggle(f, s);
         }
+
+        // Efeito Matrix
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 330; canvas.height = 450;
+        const letters = "01";
+        const fontSize = 10;
+        const drops = Array(Math.floor(canvas.width/fontSize)).fill(1);
+
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0f0";
+            ctx.font = fontSize + "px monospace";
+            drops.forEach((y, i) => {
+                const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                ctx.fillText(text, i * fontSize, y * fontSize);
+                if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            });
+        }
+        setInterval(draw, 50);
     </script>
 </body>
 </html>
