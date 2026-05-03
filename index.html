@@ -3,91 +3,57 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        :root { --ciano: #00ffff; --matrix: #00ff41; }
-        body { background: transparent; margin: 0; padding: 10px; font-family: monospace; overflow: hidden; color: #ccc; }
-        #matrix-canvas { position: absolute; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; opacity: 0.3; }
-        .panel { background: rgba(0,0,0,0.95); border: 2px solid var(--ciano); border-radius: 15px; padding: 20px; box-shadow: 0 0 20px var(--ciano); }
-        h1 { color: var(--ciano); text-align: center; text-shadow: 0 0 10px var(--ciano); font-size: 1.2rem; }
+        :root { --ciano: #00ffff; --green: #33ff33; }
+        body { background: transparent; margin: 0; padding: 10px; font-family: sans-serif; overflow: hidden; }
+        #matrix { position: absolute; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; }
+        .panel { 
+            background: rgba(0,0,0,0.95); 
+            border: 2px solid var(--ciano); 
+            border-radius: 15px; 
+            padding: 20px; 
+            color: #eee;
+            box-shadow: 0 0 20px var(--ciano);
+        }
+        h1 { color: var(--ciano); text-align: center; font-size: 1.4rem; text-shadow: 0 0 10px var(--ciano); margin: 0 0 15px; }
+        h3 { color: var(--green); font-size: 0.8rem; border-bottom: 1px solid rgba(51,255,51,0.3); margin: 15px 0 5px; text-transform: uppercase; }
+        .row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
         
-        /* Estilo Login */
-        #login-box { text-align: center; }
-        input { width: 90%; padding: 12px; margin: 10px 0; background: #111; border: 1px solid var(--ciano); color: var(--ciano); text-align: center; border-radius: 5px; }
-        .btn-login { width: 100%; padding: 12px; background: var(--ciano); border: none; color: #000; font-weight: bold; border-radius: 5px; cursor: pointer; }
-
-        /* Estilo Menu (Escondido no início) */
-        #menu-box { display: none; }
-        h3 { color: var(--matrix); font-size: 0.8rem; margin: 15px 0 5px; border-bottom: 1px solid rgba(0,255,65,0.3); }
-        .row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
-        
-        /* Switch Customizado */
-        .switch { position: relative; width: 40px; height: 20px; }
+        .switch { position: relative; width: 44px; height: 22px; }
         .switch input { display: none; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 20px; transition: .4s; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: #888; transition: .4s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #444; border-radius: 22px; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: #aaa; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background: var(--ciano); }
-        input:checked + .slider:before { transform: translateX(20px); background: #fff; }
+        input:checked + .slider:before { transform: translateX(22px); background: #fff; }
+
+        .btn { width: 100%; padding: 15px; background: var(--ciano); border: none; color: #000; font-weight: bold; border-radius: 10px; margin-top: 20px; text-transform: uppercase; cursor: pointer; }
     </style>
 </head>
 <body>
-    <canvas id="matrix-canvas"></canvas>
-    
+    <canvas id="matrix"></canvas>
     <div class="panel">
         <h1>NEXUS MEGA MENU</h1>
-
-        <div id="login-box">
-            <p style="font-size: 0.7rem;">SISTEMA DE AUTENTICAÇÃO</p>
-            <input type="text" id="keyInput" placeholder="INSIRA SUA KEY">
-            <button class="btn-login" onclick="validarKey()">ENTRAR</button>
-        </div>
-
-        <div id="menu-box">
-            <h3>COMBATE (DUMP)</h3>
-            <div class="row"><span>AimLock 100%</span><label class="switch"><input type="checkbox" onchange="send('aim', this.checked)"><span class="slider"></span></label></div>
-            <div class="row"><span>Aimbot Tiro</span><label class="switch"><input type="checkbox" onchange="send('bot', this.checked)"><span class="slider"></span></label></div>
-            <div class="row"><span>No Recoil</span><label class="switch"><input type="checkbox" onchange="send('recoil', this.checked)"><span class="slider"></span></label></div>
-            
-            <h3>VISUAL & MAPA</h3>
-            <div class="row"><span>ESP Line</span><label class="switch"><input type="checkbox" onchange="send('esp', this.checked)"><span class="slider"></span></label></div>
-            <div class="row"><span>Corpo Branco</span><label class="switch"><input type="checkbox" onchange="send('white', this.checked)"><span class="slider"></span></label></div>
-            
-            <button class="btn-login" style="margin-top:20px;" onclick="window.Android.openGame('com.dts.freefireth')">INICIAR JOGO</button>
-        </div>
+        <h3>COMBATE (OFFSETS)</h3>
+        <div class="row"><span>AimLock 100%</span><label class="switch"><input type="checkbox" onchange="send('aim', this.checked)"><span class="slider"></span></label></div>
+        <div class="row"><span>Aimbot Tiro</span><label class="switch"><input type="checkbox" onchange="send('bot', this.checked)"><span class="slider"></span></label></div>
+        <h3>MOVIMENTAÇÃO</h3>
+        <div class="row"><span>Velocidade Correr</span><label class="switch"><input type="checkbox" onchange="send('speed', this.checked)"><span class="slider"></span></label></div>
+        <button class="btn" onclick="window.Android.openGame('com.dts.freefireth')">INICIAR JOGO</button>
     </div>
-
     <script>
-        const hwid = new URLSearchParams(window.location.search).get('hwid');
-
-        async function validarKey() {
-            const key = document.getElementById('keyInput').value;
-            // Aqui você chama sua API na Vercel que checa no Supabase/Database
-            const response = await fetch(`/api/verify?key=${key}&hwid=${hwid}`);
-            const data = await response.json();
-
-            if(data.success) {
-                document.getElementById('login-box').style.display = 'none';
-                document.getElementById('menu-box').style.display = 'block';
-            } else {
-                alert("KEY INVÁLIDA OU HWID JÁ VINCULADO!");
-            }
-        }
-
-        function send(feat, stat) { if(window.Android) window.Android.onFeatureToggle(feat, stat); }
-
-        // Animação Matrix
-        const c = document.getElementById('matrix-canvas');
+        function send(f, s) { if(window.Android) window.Android.onFeatureToggle(f, s); }
+        const c = document.getElementById('matrix');
         const ctx = c.getContext('2d');
         c.width = window.innerWidth; c.height = window.innerHeight;
-        const drops = Array(Math.floor(c.width/12)).fill(1);
-        function draw() {
+        const drops = Array(Math.floor(c.width/15)).fill(1);
+        setInterval(() => {
             ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,c.width,c.height);
             ctx.fillStyle = "#0f0";
             drops.forEach((y, i) => {
-                ctx.fillText(Math.floor(Math.random()*2), i*12, y*12);
-                if(y*12 > c.height && Math.random() > 0.98) drops[i] = 0;
+                ctx.fillText(Math.floor(Math.random()*2), i*15, y*15);
+                if(y*15 > c.height && Math.random() > 0.98) drops[i] = 0;
                 drops[i]++;
             });
-        }
-        setInterval(draw, 50);
+        }, 50);
     </script>
 </body>
 </html>
