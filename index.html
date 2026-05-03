@@ -3,67 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS MEGA MENU</title>
+    <title>NEXUS MEGA MENU V3</title>
     <style>
-        :root { --neon: #00ffff; --bg: #050505; }
-        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        .box { width: 85%; max-width: 320px; padding: 30px; border: 2px solid var(--neon); border-radius: 15px; box-shadow: 0 0 20px var(--neon); text-align: center; background: #000; position: relative; }
-        h2 { text-shadow: 0 0 10px var(--neon); margin: 0 0 15px; letter-spacing: 3px; font-size: 22px; }
-        input { width: 100%; padding: 12px; margin: 15px 0; background: #111; border: 1px solid var(--neon); color: #fff; border-radius: 5px; text-align: center; box-sizing: border-box; outline: none; }
-        button { width: 100%; padding: 12px; background: transparent; border: 2px solid var(--neon); color: var(--neon); font-weight: bold; cursor: pointer; border-radius: 5px; transition: 0.3s; text-transform: uppercase; }
-        button:hover { background: var(--neon); color: #000; box-shadow: 0 0 25px var(--neon); }
-        #status { margin-top: 15px; font-size: 11px; font-weight: bold; min-height: 15px; letter-spacing: 1px; }
-        .panel-link { display: block; margin-top: 20px; font-size: 10px; color: #666; text-decoration: none; }
+        :root {
+            --neon-cyan: #00ffff;
+            --bg-dark: #000000;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--neon-cyan);
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Moldura Estilo Matrix/Nexus */
+        .login-container {
+            width: 85%;
+            max-width: 340px;
+            padding: 40px 20px;
+            border: 2px solid var(--neon-cyan);
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3), inset 0 0 15px rgba(0, 255, 255, 0.2);
+            text-align: center;
+            position: relative;
+        }
+
+        h2 {
+            margin: 0 0 10px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px var(--neon-cyan);
+            font-size: 26px;
+        }
+
+        .version-tag {
+            font-size: 10px;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            color: #fff;
+            opacity: 0.7;
+        }
+
+        input {
+            width: 90%;
+            padding: 15px;
+            margin: 20px 0;
+            background: #0a0a0a;
+            border: 1px solid var(--neon-cyan);
+            color: #fff;
+            border-radius: 8px;
+            outline: none;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: inset 0 0 5px var(--neon-cyan);
+        }
+
+        button {
+            width: 90%;
+            padding: 15px;
+            background: transparent;
+            border: 2px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.4s;
+            letter-spacing: 2px;
+        }
+
+        button:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 40px var(--neon-cyan);
+        }
+
+        #status {
+            margin-top: 25px;
+            font-size: 12px;
+            font-weight: bold;
+            height: 20px;
+            text-shadow: 0 0 5px currentColor;
+        }
+
+        .footer-link {
+            margin-top: 25px;
+            display: block;
+            font-size: 10px;
+            color: #555;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .footer-link:hover { color: var(--neon-cyan); }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h2>NEXUS MEGA</h2>
-        <div style="font-size: 10px; opacity: 0.8;">SECURITY SYSTEM V3 - VERCEL</div>
-        
-        <input type="text" id="licenseKey" placeholder="INSIRA SUA CHAVE">
-        <button onclick="validar()">AUTENTICAR</button>
-        
-        <div id="status">AGUARDANDO LOGIN...</div>
-        
-        <a href="https://nexus-vip-key.vercel.app/" class="panel-link">PAINEL DE LICENÇAS</a>
-    </div>
 
-    <script>
-        async function validar() {
-            const key = document.getElementById('licenseKey').value.trim();
-            const status = document.getElementById('status');
-            
-            if(!key) { status.innerText = "ERRO: DIGITE A KEY!"; status.style.color = "#ff4444"; return; }
+<div class="login-container">
+    <h2>NEXUS MEGA</h2>
+    <div class="version-tag">SYSTEM V3 - VERCEL INFRA</div>
+    
+    <input type="text" id="userKey" placeholder="LICENSE KEY" spellcheck="false">
+    
+    <button onclick="autenticarNexus()" id="btnAtivar">AUTENTICAR</button>
+    
+    <div id="status">AGUARDANDO...</div>
 
-            status.innerText = "CONECTANDO À VERCEL...";
-            status.style.color = "#00ffff";
+    <a href="https://nexus-vip-key.vercel.app/" class="footer-link">GERENCIAR LICENÇAS</a>
+</div>
 
-            try {
-                // Puxa o ID do dispositivo via Sketchware
-                const hwid = window.Android ? window.Android.getDeviceId() : "PC_TEST_MODE";
-                
-                // IMPORTANTE: Se você moveu a API para a Vercel, o link muda aqui:
-                const url = `https://nexus-vip-key.vercel.app/api/verify?key=${key}&hwid=${hwid}`;
+<script>
+    async function autenticarNexus() {
+        const key = document.getElementById('userKey').value.trim();
+        const status = document.getElementById('status');
+        const btn = document.getElementById('btnAtivar');
 
-                const response = await fetch(url);
-                const data = await response.json();
-
-                if (data.success) {
-                    status.innerText = "ACESSO LIBERADO!";
-                    status.style.color = "#00ff00";
-                    setTimeout(() => { 
-                        if(window.Android) window.Android.onLoginSuccess(); 
-                    }, 1200);
-                } else {
-                    status.innerText = "ERRO: " + data.message.toUpperCase();
-                    status.style.color = "#ff4444";
-                }
-            } catch (err) {
-                status.innerText = "ERRO DE COMUNICAÇÃO COM A VERCEL!";
-                status.style.color = "yellow";
-            }
+        if (!key) {
+            status.innerText = "DIGITE UMA CHAVE VÁLIDA!";
+            status.style.color = "#ff4444";
+            return;
         }
-    </script>
+
+        btn.disabled = true;
+        status.innerText = "CONECTANDO À VERCEL...";
+        status.style.color = var(--neon-cyan);
+
+        try {
+            // Obtém HWID via ponte Java do Sketchware
+            const hwid = window.Android ? window.Android.getDeviceId() : "DEV_MODE";
+            
+            // LINK DA API NA VERCEL
+            const apiUrl = `https://nexus-vip-key.vercel.app/api/verify?key=${key}&hwid=${hwid}`;
+
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+
+            if (data.success) {
+                status.innerText = "ACESSO LIBERADO!";
+                status.style.color = "#00ff00";
+                
+                // Abre o menu no Sketchware
+                setTimeout(() => {
+                    if (window.Android) {
+                        window.Android.onLoginSuccess();
+                    }
+                }, 1500);
+            } else {
+                status.innerText = "ERRO: " + data.message.toUpperCase();
+                status.style.color = "#ff4444";
+                btn.disabled = false;
+            }
+        } catch (error) {
+            status.innerText = "ERRO NA INFRAESTRUTURA VERCEL";
+            status.style.color = "#ffff00";
+            btn.disabled = false;
+        }
+    }
+</script>
+
 </body>
 </html>
+
