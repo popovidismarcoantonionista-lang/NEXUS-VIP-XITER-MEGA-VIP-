@@ -1,28 +1,153 @@
-// Dentro do seu addJavascriptInterface no WebView
-webview_flutuante.addJavascriptInterface(new Object() {
-    
-    @JavascriptInterface
-    public String getDeviceID() {
-        // Captura o HWID real do dispositivo
-        return android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <style>
+        :root {
+            --neon: #00f2ff;
+            --matrix: #00ff41;
+            --bg: rgba(5, 5, 5, 0.98);
+            --card: rgba(25, 25, 25, 0.7);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background: transparent; margin: 0; padding: 0;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; font-family: 'Segoe UI', sans-serif; overflow: hidden;
+        }
+
+        #canvas { position: absolute; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; }
+
+        /* Container Principal */
+        .container {
+            width: 90%; max-width: 340px;
+            background: var(--bg);
+            border: 2px solid var(--neon);
+            border-radius: 22px;
+            padding: 25px;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
+            backdrop-filter: blur(12px);
+            display: none; /* Escondido por padrão */
+            animation: zoomIn 0.4s ease;
+        }
+
+        .active { display: block; } /* Classe que mostra a tela atual */
+
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
+        h1 { color: var(--neon); text-align: center; margin: 0; font-size: 1.5rem; text-shadow: 0 0 10px var(--neon); }
+        .sub { color: var(--matrix); text-align: center; font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }
+
+        /* Estilo Login */
+        .input-key {
+            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--neon);
+            background: rgba(255,255,255,0.05); color: #fff; text-align: center; margin-bottom: 15px; outline: none;
+        }
+
+        .btn-main {
+            width: 100%; padding: 15px; border: none; border-radius: 12px;
+            background: linear-gradient(135deg, var(--neon), #00a2ff);
+            color: #000; font-weight: 900; text-transform: uppercase; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 242, 255, 0.4);
+        }
+
+        /* Estilo Menu */
+        .option {
+            background: var(--card); border-radius: 12px; padding: 12px 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .option span { color: #fff; font-size: 0.9rem; }
+
+        .switch { position: relative; width: 44px; height: 22px; }
+        .switch input { display: none; }
+        .slider { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 22px; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .4s; }
+        input:checked + .slider { background: var(--neon); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        .status { text-align: center; font-size: 0.8rem; margin-top: 15px; height: 20px; }
+        .err { color: #ff4444; } .ok { color: var(--matrix); }
+    </style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div id="login-screen" class="container active">
+    <h1>NEXUS MEGA</h1>
+    <p class="sub">Sistema de Licença</p>
+    <input type="text" id="key-input" class="input-key" placeholder="SUA KEY AQUI">
+    <button class="btn-main" onclick="autenticar()">Entrar no Menu</button>
+    <div id="msg" class="status"></div>
+</div>
+
+<div id="menu-screen" class="container">
+    <h1>NEXUS MEGA</h1>
+    <p class="sub">Painel VIP OB53</p>
+
+    <div class="option"><span>AimLock KnockDown</span><label class="switch"><input type="checkbox" onchange="send('aim', this.checked)"><span class="slider"></span></label></div>
+    <div class="option"><span>No Recoil / Drop</span><label class="switch"><input type="checkbox" onchange="send('recoil', this.checked)"><span class="slider"></span></label></div>
+    <div class="option"><span>Speed Skill Sync</span><label class="switch"><input type="checkbox" onchange="send('speed', this.checked)"><span class="slider"></span></label></div>
+    <div class="option"><span>FOV Zoom View</span><label class="switch"><input type="checkbox" onchange="send('fov', this.checked)"><span class="slider"></span></label></div>
+
+    <button class="btn-main" style="margin-top: 15px;" onclick="window.Android.openGame()">Abrir Free Fire</button>
+</div>
+
+<script>
+    // URL da sua função Vercel que tem o Supabase
+    const API_URL = "https://SEU-PROJETO.vercel.app/api/handler";
+
+    async function autenticar() {
+        const key = document.getElementById('key-input').value;
+        const msg = document.getElementById('msg');
+        
+        // Pega o HWID real do Java
+        const hwid = window.Android ? window.Android.getDeviceID() : "PC_TEST";
+
+        if(!key) { msg.innerHTML = '<span class="err">Digite a Key!</span>'; return; }
+
+        msg.innerHTML = "Verificando...";
+
+        try {
+            const res = await fetch(`${API_URL}?key=${key}&hwid=${hwid}`);
+            const data = await res.json();
+
+            if(data.success) {
+                msg.innerHTML = '<span class="ok">Sucesso!</span>';
+                setTimeout(() => {
+                    document.getElementById('login-screen').classList.remove('active');
+                    document.getElementById('menu-screen').classList.add('active');
+                }, 1000);
+            } else {
+                msg.innerHTML = `<span class="err">${data.message}</span>`;
+            }
+        } catch (e) {
+            msg.innerHTML = '<span class="err">Erro de conexão!</span>';
+        }
     }
 
-    @JavascriptInterface
-    public void onFeatureToggle(String feature, boolean active) {
-        runOnUiThread(() -> {
-            // Seus offsets OB53 que mapeamos antes
-            if (feature.equals("aim")) aplicarOffset("684EA34", active ? "0000A0E3" : "0000A0E1");
-            if (feature.equals("recoil")) aplicarOffset("754", active ? "0000A0E3" : "0000A0E1");
-            if (feature.equals("speed")) aplicarOffset("68A10DC", active ? "00008052" : "0000A0E1");
-            if (feature.equals("fov")) aplicarOffset("68DEC3C", active ? "0000A0E3" : "0000A0E1");
-            
-            android.widget.Toast.makeText(getApplicationContext(), feature.toUpperCase() + (active ? " ON" : " OFF"), 0).show();
+    function send(f, s) { if(window.Android) window.Android.onFeatureToggle(f, s); }
+
+    // Matrix Background
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const drops = Array(Math.floor(canvas.width/12)).fill(1);
+    function draw() {
+        ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = "#0f0"; ctx.font = "12px monospace";
+        drops.forEach((y, i) => {
+            ctx.fillText(Math.floor(Math.random()*2), i*12, y*12);
+            if(y*12 > canvas.height && Math.random() > 0.98) drops[i] = 0;
+            drops[i]++;
         });
     }
+    setInterval(draw, 50);
+</script>
 
-    @JavascriptInterface
-    public void openGame() {
-        Intent i = getPackageManager().getLaunchIntentForPackage("com.dts.freefireth");
-        if(i != null) startActivity(i);
-    }
-}, "Android");
+</body>
+</html>
