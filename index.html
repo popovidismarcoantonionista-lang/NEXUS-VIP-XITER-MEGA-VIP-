@@ -5,33 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NEXUS VIP - LOGIN</title>
     <style>
-        /* ESTILO MATRIX E RGB */
-        :root { --neon-green: #00ff41; --bg-dark: rgba(0, 0, 0, 0.9); }
-        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Courier New', monospace; background: #000; overflow: hidden; color: var(--neon-green); }
-        canvas#matrix { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-        
-        .auth-container { 
-            width: 85%; max-width: 320px; background: var(--bg-dark); 
-            border: 2px solid var(--neon-green); border-radius: 5px; 
-            padding: 40px 20px; text-align: center; 
-            box-shadow: 0 0 15px var(--neon-green);
+        /* CONFIGURAÇÕES DE CORES NEON */
+        :root {
+            --neon-green: #00ff41;
+            --bg-dark: rgba(0, 0, 0, 0.9);
+            --rgb-border: linear-gradient(45deg, #ff0000, #ff00f7, #0011ff, #00ff09, #ff0000);
         }
-        
-        .logo-title { font-size: 28px; font-weight: bold; text-shadow: 0 0 10px var(--neon-green); margin-bottom: 25px; letter-spacing: 3px; }
-        
-        .in-auth { 
-            width: 90%; background: transparent; border: 1px solid var(--neon-green); 
-            padding: 12px; color: var(--neon-green); text-align: center; 
-            font-size: 16px; margin-bottom: 20px; outline: none;
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Courier New', monospace;
+            background: #000;
+            overflow: hidden;
+            color: var(--neon-green);
         }
-        
-        .btn-auth { 
-            width: 100%; background: var(--neon-green); color: #000; 
-            border: none; padding: 15px; font-weight: bold; 
-            font-size: 16px; cursor: pointer; text-transform: uppercase;
+
+        /* EFEITO MATRIX */
+        canvas#matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
         }
-        
-        .btn-auth:active { transform: scale(0.95); opacity: 0.8; }
+
+        /* CONTAINER COM BORDA RGB DINÂMICA */
+        .auth-container {
+            width: 85%;
+            max-width: 320px;
+            background: var(--bg-dark);
+            border: 2px solid var(--neon-green);
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+            position: relative;
+        }
+
+        .logo-title {
+            font-size: 30px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px var(--neon-green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; text-shadow: 0 0 25px var(--neon-green); }
+            100% { opacity: 0.8; }
+        }
+
+        /* CAMPO DE ENTRADA (WebView Style) */
+        .in-auth {
+            width: 90%;
+            background: transparent;
+            border: 1px solid var(--neon-green);
+            padding: 12px;
+            color: var(--neon-green);
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 25px;
+            outline: none;
+            box-shadow: inset 0 0 5px rgba(0, 255, 65, 0.2);
+        }
+
+        /* BOTÃO ESTILIZADO */
+        .btn-auth {
+            width: 100%;
+            background: var(--neon-green);
+            color: #000;
+            border: none;
+            padding: 15px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.3s;
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+
+        .btn-auth:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 5px var(--neon-green);
+        }
+
+        .btn-auth:disabled {
+            background: #555;
+            box-shadow: none;
+            color: #888;
+        }
     </style>
 </head>
 <body>
@@ -39,60 +109,67 @@
 
     <div class="auth-container">
         <div class="logo-title">NEXUS VIP</div>
-        <input type="text" id="keyInput" class="in-auth" placeholder="INSIRA SUA KEY">
+        
+        <input type="text" id="keyInput" class="in-auth" placeholder="INSIRA SUA KEY" autocomplete="off">
+        
         <button class="btn-auth" id="loginBtn" onclick="autenticar()">VERIFICAR KEY</button>
     </div>
 
     <script>
-        // EFEITO MATRIX DE FUNDO
+        // --- LÓGICA DO EFEITO MATRIX ---
         const canvas = document.getElementById('matrix'), ctx = canvas.getContext('2d');
         canvas.height = window.innerHeight; canvas.width = window.innerWidth;
-        const characters = "01ABCDEF", fontSize = 16, columns = canvas.width / fontSize, drops = Array(Math.floor(columns)).fill(1);
-        function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.font = fontSize + "px monospace"; ctx.fillStyle = "#00ff41";
+        const characters = "01$#@&%*", fontSize = 16, columns = canvas.width / fontSize, drops = Array(Math.floor(columns)).fill(1);
+        
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = fontSize + "px monospace";
+            ctx.fillStyle = "#00ff41";
             for (let i = 0; i < drops.length; i++) {
-                ctx.fillText(characters.charAt(Math.floor(Math.random() * characters.length)), i * fontSize, drops[i] * fontSize);
+                const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
                 if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
             }
         }
-        setInterval(draw, 40);
+        setInterval(drawMatrix, 50);
 
-        // SUA FUNÇÃO DE AUTENTICAÇÃO REAL
+        // --- LÓGICA DE AUTENTICAÇÃO ---
         async function autenticar() {
-            const keyInput = document.getElementById('keyInput');
-            const key = keyInput.value.trim();
+            const keyField = document.getElementById('keyInput');
+            const key = keyField.value.trim();
             const btn = document.getElementById('loginBtn');
             
-            // Pega o ID do dispositivo via Sketchware (Bridge)
-            const hwid = window.Android ? window.Android.getDeviceId() : "WEB_TEST";
+            // Pega o Device ID (HWID) do Sketchware via ponte Java
+            const hwid = window.Android ? window.Android.getDeviceId() : "WEB_TEST_MODE";
 
             if (!key) {
-                alert("POR FAVOR, INSIRA UMA KEY!");
+                alert("ERRO: DIGITE UMA KEY VÁLIDA!");
                 return;
             }
 
+            // Interface Visual de Carregamento
             btn.innerText = "VERIFICANDO...";
             btn.disabled = true;
 
             try {
-                // Faz a chamada para a sua API na Vercel (arquivo api.js)
-                const response = await fetch(`/api/verify?key=${key}&hwid=${hwid}`);
+                // CHAMA A SUA API NA VERCEL
+                const response = await fetch(`https://v0-sistema-de-keys-one.vercel.app/api/verify?key=${key}&hwid=${hwid}`);
                 const data = await response.json();
 
                 if (data.success) {
-                    // Se a key existir no Supabase, avisa o Sketchware
+                    // Chama a função 'sucesso' no Sketchware
                     window.Android.sucesso(key, data.token, data.expiraEm);
                 } else {
-                    // Se der erro (HWID diferente ou key falsa), avisa o Sketchware
+                    // Chama a função 'erro' no Sketchware
                     window.Android.erro(data.message, data.code);
                 }
             } catch (err) {
                 if (window.Android) {
-                    window.Android.erro("Erro de conexão com o servidor!", "network_error");
+                    window.Android.erro("Erro de conexão com o servidor Vercel", "network_error");
                 } else {
-                    alert("Erro de conexão!");
+                    alert("Erro ao conectar à API!");
                 }
             } finally {
                 btn.innerText = "VERIFICAR KEY";
