@@ -1,97 +1,71 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        :root { --neon: #00ff41; --bg: #050505; }
-        body { background: var(--bg); color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        #matrix { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
-        .container { width: 320px; background: rgba(10, 10, 10, 0.9); border: 2px solid var(--neon); border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 0 20px var(--neon); }
-        h2 { color: var(--neon); text-shadow: 0 0 10px var(--neon); margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: var(--neon); border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: var(--neon); border: none; color: black; font-weight: bold; border-radius: 5px; cursor: pointer; margin-top: 10px; }
-        .feature-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(0,255,65,0.1); }
-        #menu { display: none; } /* Começa escondido */
-        
-        /* Switch Design */
-        .switch { position: relative; width: 40px; height: 20px; }
+        :root { --neon: #00ff41; --bg: rgba(10, 10, 10, 0.95); }
+        body { background: transparent; margin: 0; padding: 10px; font-family: sans-serif; }
+        .panel { background: var(--bg); border: 2px solid var(--neon); border-radius: 12px; padding: 15px; box-shadow: 0 0 15px var(--neon); text-align: center; }
+        h2 { color: var(--neon); font-size: 1.1rem; margin: 0 0 10px; text-shadow: 0 0 5px var(--neon); }
+        input { width: 90%; padding: 10px; margin: 10px 0; background: #000; border: 1px solid #333; color: var(--neon); border-radius: 5px; text-align: center; }
+        .btn-main { width: 95%; padding: 10px; background: var(--neon); border: none; font-weight: bold; border-radius: 5px; cursor: pointer; margin-bottom: 10px; }
+        .btn-game { flex: 1; padding: 8px; font-size: 10px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; }
+        .row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(0,255,65,0.1); color: #ddd; font-size: 0.8rem; }
+        #menu { display: none; }
+        .switch { position: relative; width: 34px; height: 18px; }
         .switch input { display: none; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 20px; transition: .4s; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: white; transition: .4s; border-radius: 50%; }
+        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background: var(--neon); }
-        input:checked + .slider:before { transform: translateX(20px); }
+        input:checked + .slider:before { transform: translateX(16px); }
     </style>
 </head>
 <body>
-    <canvas id="matrix"></canvas>
-    <div class="container">
-        <div id="login">
-            <h2>NEXUS LOGIN</h2>
-            <input type="text" id="keyInput" placeholder="SUA LICENÇA">
-            <button id="loginBtn" onclick="fazerLogin()">AUTENTICAR</button>
+
+    <div id="login" class="panel">
+        <h2>NEXUS LOGIN</h2>
+        <input type="text" id="keyInput" placeholder="CHAVE VIP">
+        <button class="btn-main" id="btn" onclick="fazerLogin()">AUTENTICAR</button>
+    </div>
+
+    <div id="menu" class="panel">
+        <h2>NEXUS MOD MENU</h2>
+        
+        <div style="display: flex; gap: 5px; margin-bottom: 15px;">
+            <button class="btn-game" style="background: #ff4500;" onclick="window.Android.openGame('com.dts.freefireth')">ABRIR FF</button>
+            <button class="btn-game" style="background: #9932cc;" onclick="window.Android.openGame('com.dts.freefiremax')">ABRIR MAX</button>
         </div>
 
-        <div id="menu">
-            <h2>NEXUS MODS</h2>
-            <div class="feature-row">
-                <span>AIMBOT ASSIST</span>
-                <label class="switch"><input type="checkbox" onchange="send('aim', this.checked)"><span class="slider"></span></label>
-            </div>
-            <div class="feature-row">
-                <span>SPEED HACK</span>
-                <label class="switch"><input type="checkbox" onchange="send('speed', this.checked)"><span class="slider"></span></label>
-            </div>
-            <button onclick="location.reload()" style="background:transparent; border:1px solid red; color:red; margin-top:20px;">SAIR</button>
-        </div>
+        <div class="row"><span>AIMBOT ASSIST</span><label class="switch"><input type="checkbox" onchange="send('aimbot', this.checked)"><span class="slider"></span></label></div>
+        <div class="row"><span>AUTO HEADSHOT</span><label class="switch"><input type="checkbox" onchange="send('hs', this.checked)"><span class="slider"></span></label></div>
+        <div class="row"><span>SPEED HACK X10</span><label class="switch"><input type="checkbox" onchange="send('speed', this.checked)"><span class="slider"></span></label></div>
+
+        <button onclick="location.reload()" style="background:transparent; border:1px solid red; color:red; margin-top:10px; font-size: 10px; width: 100%;">SAIR</button>
     </div>
 
     <script>
         const params = new URLSearchParams(window.location.search);
-        const hwid = params.get('hwid') || 'SEM_ID';
+        const hwid = params.get('hwid') || 'DEVICE_UNKNOWN';
 
         async function fazerLogin() {
-            const k = document.getElementById('keyInput').value;
-            const btn = document.getElementById('loginBtn');
-            if(!k) return alert("Digite a Key");
-
-            btn.innerText = "VERIFICANDO...";
+            const k = document.getElementById('keyInput').value.trim();
+            if(!k) return;
+            document.getElementById('btn').innerText = "VERIFICANDO...";
             try {
-                // Chama a sua API na Vercel
-                const res = await fetch(`/api/verify?key=${k.trim()}&hwid=${hwid}`);
+                const res = await fetch(`/api/verify?key=${k}&hwid=${hwid}`);
                 const data = await res.json();
-
                 if(data.success) {
                     document.getElementById('login').style.display = 'none';
                     document.getElementById('menu').style.display = 'block';
                 } else {
                     alert(data.message);
-                    btn.innerText = "AUTENTICAR";
+                    document.getElementById('btn').innerText = "AUTENTICAR";
                 }
-            } catch(e) {
-                alert("Erro de conexão!");
-                btn.innerText = "AUTENTICAR";
-            }
+            } catch(e) { alert("ERRO DE CONEXÃO"); }
         }
 
-        function send(f, s) {
-            if(window.Android) window.Android.onFeatureToggle(f, s);
-        }
-
-        // Efeito Matrix Simples
-        const canvas = document.getElementById('matrix');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const drops = Array(Math.floor(canvas.width/16)).fill(1);
-        function draw() {
-            ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "#0f0"; drops.forEach((y, i) => {
-                ctx.fillText("01", i*16, y*16);
-                if(y*16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
-            });
-        }
-        setInterval(draw, 50);
+        function send(f, s) { if(window.Android) window.Android.onFeatureToggle(f, s); }
     </script>
 </body>
 </html>
