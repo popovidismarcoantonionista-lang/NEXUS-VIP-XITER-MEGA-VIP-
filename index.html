@@ -1,67 +1,72 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS MEGA V3</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>NEXUS VIP</title>
     <style>
-        :root { --neon: #00ffff; }
-        body { background: #000; color: var(--neon); font-family: monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        .box { width: 85%; max-width: 320px; padding: 35px; border: 2px solid var(--neon); border-radius: 20px; box-shadow: 0 0 25px rgba(0,255,255,0.4); text-align: center; background: #000; }
-        h2 { text-shadow: 0 0 10px var(--neon); letter-spacing: 4px; margin: 0; }
-        input { width: 100%; padding: 12px; margin: 15px 0; background: #0a0a0a; border: 1px solid var(--neon); color: #fff; text-align: center; border-radius: 8px; box-sizing: border-box; outline: none; }
-        button { width: 100%; padding: 12px; background: transparent; border: 2px solid var(--neon); color: var(--neon); font-weight: bold; cursor: pointer; border-radius: 8px; transition: 0.3s; }
-        button:hover { background: var(--neon); color: #000; }
-        #status { margin-top: 20px; font-size: 11px; font-weight: bold; min-height: 15px; }
+        :root { --neon: #00ff41; --bg: #0a0a0a; }
+        body { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        .panel { width: 280px; padding: 20px; border: 1px solid var(--neon); border-radius: 10px; background: rgba(0,0,0,0.9); box-shadow: 0 0 20px var(--neon); text-align: center; }
+        .title { font-size: 18px; color: var(--neon); letter-spacing: 4px; margin-bottom: 20px; text-shadow: 0 0 10px var(--neon); }
+        input { width: 100%; padding: 10px; margin-bottom: 15px; background: #111; border: 1px solid #333; color: var(--neon); border-radius: 5px; box-sizing: border-box; text-align: center; }
+        button { width: 100%; padding: 10px; background: var(--neon); border: none; color: #000; font-weight: bold; border-radius: 5px; cursor: pointer; margin-bottom: 10px; }
+        .btn-test { background: transparent; border: 1px solid var(--neon); color: var(--neon); font-size: 11px; }
+        .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 5px; border-bottom: 1px solid #222; }
+        
+        /* Switch */
+        .switch { position: relative; width: 40px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; transition: .4s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background: var(--neon); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        #menu-content { display: none; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h2>NEXUS MEGA</h2>
-        <div style="font-size: 10px; opacity: 0.7; margin-bottom: 10px;">V3 - VERCEL INFRA</div>
-        <input type="text" id="keyInput" placeholder="SUA CHAVE AQUI">
-        <button onclick="executarLogin()">AUTENTICAR</button>
-        <div id="status">AGUARDANDO...</div>
+
+    <div class="panel">
+        <div id="login-area">
+            <div class="title">NEXUS LOGIN</div>
+            <input type="text" id="key" placeholder="INSIRA A KEY">
+            <button onclick="login()">ENTRAR</button>
+            <button class="btn-test" onclick="usarTeste()">TESTAR COM KEY FREE</button>
+        </div>
+
+        <div id="menu-content">
+            <div class="title">NEXUS OB53</div>
+            <div class="row"><span>AIM ASSIST</span><label class="switch"><input type="checkbox" onchange="send('aim',this.checked)"><span class="slider"></span></label></div>
+            <div class="row"><span>SPEED HACK</span><label class="switch"><input type="checkbox" onchange="send('speed',this.checked)"><span class="slider"></span></label></div>
+            <div class="row"><span>ANTENA 64B</span><label class="switch"><input type="checkbox" onchange="send('antena',this.checked)"><span class="slider"></span></label></div>
+            <button class="btn-test" onclick="location.reload()">SAIR</button>
+        </div>
     </div>
 
     <script>
-        async function executarLogin() {
-            const status = document.getElementById('status');
-            const key = document.getElementById('keyInput').value.trim();
+        async function login() {
+            const k = document.getElementById('key').value;
+            const h = "USER_DEVICE_ID"; // O Sketchware pode injetar o ID real aqui
 
-            if(!key) {
-                status.innerText = "DIGITE A KEY!";
-                status.style.color = "red";
-                return;
+            const r = await fetch(`https://nexus-vip-key.vercel.app/api/verify?key=${k}&hwid=${h}`);
+            const d = await r.json();
+
+            if(d.success) {
+                document.getElementById('login-area').style.display = 'none';
+                document.getElementById('menu-content').style.display = 'block';
+            } else {
+                alert("Erro: " + d.message);
             }
+        }
 
-            status.innerText = "VALIDANDO...";
-            status.style.color = "#00ffff";
+        function usarTeste() {
+            document.getElementById('key').value = "NEXUS-TESTE-FREE";
+            login();
+        }
 
-            try {
-                // Tenta pegar o HWID da ponte Android
-                let hwid = "BROWSER_TEST";
-                if (typeof Android !== 'undefined') {
-                    hwid = Android.getDeviceId();
-                }
-
-                const response = await fetch(`https://nexus-vip-key.vercel.app/api/verify?key=${key}&hwid=${hwid}`);
-                const data = await response.json();
-
-                if (data.success) {
-                    status.innerText = "ACESSO LIBERADO!";
-                    status.style.color = "#00ff00";
-                    if (typeof Android !== 'undefined') {
-                        setTimeout(() => { Android.onLoginSuccess(); }, 1000);
-                    }
-                } else {
-                    status.innerText = "ERRO: " + data.message.toUpperCase();
-                    status.style.color = "#ff4444";
-                }
-            } catch (err) {
-                status.innerText = "ERRO DE CONEXÃO!";
-                status.style.color = "yellow";
-            }
+        function send(f, s) {
+            if(window.Android) window.Android.onFeatureToggle(f, s);
         }
     </script>
 </body>
