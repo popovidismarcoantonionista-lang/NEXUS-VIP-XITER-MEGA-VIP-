@@ -4,30 +4,24 @@ export default async function handler(req, res) {
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
     const { key, hwid } = req.query;
 
-    if (!key || !hwid) {
-        return res.status(200).json({ success: false, message: "Parâmetros inválidos!" });
-    }
-
-    // Busca a key na tabela 'keys'
     const { data: license, error } = await supabase
-        .from('keys')
+        .from('keys') // TABELA DO SEU SQL
         .select('*')
-        .eq('key', key.trim())
+        .eq('key', key)
         .maybeSingle();
 
-    if (error) return res.status(200).json({ success: false, message: "Erro no Banco de Dados" });
-    if (!license) return res.status(200).json({ success: false, message: "Key não encontrada!" });
+    if (error || !license) {
+        return res.status(200).json({ success: false, message: "Key Inválida!" });
+    }
 
-    // Lógica de HWID (Trava no dispositivo)
     if (!license.hwid) {
-        // Se a key está vazia, salva o HWID do celular atual
-        await supabase.from('keys').update({ hwid: hwid }).eq('key', key.trim());
-        return res.status(200).json({ success: true, message: "Acesso Liberado! Dispositivo vinculado." });
+        await supabase.from('keys').update({ hwid: hwid }).eq('key', key);
+        return res.status(200).json({ success: true, message: "Vinculado!" });
     }
 
     if (license.hwid !== hwid) {
-        return res.status(200).json({ success: false, message: "Key já vinculada a outro celular!" });
+        return res.status(200).json({ success: false, message: "Key em uso em outro celular!" });
     }
 
-    return res.status(200).json({ success: true, message: "Acesso Liberado!" });
+    return res.status(200).json({ success: true });
 }
