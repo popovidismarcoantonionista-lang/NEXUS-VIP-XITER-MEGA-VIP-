@@ -1,102 +1,51 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <style>
-        :root { --matrix: #00ff41; }
-        body { background: transparent; margin: 0; padding: 10px; font-family: monospace; overflow: hidden; }
-        
-        /* Garantir que o painel apareça sobre a tela branca */
-        .panel { 
-            background: rgba(0, 0, 0, 0.95); 
-            border: 2px solid var(--matrix); 
-            border-radius: 15px; 
-            padding: 15px; 
-            color: var(--matrix);
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
-            position: relative;
-            z-index: 5;
-        }
-
-        #matrix-canvas {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; /* Atrás dos botões */
-            opacity: 0.3;
-        }
-
-        .content { position: relative; z-index: 10; } /* Conteúdo sempre no topo */
-
-        input { 
-            width: 85%; padding: 12px; margin: 10px 0; 
-            background: #000; border: 1px solid var(--matrix); 
-            color: var(--matrix); text-align: center; border-radius: 5px;
-        }
-
-        button { 
-            width: 100%; padding: 12px; background: var(--matrix); 
-            border: none; color: #000; font-weight: bold; 
-            border-radius: 5px; cursor: pointer;
-        }
-
-        #menu { display: none; } /* Começa escondido */
+        body { background: black; color: #00ff41; font-family: monospace; margin: 0; padding: 10px; overflow: hidden; }
+        .panel { border: 2px solid #00ff41; border-radius: 10px; padding: 10px; background: rgba(0,0,0,0.9); }
+        canvas { position: absolute; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; }
+        button { width: 100%; background: #00ff41; color: black; border: none; padding: 10px; font-weight: bold; margin-top: 5px; }
+        .row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #113311; }
+        #menu { display: none; }
     </style>
 </head>
 <body>
+    <canvas id="ctx"></canvas>
+    <div class="panel" id="login">
+        <h2 style="text-align:center">NEXUS LOGIN</h2>
+        <input type="text" id="key" placeholder="KEY" style="width:90%; padding:10px; margin-bottom:10px;">
+        <button onclick="login()">ACESSAR</button>
+    </div>
 
-    <div class="panel">
-        <canvas id="matrix-canvas"></canvas>
-        
-        <div class="content" id="login-screen">
-            <h3>NEXUS SYSTEM</h3>
-            <input type="text" id="key" placeholder="INSIRA A CHAVE">
-            <button onclick="fazerLogin()">AUTENTICAR</button>
-        </div>
-
-        <div class="content" id="menu">
-            <h3>MOD MENU</h3>
-            <button style="background:orange; margin-bottom:10px;" onclick="window.Android.openGame('com.dts.freefireth')">FREE FIRE</button>
-            <div style="display:flex; justify-content:space-between; padding: 10px 0;">
-                <span>AIMBOT</span>
-                <input type="checkbox" onchange="send('aimbot', this.checked)">
-            </div>
-            <button onclick="location.reload()" style="background:transparent; color:red; border:1px solid red; margin-top:10px;">SAIR</button>
-        </div>
+    <div class="panel" id="menu">
+        <h2 style="text-align:center">MOD MENU</h2>
+        <div class="row"><span>AIMBOT</span><input type="checkbox" onchange="window.Android.onFeatureToggle('aimbot', this.checked)"></div>
+        <div class="row"><span>HEADSHOT</span><input type="checkbox" onchange="window.Android.onFeatureToggle('hs', this.checked)"></div>
+        <button onclick="location.reload()" style="background: red; color: white;">SAIR</button>
     </div>
 
     <script>
-        const hwid = new URLSearchParams(window.location.search).get('hwid');
-
-        async function fazerLogin() {
-            const k = document.getElementById('key').value;
-            if(!k) return;
-            try {
-                const res = await fetch(`/api/verify?key=${k}&hwid=${hwid}`);
-                const data = await res.json();
-                if(data.success) {
-                    document.getElementById('login-screen').style.display = 'none';
-                    document.getElementById('menu').style.display = 'block';
-                } else {
-                    alert(data.message);
-                }
-            } catch(e) { alert("Erro de conexão com a API"); }
+        function login() {
+            // Lógica simples de teste (substitua pela sua API fetch)
+            if(document.getElementById('key').value === "1") {
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('menu').style.display = 'block';
+            } else { alert("Key Errada!"); }
         }
 
-        function send(f, s) { if(window.Android) window.Android.onFeatureToggle(f, s); }
-
-        // Script Matrix ultra-leve
-        const c = document.getElementById('matrix-canvas');
-        const ctx = c.getContext('2d');
-        c.width = 300; c.height = 400;
-        const drops = Array(20).fill(1);
+        // Matrix Effect
+        const c = document.getElementById("ctx");
+        const ctx = c.getContext("2d");
+        c.height = window.innerHeight; c.width = window.innerWidth;
+        const drops = Array(Math.floor(c.width/10)).fill(1);
         setInterval(() => {
-            ctx.fillStyle = "rgba(0,0,0,0.1)";
-            ctx.fillRect(0,0,c.width,c.height);
-            ctx.fillStyle = "#0f0";
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, c.width, c.height);
+            ctx.fillStyle = "#0F0"; ctx.font = "10px arial";
             drops.forEach((y, i) => {
-                ctx.fillText(Math.floor(Math.random()*2), i*15, y*15);
-                if(y*15 > c.height && Math.random() > 0.95) drops[i] = 0;
+                ctx.fillText(Math.floor(Math.random()*2), i*10, y*10);
+                if(y*10 > c.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
             });
         }, 50);
