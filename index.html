@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NEXUS VIP - LOGIN</title>
+    <style>
+        /* ESTILO MATRIX E RGB */
+        :root { --neon-green: #00ff41; --bg-dark: rgba(0, 0, 0, 0.9); }
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Courier New', monospace; background: #000; overflow: hidden; color: var(--neon-green); }
+        canvas#matrix { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        
+        .auth-container { 
+            width: 85%; max-width: 320px; background: var(--bg-dark); 
+            border: 2px solid var(--neon-green); border-radius: 5px; 
+            padding: 40px 20px; text-align: center; 
+            box-shadow: 0 0 15px var(--neon-green);
+        }
+        
+        .logo-title { font-size: 28px; font-weight: bold; text-shadow: 0 0 10px var(--neon-green); margin-bottom: 25px; letter-spacing: 3px; }
+        
+        .in-auth { 
+            width: 90%; background: transparent; border: 1px solid var(--neon-green); 
+            padding: 12px; color: var(--neon-green); text-align: center; 
+            font-size: 16px; margin-bottom: 20px; outline: none;
+        }
+        
+        .btn-auth { 
+            width: 100%; background: var(--neon-green); color: #000; 
+            border: none; padding: 15px; font-weight: bold; 
+            font-size: 16px; cursor: pointer; text-transform: uppercase;
+        }
+        
+        .btn-auth:active { transform: scale(0.95); opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+
+    <div class="auth-container">
+        <div class="logo-title">NEXUS VIP</div>
+        <input type="text" id="keyInput" class="in-auth" placeholder="INSIRA SUA KEY">
+        <button class="btn-auth" id="loginBtn" onclick="autenticar()">VERIFICAR KEY</button>
+    </div>
+
+    <script>
+        // EFEITO MATRIX DE FUNDO
+        const canvas = document.getElementById('matrix'), ctx = canvas.getContext('2d');
+        canvas.height = window.innerHeight; canvas.width = window.innerWidth;
+        const characters = "01ABCDEF", fontSize = 16, columns = canvas.width / fontSize, drops = Array(Math.floor(columns)).fill(1);
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = fontSize + "px monospace"; ctx.fillStyle = "#00ff41";
+            for (let i = 0; i < drops.length; i++) {
+                ctx.fillText(characters.charAt(Math.floor(Math.random() * characters.length)), i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(draw, 40);
+
+        // SUA FUNÇÃO DE AUTENTICAÇÃO REAL
+        async function autenticar() {
+            const keyInput = document.getElementById('keyInput');
+            const key = keyInput.value.trim();
+            const btn = document.getElementById('loginBtn');
+            
+            // Pega o ID do dispositivo via Sketchware (Bridge)
+            const hwid = window.Android ? window.Android.getDeviceId() : "WEB_TEST";
+
+            if (!key) {
+                alert("POR FAVOR, INSIRA UMA KEY!");
+                return;
+            }
+
+            btn.innerText = "VERIFICANDO...";
+            btn.disabled = true;
+
+            try {
+                // Faz a chamada para a sua API na Vercel (arquivo api.js)
+                const response = await fetch(`/api/verify?key=${key}&hwid=${hwid}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    // Se a key existir no Supabase, avisa o Sketchware
+                    window.Android.sucesso(key, data.token, data.expiraEm);
+                } else {
+                    // Se der erro (HWID diferente ou key falsa), avisa o Sketchware
+                    window.Android.erro(data.message, data.code);
+                }
+            } catch (err) {
+                if (window.Android) {
+                    window.Android.erro("Erro de conexão com o servidor!", "network_error");
+                } else {
+                    alert("Erro de conexão!");
+                }
+            } finally {
+                btn.innerText = "VERIFICAR KEY";
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
