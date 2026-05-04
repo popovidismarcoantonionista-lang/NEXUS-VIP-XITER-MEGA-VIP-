@@ -8,12 +8,16 @@ export default async function handler(req, res) {
     if (req.method === 'OPTIONS') return res.status(200).end();
 
     const { key, hwid } = req.query;
-    
-    // Conexão limpa com o Supabase
-    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+
+    // Remove espaços e barras extras da URL para garantir
+    const supabaseUrl = process.env.SUPABASE_URL?.trim().replace(/\/$/, "");
+    const supabaseKey = process.env.SUPABASE_KEY?.trim();
+
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+        db: { schema: 'public' }
+    });
 
     try {
-        // Tentativa de busca na tabela 'keys'
         const { data: license, error } = await supabase
             .from('keys') 
             .select('*')
@@ -21,30 +25,30 @@ export default async function handler(req, res) {
             .maybeSingle();
 
         if (error) {
-            // Isso vai nos dizer se o erro é o nome da tabela (PGRST125)
+            console.error("Erro do Supabase:", error);
             return res.status(200).json({ 
                 success: false, 
-                message: "ERRO DE ROTA: " + error.message 
+                message: `ERRO DE TABELA: ${error.message} (Código: ${error.code})` 
             });
         }
 
         if (!license) {
-            return res.status(200).json({ success: false, message: "KEY INVÁLIDA!" });
+            return res.status(200).json({ success: false, message: "KEY NÃO ENCONTRADA!" });
         }
 
         // Validação de HWID
-        if (!license.hwid || license.hwid === "") {
+        if (!license.hwid) {
             await supabase.from('keys').update({ hwid: hwid }).eq('key', key);
-            return res.status(200).json({ success: true, message: "DISPOSITIVO VINCULADO!" });
+            return res.status(200).json({ success: true, message: "VINCULADO COM SUCESSO!" });
         }
 
         if (license.hwid !== hwid) {
-            return res.status(200).json({ success: false, message: "ESTA KEY JÁ POSSUI DONO!" });
+            return res.status(200).json({ success: false, message: "KEY EM USO EM OUTRO CELULAR!" });
         }
 
         return res.status(200).json({ success: true, message: "ACESSO LIBERADO!" });
 
     } catch (err) {
-        return res.status(200).json({ success: false, message: "FALHA GERAL: " + err.message });
+        return res.status(200).json({ success: false, message: "ERRO DE ROTA: " + err.message });
     }
 }
