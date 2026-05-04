@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 export default async function handler(req, res) {
+    // Configurações de CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -9,34 +10,29 @@ export default async function handler(req, res) {
 
     const { key, hwid } = req.query;
 
-    // Garante que as variáveis existem antes de conectar
-    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {
-        return res.status(200).json({ success: false, message: "ERRO: Variáveis da Vercel não configuradas!" });
-    }
-
+    // Conexão com Supabase usando as variáveis de ambiente da Vercel
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
     try {
-        // Busca explícita na tabela keys
+        // Busca a licença
         const { data: license, error } = await supabase
             .from('keys') 
             .select('*')
             .eq('key', key)
-            .single(); // Mudamos para single para ser mais direto
+            .maybeSingle();
 
-        if (error) {
-            // Se der erro de caminho, ele vai dizer exatamente qual tabela ele não achou
-            return res.status(200).json({ 
-                success: false, 
-                message: `Tabela não encontrada: ${error.message}` 
-            });
-        }
+        if (error) throw error;
 
         if (!license) {
             return res.status(200).json({ success: false, message: "KEY INVÁLIDA!" });
         }
 
-        // Validação de HWID
+        // Validação de expiração (se a coluna existir)
+        if (license.expira_em && new Date(license.expira_em) < new Date()) {
+            return res.status(200).json({ success: false, message: "KEY EXPIRADA!" });
+        }
+
+        // Vinculação ou Verificação de HWID
         if (!license.hwid) {
             await supabase.from('keys').update({ hwid: hwid }).eq('key', key);
             return res.status(200).json({ success: true, message: "APARELHO VINCULADO!" });
@@ -51,7 +47,7 @@ export default async function handler(req, res) {
     } catch (err) {
         return res.status(200).json({ 
             success: false, 
-            message: "ERRO DE ROTA: " + err.message 
+            message: "ERRO NO BANCO: " + err.message 
         });
     }
 }
