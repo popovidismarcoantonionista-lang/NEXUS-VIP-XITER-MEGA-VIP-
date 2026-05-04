@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
     try {
         const { data: license, error } = await supabase
-            .from('keys')
+            .from('keys') // Nome da tabela conforme seu print
             .select('*')
             .eq('key', key)
             .maybeSingle();
