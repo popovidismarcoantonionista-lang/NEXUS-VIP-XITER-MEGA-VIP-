@@ -3,153 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS VIP - LOGIN</title>
+    <title>NEXUS VIP</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
-        body { background-color: black; overflow: hidden; color: #00ff00; }
-        
-        /* Efeito Matrix Background */
+        body { background-color: black; color: #00ff00; overflow: hidden; }
         #canvas { position: fixed; top: 0; left: 0; z-index: -1; }
-
-        .container {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100vh; text-align: center; padding: 20px;
-        }
-
-        .login-box {
-            background: rgba(0, 20, 0, 0.9);
-            padding: 30px; border: 2px solid #00ff00;
-            box-shadow: 0 0 20px #00ff00; border-radius: 10px; width: 100%; max-width: 350px;
-        }
-
-        h2 { margin-bottom: 20px; text-shadow: 0 0 10px #00ff00; letter-spacing: 3px; }
-
-        input {
-            width: 100%; padding: 12px; margin-bottom: 15px;
-            background: black; border: 1px solid #00ff00;
-            color: #00ff00; text-align: center; outline: none;
-        }
-
-        button {
-            width: 100%; padding: 12px; background: #00ff00;
-            color: black; border: none; font-weight: bold;
-            cursor: pointer; transition: 0.3s; text-transform: uppercase;
-        }
-
-        button:hover { background: #008800; box-shadow: 0 0 15px #00ff00; }
-
-        #msg { margin-top: 15px; font-size: 14px; min-height: 20px; font-weight: bold; }
-
-        /* Menu (Invisível até o login) */
-        #menu-screen { display: none; }
-        .feature-card {
-            background: rgba(0, 30, 0, 0.8); border: 1px solid #00ff00;
-            margin: 10px; padding: 15px; width: 280px; display: flex;
-            justify-content: space-between; align-items: center;
-        }
+        .container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        .box { background: rgba(0, 20, 0, 0.9); padding: 30px; border: 2px solid #00ff00; box-shadow: 0 0 15px #00ff00; border-radius: 8px; width: 90%; max-width: 350px; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 15px 0; background: black; border: 1px solid #00ff00; color: #00ff00; text-align: center; outline: none; }
+        button { width: 100%; padding: 12px; background: #00ff00; color: black; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        #msg { margin-top: 15px; font-weight: bold; font-size: 13px; }
+        #menu { display: none; }
     </style>
 </head>
 <body>
-
     <canvas id="canvas"></canvas>
 
-    <div id="login-screen" class="container">
-        <div class="login-box">
-            <h2>NEXUS VIP</h2>
-            <input type="text" id="keyInput" placeholder="INSIRA SUA KEY">
-            <button onclick="autenticar()">ENTRAR NO MENU</button>
+    <div id="login" class="container">
+        <div class="box">
+            <h2 style="letter-spacing: 5px;">NEXUS VIP</h2>
+            <input type="text" id="keyInput" placeholder="SUA LICENÇA AQUI">
+            <button onclick="validar()">ENTRAR NO MENU</button>
             <p id="msg"></p>
         </div>
     </div>
 
-    <div id="menu-screen" class="container">
-        <div class="login-box">
-            <h2>MENU NEXUS</h2>
-            <div class="feature-card">
-                <span>AIMLOCK</span>
-                <input type="checkbox" onchange="window.Android.onFeatureToggle('aim', this.checked)">
-            </div>
-            <div class="feature-card">
-                <span>NO RECOIL</span>
-                <input type="checkbox" onchange="window.Android.onFeatureToggle('recoil', this.checked)">
-            </div>
-            <div class="feature-card">
-                <span>SPEED HACK</span>
-                <input type="checkbox" onchange="window.Android.onFeatureToggle('speed', this.checked)">
-            </div>
+    <div id="menu" class="container">
+        <div class="box">
+            <h2>NEXUS MENU</h2>
+            <hr style="border: 0.5px solid #00ff00; margin: 10px 0;">
+            <p>CONECTADO COM SUCESSO</p>
             <br>
-            <button onclick="window.Android.openGame()">INICIAR JOGO</button>
+            <button onclick="window.Android.openGame()">ABRIR JOGO</button>
         </div>
     </div>
 
     <script>
-        // --- EFEITO MATRIX ---
+        // Matrix Effect
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const letters = "0123456789ABCDEFHIJKLMNOPQRSTUVXYZ";
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const letters = "0123456789ABCDEF";
         const fontSize = 16;
         const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
-
-        function drawMatrix() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#00ff00";
-            ctx.font = fontSize + "px arial";
-            for (let i = 0; i < drops.length; i++) {
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#00ff00"; ctx.font = fontSize + "px arial";
+            drops.forEach((y, i) => {
                 const text = letters[Math.floor(Math.random() * letters.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                ctx.fillText(text, i * fontSize, y * fontSize);
+                if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
-            }
+            });
         }
-        setInterval(drawMatrix, 35);
+        setInterval(draw, 35);
 
-        // --- SISTEMA DE AUTENTICAÇÃO ---
-        async function autenticar() {
+        // Lógica de Validação
+        async function validar() {
             const key = document.getElementById('keyInput').value;
             const msg = document.getElementById('msg');
             
-            // Pega o HWID do Android através da ponte Java
-            let hwid = "BROWSER_TEST";
-            if (window.Android && window.Android.getDeviceID) {
-                hwid = window.Android.getDeviceID();
-            }
+            // Tenta pegar o ID do Android, senão usa um fallback
+            let hwid = "ID_INDISPONIVEL";
+            try {
+                if (window.Android && window.Android.getDeviceID) {
+                    hwid = window.Android.getDeviceID();
+                }
+            } catch(e) { console.log("Erro ao acessar interface Android"); }
 
-            if (!key) {
-                msg.innerText = "DIGITE UMA LICENÇA!";
-                msg.style.color = "red";
-                return;
-            }
+            if (!key) { msg.innerText = "DIGITE A KEY!"; msg.style.color = "red"; return; }
 
-            msg.innerText = "VERIFICANDO...";
+            msg.innerText = "AUTENTICANDO...";
             msg.style.color = "yellow";
 
             try {
-                // Link da sua API na Vercel
-                const API_URL = `https://nexus-vip-key.vercel.app/api/verify?key=${encodeURIComponent(key)}&hwid=${encodeURIComponent(hwid)}`;
-                
-                const response = await fetch(API_URL);
-                const data = await response.json();
+                const url = `https://nexus-vip-key.vercel.app/api/verify?key=${encodeURIComponent(key)}&hwid=${encodeURIComponent(hwid)}`;
+                const res = await fetch(url);
+                const data = await res.json();
 
                 if (data.success) {
                     msg.style.color = "#00ff00";
-                    msg.innerText = data.message || "SUCESSO!";
-                    
+                    msg.innerText = data.message;
                     setTimeout(() => {
-                        document.getElementById('login-screen').style.display = 'none';
-                        document.getElementById('menu-screen').style.display = 'flex';
+                        document.getElementById('login').style.display = 'none';
+                        document.getElementById('menu').style.display = 'flex';
                     }, 1000);
                 } else {
                     msg.style.color = "red";
-                    msg.innerText = data.message || "ERRO DESCONHECIDO";
+                    msg.innerText = data.message;
                 }
-            } catch (error) {
+            } catch (err) {
                 msg.style.color = "red";
                 msg.innerText = "ERRO DE CONEXÃO!";
-                console.error(error);
             }
         }
     </script>
