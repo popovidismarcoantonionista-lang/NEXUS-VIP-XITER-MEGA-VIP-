@@ -8,23 +8,36 @@ export default async function handler(req, res) {
     if (req.method === 'OPTIONS') return res.status(200).end();
 
     const { key, hwid } = req.query;
+
+    // Garante que as variáveis existem antes de conectar
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {
+        return res.status(200).json({ success: false, message: "ERRO: Variáveis da Vercel não configuradas!" });
+    }
+
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
     try {
-        // O NOME AQUI DEVE SER 'keys' IGUAL NO SUPABASE
+        // Busca explícita na tabela keys
         const { data: license, error } = await supabase
             .from('keys') 
             .select('*')
             .eq('key', key)
-            .maybeSingle();
+            .single(); // Mudamos para single para ser mais direto
 
-        if (error) throw error; // Se a tabela não existir, o erro PGRST125 cai aqui
-
-        if (!license) {
-            return res.status(200).json({ success: false, message: "KEY NÃO ENCONTRADA!" });
+        if (error) {
+            // Se der erro de caminho, ele vai dizer exatamente qual tabela ele não achou
+            return res.status(200).json({ 
+                success: false, 
+                message: `Tabela não encontrada: ${error.message}` 
+            });
         }
 
-        if (!license.hwid || license.hwid === "") {
+        if (!license) {
+            return res.status(200).json({ success: false, message: "KEY INVÁLIDA!" });
+        }
+
+        // Validação de HWID
+        if (!license.hwid) {
             await supabase.from('keys').update({ hwid: hwid }).eq('key', key);
             return res.status(200).json({ success: true, message: "APARELHO VINCULADO!" });
         }
@@ -38,7 +51,7 @@ export default async function handler(req, res) {
     } catch (err) {
         return res.status(200).json({ 
             success: false, 
-            message: "ERRO NO BANCO: " + err.message // Aqui aparecerá o erro se o nome da tabela estiver errado
+            message: "ERRO DE ROTA: " + err.message 
         });
     }
 }
