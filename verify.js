@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
     // COLOQUE SEUS DADOS REAIS AQUI PARA TESTAR:
     const URL_DIRETA = "https://qudbsaujvnvwoybxarhp.supabase.co";
-    const KEY_DIRETA = "sb_secret_LuooVQa9KoGSDbgOKTOvsw_-FKNHWJr"; 
+    const KEY_DIRETA = "sb_secret_DbBG0Q4gXns-95PseLRvmg_3umCJFEq"; 
 
     const supabase = createClient(URL_DIRETA, KEY_DIRETA);
     const { key, hwid } = req.query;
