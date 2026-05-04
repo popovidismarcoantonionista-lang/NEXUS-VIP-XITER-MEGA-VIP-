@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS VIP - LOGIN</title>
+    <title>NEXUS VIP - SYSTEM</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
         body { background-color: black; overflow: hidden; color: #00ff00; }
         
-        /* Efeito de Fundo Matrix */
         #canvas { position: fixed; top: 0; left: 0; z-index: -1; }
 
         .container {
@@ -16,13 +15,13 @@
             height: 100vh; text-align: center; padding: 20px;
         }
 
-        .login-box {
+        .box {
             background: rgba(0, 20, 0, 0.9);
-            padding: 30px; border: 2px solid #00ff00;
-            box-shadow: 0 0 20px #00ff00; border-radius: 10px; width: 100%; max-width: 350px;
+            padding: 25px; border: 2px solid #00ff00;
+            box-shadow: 0 0 20px #00ff00; border-radius: 10px; width: 100%; max-width: 360px;
         }
 
-        h2 { margin-bottom: 20px; text-shadow: 0 0 10px #00ff00; letter-spacing: 3px; }
+        h2 { margin-bottom: 20px; text-shadow: 0 0 10px #00ff00; letter-spacing: 2px; font-size: 22px; }
 
         input {
             width: 100%; padding: 12px; margin-bottom: 15px;
@@ -34,13 +33,20 @@
             width: 100%; padding: 12px; background: #00ff00;
             color: black; border: none; font-weight: bold;
             cursor: pointer; transition: 0.3s; text-transform: uppercase;
+            font-size: 14px;
         }
 
         button:hover { background: #008800; box-shadow: 0 0 15px #00ff00; }
 
-        #msg { margin-top: 15px; font-size: 13px; font-weight: bold; min-height: 20px; }
+        #msg { margin-top: 15px; font-size: 12px; font-weight: bold; min-height: 18px; }
 
-        /* Tela do Menu após Login */
+        /* Estilos do Menu VIP */
+        .status-info { text-align: left; margin: 15px 0; font-size: 11px; line-height: 1.5; border-left: 2px solid #00ff00; padding-left: 10px; }
+        .status-info span { color: white; }
+        
+        .grid-features { display: grid; gap: 8px; margin-top: 15px; }
+        .btn-feature { background: transparent; border: 1px solid #00ff00; color: #00ff00; padding: 8px; font-size: 11px; }
+        
         #menu-screen { display: none; }
     </style>
 </head>
@@ -49,94 +55,102 @@
     <canvas id="canvas"></canvas>
 
     <div id="login-screen" class="container">
-        <div class="login-box">
-            <h2>NEXUS VIP</h2>
-            <input type="text" id="keyInput" placeholder="DIGITE SUA KEY">
-            <button onclick="autenticar()">ENTRAR NO MENU</button>
+        <div class="box">
+            <h2>NEXUS LOGIN</h2>
+            <input type="text" id="keyInput" placeholder="SUA LICENÇA AQUI">
+            <button onclick="autenticar()">VERIFICAR ACESSO</button>
             <p id="msg"></p>
         </div>
     </div>
 
     <div id="menu-screen" class="container">
-        <div class="login-box">
-            <h2>NEXUS MENU</h2>
-            <p style="color: white; margin-bottom: 15px;">CONECTADO COM SUCESSO</p>
-            <button onclick="window.Android.openGame()">ABRIR FREE FIRE</button>
-            <br><br>
-            <p style="font-size: 10px; opacity: 0.7;">BEM-VINDO AO FUTURO</p>
+        <div class="box">
+            <h2 style="font-size: 18px;">NEXUS VIP PANEL</h2>
+            
+            <div class="status-info">
+                <p>> STATUS: <span>ONLINE</span></p>
+                <p>> DISPOSITIVO: <span>VINCULADO</span></p>
+                <p>> ANTI-BAN: <span>PROTECTED</span></p>
+            </div>
+
+            <div class="grid-features">
+                <button class="btn-feature" onclick="toggleBtn(this)">AIMBOT HEAD [OFF]</button>
+                <button class="btn-feature" onclick="toggleBtn(this)">ESP LINE [OFF]</button>
+                <button class="btn-feature" onclick="toggleBtn(this)">SPEED HACK [OFF]</button>
+                
+                <button onclick="window.Android.openGame()" style="margin-top: 10px; background: #00ff00; color: black;">
+                    ABRIR FREE FIRE
+                </button>
+            </div>
+            <p style="margin-top: 15px; font-size: 9px; opacity: 0.5;">POWERED BY NEXUS VIP © 2026</p>
         </div>
     </div>
 
     <script>
-        // --- EFEITO MATRIX ---
+        // --- CHUVA MATRIX ---
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const letters = "0123456789ABCDEFHIJKLMNOPQRSTUVXYZ";
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const letters = "010101010101010101";
         const fontSize = 16;
         const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
-
-        function drawMatrix() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#00ff00";
-            ctx.font = fontSize + "px arial";
-            for (let i = 0; i < drops.length; i++) {
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#00ff00"; ctx.font = fontSize + "px arial";
+            drops.forEach((y, i) => {
                 const text = letters[Math.floor(Math.random() * letters.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                ctx.fillText(text, i * fontSize, y * fontSize);
+                if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
-            }
+            });
         }
-        setInterval(drawMatrix, 35);
+        setInterval(draw, 35);
 
-        // --- SISTEMA DE AUTENTICAÇÃO ---
+        // --- LÓGICA DE LOGIN ---
         async function autenticar() {
-            const keyInput = document.getElementById('keyInput').value.trim();
+            const key = document.getElementById('keyInput').value.trim();
             const msg = document.getElementById('msg');
-            
-            // Pega o HWID do dispositivo através da ponte Android no Sketchware
-            let deviceID = "BROWSER_USER";
-            try {
-                if (window.Android && window.Android.getDeviceID) {
-                    deviceID = window.Android.getDeviceID();
-                }
-            } catch(e) { console.log("Interface Android não detetada"); }
-
-            if (!keyInput) {
-                msg.innerText = "DIGITE A SUA LICENÇA!";
-                msg.style.color = "red";
-                return;
-            }
-
-            msg.innerText = "VERIFICANDO NO BANCO...";
-            msg.style.color = "yellow";
+            let hwid = "BROWSER";
 
             try {
-                // Chamada para a Vercel (que faz o trabalho com o Supabase)
-                const api_url = `https://nexus-vip-key.vercel.app/api/verify?key=${encodeURIComponent(keyInput)}&hwid=${encodeURIComponent(deviceID)}`;
-                
-                const response = await fetch(api_url);
-                const data = await response.json();
+                if (window.Android && window.Android.getDeviceID) hwid = window.Android.getDeviceID();
+            } catch(e) {}
+
+            if (!key) { msg.innerText = "ERRO: INSIRA A KEY!"; msg.style.color = "red"; return; }
+
+            msg.innerText = "AUTENTICANDO..."; msg.style.color = "yellow";
+
+            try {
+                // Link da sua Vercel atualizado
+                const res = await fetch(`https://nexus-vip-key.vercel.app/api/verify?key=${encodeURIComponent(key)}&hwid=${encodeURIComponent(hwid)}`);
+                const data = await res.json();
 
                 if (data.success) {
                     msg.style.color = "#00ff00";
                     msg.innerText = data.message;
-                    
-                    // Transição para o menu de sucesso
                     setTimeout(() => {
                         document.getElementById('login-screen').style.display = 'none';
                         document.getElementById('menu-screen').style.display = 'flex';
-                    }, 1500);
+                    }, 1200);
                 } else {
                     msg.style.color = "red";
                     msg.innerText = data.message;
                 }
-            } catch (error) {
+            } catch (err) {
                 msg.style.color = "red";
-                msg.innerText = "ERRO DE CONEXÃO COM O SERVIDOR!";
+                msg.innerText = "ERRO DE CONEXÃO!";
+            }
+        }
+
+        // --- FUNÇÃO DO MENU ---
+        function toggleBtn(btn) {
+            if (btn.innerText.includes("[OFF]")) {
+                btn.innerText = btn.innerText.replace("[OFF]", "[ON]");
+                btn.style.background = "rgba(0, 255, 0, 0.2)";
+            } else {
+                btn.innerText = btn.innerText.replace("[ON]", "[OFF]");
+                btn.style.background = "transparent";
             }
         }
     </script>
