@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS VIP RGB MOD</title>
+    <style>
+        /* --- ESTILO MATRIX RGB --- */
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Animação do fundo Matrix RGB */
+        #matrix-canvas {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.7; /* Suaviza o fundo */
+        }
+
+        /* --- CONTAINER DO MENU CENTRALIZADO --- */
+        .menu-container {
+            width: 90%;
+            max-width: 420px;
+            padding: 20px;
+            background: rgba(0, 15, 0, 0.95);
+            border-radius: 12px;
+            position: relative;
+            z-index: 1;
+            
+            /* BORDA RGB PULSANTE */
+            border: 3px solid transparent;
+            border-image: linear-gradient(to bottom right, #ff0000, #00ff00, #0000ff, #ff00ff) 1;
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.6); /* Brilho neon fixo base */
+            animation: rgbPulse 3s infinite alternate, rgbShadowPulse 3s infinite alternate;
+        }
+
+        /* Animações RGB da borda e sombra */
+        @keyframes rgbPulse {
+            0% { border-color: #ff0000; }
+            33% { border-color: #00ff00; }
+            66% { border-color: #0000ff; }
+            100% { border-color: #ff00ff; }
+        }
+        @keyframes rgbShadowPulse {
+            0% { box-shadow: 0 0 15px rgba(255, 0, 0, 0.4); }
+            33% { box-shadow: 0 0 25px rgba(0, 255, 0, 0.6); }
+            66% { box-shadow: 0 0 25px rgba(0, 0, 255, 0.6); }
+            100% { box-shadow: 0 0 15px rgba(255, 0, 255, 0.4); }
+        }
+
+        /* --- TEXTOS E ELEMENTOS DO MENU --- */
+        h1 {
+            text-align: center;
+            font-size: 26px;
+            color: #fff;
+            text-shadow: 0 0 15px #fff;
+            margin-top: 0;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        .category-title {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .function-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .function-name {
+            color: #ddd;
+            font-size: 17px;
+        }
+
+        /* --- TOGGLE SWITCH NEON --- */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 26px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #111;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 34px;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px; width: 18px;
+            left: 4px; bottom: 3px;
+            background-color: #ddd;
+            border-radius: 50%;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: rgba(0, 100, 0, 0.4);
+            border-color: #00ff00;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+            background-color: #00ff00;
+            box-shadow: 0 0 12px #00ff00;
+        }
+
+        /* --- BOTÃO DE SAÍDA --- */
+        .btn-exit {
+            margin-top: 25px;
+            width: 100%;
+            background: transparent;
+            border: 1px solid #ff0000;
+            color: #ff0000;
+            padding: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+        .btn-exit:hover { background: rgba(255, 0, 0, 0.1); }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix-canvas"></canvas>
+
+    <div class="menu-container">
+        <h1>NEXUS VIP RGB</h1>
+
+        <p class="category-title">COMBATE</p>
+        <div class="function-item">
+            <span class="function-name">HEADSHOT 100%</span>
+            <label class="switch">
+                <input type="checkbox" id="headshot">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="function-item">
+            <span class="function-name">AIMBOT FOV</span>
+            <label class="switch">
+                <input type="checkbox" id="aimbot">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="function-item">
+            <span class="function-name">NO RECOIL</span>
+            <label class="switch">
+                <input type="checkbox" id="no_recoil">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <p class="category-title">VISUAL & SISTEMA</p>
+        <div class="function-item">
+            <span class="function-name">ESP LINE NEON</span>
+            <label class="switch">
+                <input type="checkbox" id="esp_line">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="function-item">
+            <span class="function-name">WALLHACK</span>
+            <label class="switch">
+                <input type="checkbox" id="wallhack">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="function-item">
+            <span class="function-name">SPEED HACK (2X)</span>
+            <label class="switch">
+                <input type="checkbox" id="speed_hack">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <button class="btn-exit" onclick="fecharApp()">FECHAR E SAIR</button>
+    </div>
+
+    <script>
+        // --- CÓDIGO DO FUNDO MATRIX RGB ---
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボボヴッン';
+        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const nums = '0123456789';
+        const alphabet = katakana + latin + nums;
+
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const rainDrops = Array.from({ length: columns }).fill(canvas.height);
+
+        // Função para calcular cor RGB dinamicamente
+        function getRGBColor(time) {
+            const r = Math.sin(time) * 127 + 128;
+            const g = Math.sin(time + 2) * 127 + 128;
+            const b = Math.sin(time + 4) * 127 + 128;
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        let time = 0;
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Define a cor RGB atual para os códigos
+            ctx.fillStyle = getRGBColor(time); 
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+            time += 0.05; // Velocidade da mudança de cor RGB
+        }
+
+        setInterval(drawMatrix, 40); // Velocidade da chuva
+
+        // --- INTEGRAÇÃO COM O SKETCHWARE ---
+        function fecharApp() {
+            if (window.Android) {
+                window.close(); // Fecha a WebView (precisa configurar no Java)
+            } else {
+                alert("Saindo... (Modo Web)");
+            }
+        }
+
+        // Função para escutar os cliques nos Switches
+        document.querySelectorAll('input[type=checkbox]').forEach(el => {
+            el.addEventListener('change', () => {
+                const status = el.checked;
+                const funcId = el.id;
+                
+                console.log(`Função ${funcId} alterada para: ${status}`);
+
+                // Se houver ponte Java, envia o comando
+                if (window.Android && window.Android.ativarFuncao) {
+                    window.Android.ativarFuncao(funcId, status);
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
