@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TONNY MODS - VIP</title>
+    <title>NEXUS  MODS VIP</title>
     <style>
         :root { --primary: #00ff00; --rgb-speed: 3s; }
         body, html { height: 100%; margin: 0; overflow: hidden; background: #000; font-family: monospace; display: flex; justify-content: center; align-items: center; }
         #matrix-canvas { position: absolute; width: 100%; height: 100%; z-index: -1; opacity: 0.5; }
 
         .main-container {
-            width: 90%; max-width: 380px; padding: 20px; background: rgba(0, 10, 0, 0.9);
+            width: 90%; max-width: 380px; padding: 25px; background: rgba(0, 10, 0, 0.95);
             border-radius: 15px; position: relative; z-index: 1;
             border: 3px solid var(--primary);
             animation: borderRGB var(--rgb-speed) infinite linear;
@@ -25,13 +25,14 @@
 
         .screen { display: none; text-align: center; }
         .active { display: block; }
-        h1 { color: #fff; text-shadow: 0 0 10px #fff; font-size: 22px; }
-        input { background: #000; border: 1px solid var(--primary); color: var(--primary); padding: 12px; width: 85%; margin-bottom: 20px; text-align: center; outline: none; }
+        h1 { color: #fff; text-shadow: 0 0 10px #fff; font-size: 20px; margin-bottom: 20px; }
         
+        input { background: #000; border: 1px solid var(--primary); color: var(--primary); padding: 12px; width: 85%; margin-bottom: 20px; text-align: center; outline: none; }
         button { background: var(--primary); color: #000; border: none; padding: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-bottom: 10px; text-transform: uppercase; border-radius: 5px; }
-        .btn-game { background: #ffae00; color: #000; margin-top: 15px; }
+        
+        .btn-game { background: #ffae00; color: #000; margin-top: 15px; box-shadow: 0 0 10px #ffae00; }
 
-        .item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #ddd; }
+        .item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #ddd; }
         .switch { position: relative; width: 45px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #222; border: 1px solid #444; border-radius: 34px; transition: .4s; }
@@ -45,21 +46,21 @@
 
     <div class="main-container">
         <div id="login-screen" class="screen active">
-            <h1>TONNY MODS AUTH</h1>
-            <input type="text" id="keyInput" placeholder="SUA CHAVE AQUI">
-            <button onclick="fazerLogin()">ENTRAR</button>
-            <div id="status" style="color: var(--primary); font-size: 11px;">AGUARDANDO...</div>
+            <h1>NEXUS  MODS AUTH</h1>
+            <input type="text" id="keyInput" placeholder="DIGITE SUA KEY">
+            <button onclick="fazerLogin()">ENTRAR NO SISTEMA</button>
+            <div id="status" style="color: var(--primary); font-size: 11px; margin-top: 5px;">STATUS: ONLINE</div>
         </div>
 
         <div id="menu-screen" class="screen">
-            <h1>TONNY MODS VIP</h1>
-            <div class="item"><span>HEADSHOT 100%</span><label class="switch"><input type="checkbox" onchange="toggle('Headshot', this.checked)"><span class="slider"></span></label></div>
-            <div class="item"><span>AIMBOT FOV</span><label class="switch"><input type="checkbox" onchange="toggle('Aimbot', this.checked)"><span class="slider"></span></label></div>
-            <div class="item"><span>ESP LINE</span><label class="switch"><input type="checkbox" onchange="toggle('EspLine', this.checked)"><span class="slider"></span></label></div>
-            <div class="item"><span>SPEED HACK</span><label class="switch"><input type="checkbox" onchange="toggle('Speed', this.checked)"><span class="slider"></span></label></div>
+            <h1>NEXUS MODS VIP</h1>
+            <div class="item"><span>HEADSHOT 100%</span><label class="switch"><input type="checkbox" onchange="toggle('hs', this.checked)"><span class="slider"></span></label></div>
+            <div class="item"><span>AIMBOT FOV</span><label class="switch"><input type="checkbox" onchange="toggle('aim', this.checked)"><span class="slider"></span></label></div>
+            <div class="item"><span>ESP LINE NEON</span><label class="switch"><input type="checkbox" onchange="toggle('esp', this.checked)"><span class="slider"></span></label></div>
+            <div class="item"><span>SPEED HACK</span><label class="switch"><input type="checkbox" onchange="toggle('speed', this.checked)"><span class="slider"></span></label></div>
             
-            <button class="btn-game" onclick="abrirJogo()">ABRIR FREE FIRE</button>
-            <button onclick="sair()" style="background:#300; color:#f00; font-size:10px;">SAIR DO APP</button>
+            <button class="btn-game" onclick="abrirJogo()">ABRIR JOGO</button>
+            <button onclick="sair()" style="background:#300; color:#f00; font-size:10px; margin-top: 10px;">FECHAR APP</button>
         </div>
     </div>
 
@@ -67,40 +68,42 @@
         async function fazerLogin() {
             const key = document.getElementById('keyInput').value;
             const status = document.getElementById('status');
-            let hwid = window.Android ? Android.getDeviceId() : "WEB";
+            let hwid = window.Android ? Android.getDeviceId() : "WEB_DEV";
 
             try {
-                const res = await fetch(`https://nexus-vip-git-138d43-popovidismarcoantonionista-8818s-projects.vercel.app/verify?key=${key}&hwid=${hwid}`);
+                // USANDO SUA URL DA VERCEL
+                const res = await fetch(`https://nexus-vip-key.vercel.app/api/handler?key=${key}&hwid=${hwid}`);
                 const data = await res.json();
+                
                 if (data.success) {
                     if (window.Android) Android.showToast("BEM VINDO AO TONNY MODS");
                     document.getElementById('login-screen').classList.remove('active');
                     document.getElementById('menu-screen').classList.add('active');
                 } else {
                     status.innerText = "ERRO: " + data.message;
+                    status.style.color = "red";
                 }
             } catch (e) { status.innerText = "ERRO DE CONEXÃO"; }
         }
 
-        function toggle(name, state) {
+        function toggle(id, state) {
             if (window.Android) {
-                Android.ativarFuncao(name, state);
-                Android.showToast(name + (state ? "ON" : "OFF"));
+                Android.aplicarOffset(id, state);
+                Android.showToast(id.toUpperCase() + (state ? " ATIVADO" : " DESATIVADO"));
             }
         }
 
         function abrirJogo() { if (window.Android) Android.launchGame(); }
         function sair() { if (window.Android) Android.fecharApp(); }
 
-        // Fundo Matrix
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const letters = "0123456789ABCDEF";
+        const letters = "01010101NEXUS";
         const drops = Array(Math.floor(canvas.width/16)).fill(1);
         function draw() {
             ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "#0F0"; ctx.font = "16px monospace";
+            ctx.fillStyle = "#0F0"; ctx.font = "15px monospace";
             drops.forEach((y, i) => {
                 ctx.fillText(letters[Math.floor(Math.random()*letters.length)], i*16, y*16);
                 if (y*16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
