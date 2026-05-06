@@ -1,54 +1,89 @@
-import { createClient } from '@supabase/supabase-js';
+/**
+ * NEXUS XITER V2 - CORE ENGINE
+ * Gestão de Offsets, HWID e Autenticação Supabase
+ */
 
-// Use as chaves DIRETAMENTE se as variáveis de ambiente falharem para teste
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_KEY;
+// Tabela de Offsets Reais (OB53 64-bit)
+const OFFSETS = {
+    aim: "0x946001c",
+    recoil: "0x9cb8258",
+    esp: "0x9cb8260",
+    speed: "0xa07f328"
+};
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+/**
+ * Inicia o processo de autenticação verificando Key e HWID
+ */
+async function auth() {
+    const kInput = document.getElementById('key');
+    const sText = document.getElementById('status');
+    const key = kInput.value.trim();
 
-export default async function handler(req, res) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, apikey, Authorization');
-
-    if (req.method === 'OPTIONS') return res.status(200).end();
-
-    const { key, hwid } = req.query;
-
-    if (!key || !hwid) {
-        return res.status(200).json({ success: false, message: "Parâmetros ausentes" });
+    if (!key) {
+        sText.innerText = "INSIRA UMA CHAVE";
+        sText.style.color = "#f44";
+        return;
     }
 
-    try {
-        // Verifica se a Key existe na tabela 'licencas'
-        const { data, error } = await supabase
-            .from('licencas')
-            .select('*')
-            .eq('key', key)
-            .single();
+    sText.innerText = "OBTENDO HWID...";
+    sText.style.color = "var(--neon)";
 
-        if (error || !data) {
-            return res.status(200).json({ success: false, message: "Chave Inválida no Banco" });
-        }
+    // Tenta obter o HWID do Android
+    let hwid = "BROWSER_TEST";
+    if (window.Android && window.Android.getDeviceId) {
+        hwid = window.Android.getDeviceId();
+    }
 
-        // Se a chave já tem um dono (HWID), verifica se coincide
-        if (data.hwid && data.hwid !== hwid) {
-            return res.status(200).json({ success: false, message: "Este dispositivo não está autorizado" });
-        }
+    sText.innerText = "VERIFICANDO LICENÇA...";
 
-        // Se for o primeiro uso da chave, vincula o HWID
-        if (!data.hwid) {
-            const { error: updateError } = await supabase
-                .from('licencas')
-                .update({ hwid: hwid })
-                .eq('key', key);
-            
-            if (updateError) throw updateError;
-        }
+    // Se você estiver usando a função Java que já faz o POST (proc), 
+    // certifique-se de que o Java está enviando o HWID no JSON.
+    if (window.Android) {
+        // Enviamos para o Java processar a requisição de rede nativa
+        // Note: Atualize seu código Java para aceitar key e hwid
+        Android.proc(key, hwid);
+    }
+}
 
-        return res.status(200).json({ success: true, message: "Acesso Liberado" });
+/**
+ * Função de Comando (Execução de Offsets)
+ */
+function cmd(id, status) {
+    const hex = OFFSETS[id];
+    
+    if (window.Android) {
+        Android.exec(id, hex, status);
+        
+        const label = id.toUpperCase() === 'AIM' ? 'LOCK TARGET' : 
+                      id.toUpperCase() === 'RECOIL' ? 'ZERO RECOIL' :
+                      id.toUpperCase() === 'ESP' ? 'RENDER LINE' : 'VELOCITY 2.0';
+                      
+        Android.msg(label + (status ? " ATIVADO" : " DESATIVADO"));
+    }
+}
 
-    } catch (err) {
-        return res.status(500).json({ success: false, message: "Erro de Conexão com Supabase" });
+function run() { if (window.Android) Android.boot(); }
+function exit() { if (window.Android) Android.kill(); }
+
+/**
+ * Callbacks chamados pelo Java
+ */
+
+// Login com sucesso (Key válida e HWID compatível)
+function onIn() {
+    const loginScreen = document.getElementById('login-screen');
+    const menuScreen = document.getElementById('menu-screen');
+    if (loginScreen && menuScreen) {
+        loginScreen.classList.remove('active');
+        menuScreen.classList.add('active');
+    }
+}
+
+// Erro no login (Key inválida, HWID errado, etc)
+function onOut(msg) {
+    const sText = document.getElementById('status');
+    if (sText) {
+        sText.innerText = msg || "ACESSO NEGADO";
+        sText.style.color = "#f44";
     }
 }
