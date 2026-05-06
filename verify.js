@@ -1,9 +1,8 @@
 /**
  * NEXUS XITER V2 - CORE ENGINE
- * Gestão de Offsets, HWID e Autenticação Supabase
+ * Integração Vercel API: nexus-vip-key.vercel.app
  */
 
-// Tabela de Offsets Reais (OB53 64-bit)
 const OFFSETS = {
     aim: "0x946001c",
     recoil: "0x9cb8258",
@@ -11,9 +10,6 @@ const OFFSETS = {
     speed: "0xa07f328"
 };
 
-/**
- * Inicia o processo de autenticação verificando Key e HWID
- */
 async function auth() {
     const kInput = document.getElementById('key');
     const sText = document.getElementById('status');
@@ -25,39 +21,37 @@ async function auth() {
         return;
     }
 
-    sText.innerText = "OBTENDO HWID...";
+    // Estado visual inicial
+    sText.innerText = "SINCRONIZANDO...";
     sText.style.color = "var(--neon)";
 
-    // Tenta obter o HWID do Android
-    let hwid = "BROWSER_TEST";
-    if (window.Android && window.Android.getDeviceId) {
-        hwid = window.Android.getDeviceId();
-    }
-
-    sText.innerText = "VERIFICANDO LICENÇA...";
-
-    // Se você estiver usando a função Java que já faz o POST (proc), 
-    // certifique-se de que o Java está enviando o HWID no JSON.
     if (window.Android) {
-        // Enviamos para o Java processar a requisição de rede nativa
-        // Note: Atualize seu código Java para aceitar key e hwid
-        Android.proc(key, hwid);
+        try {
+            // Solicita o Device ID único do Android
+            const hwid = window.Android.getDeviceId();
+            // Dispara a validação nativa
+            Android.proc(key, hwid);
+        } catch (e) {
+            sText.innerText = "ERRO DE INTERFACE";
+            sText.style.color = "#f44";
+        }
+    } else {
+        // Simulação para ambiente de desenvolvimento browser
+        console.log("Simulando verificação para: " + key);
+        setTimeout(() => onIn(), 2000);
     }
 }
 
 /**
- * Função de Comando (Execução de Offsets)
+ * Execução de Comandos
  */
 function cmd(id, status) {
     const hex = OFFSETS[id];
-    
     if (window.Android) {
         Android.exec(id, hex, status);
-        
         const label = id.toUpperCase() === 'AIM' ? 'LOCK TARGET' : 
                       id.toUpperCase() === 'RECOIL' ? 'ZERO RECOIL' :
                       id.toUpperCase() === 'ESP' ? 'RENDER LINE' : 'VELOCITY 2.0';
-                      
         Android.msg(label + (status ? " ATIVADO" : " DESATIVADO"));
     }
 }
@@ -66,20 +60,17 @@ function run() { if (window.Android) Android.boot(); }
 function exit() { if (window.Android) Android.kill(); }
 
 /**
- * Callbacks chamados pelo Java
+ * Callbacks de Resposta
  */
-
-// Login com sucesso (Key válida e HWID compatível)
 function onIn() {
-    const loginScreen = document.getElementById('login-screen');
-    const menuScreen = document.getElementById('menu-screen');
-    if (loginScreen && menuScreen) {
-        loginScreen.classList.remove('active');
-        menuScreen.classList.add('active');
+    const login = document.getElementById('login-screen');
+    const menu = document.getElementById('menu-screen');
+    if (login && menu) {
+        login.classList.remove('active');
+        menu.classList.add('active');
     }
 }
 
-// Erro no login (Key inválida, HWID errado, etc)
 function onOut(msg) {
     const sText = document.getElementById('status');
     if (sText) {
