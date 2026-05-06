@@ -41,54 +41,35 @@
         input:checked + .slider { background: #003300; border-color: var(--neon); }
         input:checked + .slider:before { transform: translateX(20px); background: var(--neon); box-shadow: 0 0 8px var(--neon); }
         
-        #status { font-size: 10px; margin-top: 15px; letter-spacing: 1px; }
+        #status { font-size: 10px; margin-top: 15px; letter-spacing: 1px; color: var(--neon); }
     </style>
 </head>
 <body>
     <canvas id="matrix"></canvas>
 
     <div class="container">
-        <!-- TELA DE LOGIN -->
+        <!-- TELA LOGIN -->
         <div id="login-screen" class="screen active">
             <h1>AUTHENTICATOR</h1>
             <input type="text" id="key" placeholder="CHAVE DE ACESSO" spellcheck="false">
             <button onclick="auth()">VERIFICAR</button>
-            <div id="status" style="color: var(--neon);">SISTEMA PRONTO</div>
+            <div id="status">SISTEMA PRONTO</div>
         </div>
 
-        <!-- TELA DO MENU -->
+        <!-- TELA MENU -->
         <div id="menu-screen" class="screen">
             <h1>NEXUS XITER V2</h1>
-            
-            <div class="item">
-                <span>LOCK TARGET</span>
-                <label class="switch"><input type="checkbox" onchange="cmd('aim', this.checked)"><span class="slider"></span></label>
-            </div>
-            
-            <div class="item">
-                <span>ZERO RECOIL</span>
-                <label class="switch"><input type="checkbox" onchange="cmd('recoil', this.checked)"><span class="slider"></span></label>
-            </div>
-            
-            <div class="item">
-                <span>RENDER LINE</span>
-                <label class="switch"><input type="checkbox" onchange="cmd('esp', this.checked)"><span class="slider"></span></label>
-            </div>
-            
-            <div class="item">
-                <span>VELOCITY 2.0</span>
-                <label class="switch"><input type="checkbox" onchange="cmd('speed', this.checked)"><span class="slider"></span></label>
-            </div>
-            
+            <div class="item"><span>LOCK TARGET</span><label class="switch"><input type="checkbox" onchange="cmd('aim', this.checked)"><span class="slider"></span></label></div>
+            <div class="item"><span>ZERO RECOIL</span><label class="switch"><input type="checkbox" onchange="checkbox_changed('recoil', this.checked)"><span class="slider"></span></label></div>
+            <div class="item"><span>RENDER LINE</span><label class="switch"><input type="checkbox" onchange="cmd('esp', this.checked)"><span class="slider"></span></label></div>
+            <div class="item"><span>VELOCITY 2.0</span><label class="switch"><input type="checkbox" onchange="cmd('speed', this.checked)"><span class="slider"></span></label></div>
             <button class="btn-game" onclick="run()">INICIAR AMBIENTE</button>
-            <button onclick="exit()" style="background:#200; color:#f44; font-size:9px; margin-top: 15px; border: 1px solid #411; opacity: 0.6;">DESCONECTAR</button>
+            <button onclick="exit()" style="background:#200; color:#f44; font-size:9px; margin-top: 15px; opacity: 0.6;">DESCONECTAR</button>
         </div>
     </div>
 
-    <!-- SCRIPTS -->
     <script src="verify.js"></script>
     <script>
-        // Efeito Visual Matrix
         const c = document.getElementById('matrix');
         const x = c.getContext('2d');
         c.width = window.innerWidth; c.height = window.innerHeight;
