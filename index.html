@@ -3,107 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TONNY MODS VIP</title>
+    <title>NEXUS XITER V2</title>
     <style>
-        :root { --neon: #00ff00; --rgb-speed: 4s; }
-        body, html { height: 100%; margin: 0; overflow: hidden; background: #000; font-family: sans-serif; display: flex; justify-content: center; align-items: center; }
+        :root { --neon: #00ff00; --rgb-speed: 3s; }
+        body, html { height: 100%; margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; }
         #matrix { position: absolute; width: 100%; height: 100%; z-index: -1; opacity: 0.4; }
 
         .container {
-            width: 85%; max-width: 360px; padding: 25px; background: rgba(0, 10, 0, 0.95);
+            width: 85%; max-width: 380px; padding: 25px; background: rgba(0, 10, 0, 0.96);
             border-radius: 15px; position: relative; z-index: 1;
             border: 2px solid var(--neon);
-            box-shadow: 0 0 20px var(--neon);
             animation: rgbBorder var(--rgb-speed) infinite linear;
         }
 
         @keyframes rgbBorder {
-            0% { border-color: #f00; box-shadow: 0 0 15px #f00; }
-            33% { border-color: #0f0; box-shadow: 0 0 15px #0f0; }
-            66% { border-color: #00f; box-shadow: 0 0 15px #00f; }
-            100% { border-color: #f00; box-shadow: 0 0 15px #f00; }
+            0% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
+            33% { border-color: #00ff00; box-shadow: 0 0 15px #00ff00; }
+            66% { border-color: #0000ff; box-shadow: 0 0 15px #0000ff; }
+            100% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
         }
 
         .screen { display: none; text-align: center; }
         .active { display: block; }
-        h1 { color: #fff; text-shadow: 0 0 10px #fff; font-size: 18px; letter-spacing: 2px; margin-bottom: 20px; }
+        h1 { color: #fff; text-shadow: 0 0 10px #fff; font-size: 18px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
         
-        input { background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 12px; width: 90%; margin-bottom: 15px; text-align: center; outline: none; border-radius: 5px; }
-        button { background: var(--neon); color: #000; border: none; padding: 12px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase; }
+        input { background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 12px; width: 90%; margin-bottom: 20px; text-align: center; outline: none; border-radius: 5px; font-weight: bold; }
+        button { background: var(--neon); color: #000; border: none; padding: 12px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase; transition: 0.3s; }
+        button:active { transform: scale(0.98); opacity: 0.8; }
         
-        .btn-game { background: #00ffff; color: #000; margin-top: 15px; box-shadow: 0 0 10px #00ffff; }
+        .btn-game { background: #ffaa00; color: #000; margin-top: 20px; box-shadow: 0 0 10px #ffaa00; }
 
-        .item { display: flex; justify-content: space-between; align-items: center; padding: 12px 5px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 14px; }
-        .switch { position: relative; width: 40px; height: 20px; }
+        .item { display: flex; justify-content: space-between; align-items: center; padding: 15px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff; font-size: 14px; font-weight: bold; }
+        
+        .switch { position: relative; width: 42px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 34px; transition: .4s; border: 1px solid #555; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 2px; background: #fff; border-radius: 50%; transition: .4s; }
-        input:checked + .slider { background: #004400; border-color: var(--neon); }
-        input:checked + .slider:before { transform: translateX(20px); background: var(--neon); }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #1a1a1a; border-radius: 34px; transition: .4s; border: 1px solid #333; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 2px; background: #fff; border-radius: 50%; transition: .4s; }
+        input:checked + .slider { background: #003300; border-color: var(--neon); }
+        input:checked + .slider:before { transform: translateX(20px); background: var(--neon); box-shadow: 0 0 8px var(--neon); }
+        
+        #status { font-size: 10px; margin-top: 15px; letter-spacing: 1px; }
     </style>
 </head>
 <body>
     <canvas id="matrix"></canvas>
 
     <div class="container">
+        <!-- TELA DE LOGIN -->
         <div id="login-screen" class="screen active">
-            <h1>TONNY MODS AUTH</h1>
-            <input type="text" id="key" placeholder="DIGITE SUA KEY">
-            <button onclick="login()">ENTRAR NO SISTEMA</button>
-            <div id="msg" style="color: #f00; font-size: 10px; margin-top: 10px;"></div>
+            <h1>AUTHENTICATOR</h1>
+            <input type="text" id="key" placeholder="CHAVE DE ACESSO" spellcheck="false">
+            <button onclick="auth()">VERIFICAR</button>
+            <div id="status" style="color: var(--neon);">SISTEMA PRONTO</div>
         </div>
 
+        <!-- TELA DE COMANDOS (MODS) -->
         <div id="menu-screen" class="screen">
-            <h1>TONNY DUMP MENU</h1>
-            <div class="item"><span>AIMLOCK 100%</span><label class="switch"><input type="checkbox" onchange="op('aim', this.checked)"><span class="slider"></span></label></div>
-            <div class="item"><span>NO RECOIL</span><label class="switch"><input type="checkbox" onchange="op('recoil', this.checked)"><span class="slider"></span></label></div>
-            <div class="item"><span>ESP LINE NEON</span><label class="switch"><input type="checkbox" onchange="op('esp', this.checked)"><span class="slider"></span></label></div>
-            <div class="item"><span>SKY DIVE MAX</span><label class="switch"><input type="checkbox" onchange="op('sky', this.checked)"><span class="slider"></span></label></div>
+            <h1>NEXUS XITER V2</h1>
             
-            <button class="btn-game" onclick="game()">INICIAR FREE FIRE</button>
+            <div class="item">
+                <span>LOCK TARGET</span>
+                <label class="switch"><input type="checkbox" onchange="cmd('aim', '0x946001c', this.checked)"><span class="slider"></span></label>
+            </div>
+            
+            <div class="item">
+                <span>ZERO RECOIL</span>
+                <label class="switch"><input type="checkbox" onchange="cmd('recoil', '0x9cb8258', this.checked)"><span class="slider"></span></label>
+            </div>
+            
+            <div class="item">
+                <span>RENDER LINE</span>
+                <label class="switch"><input type="checkbox" onchange="cmd('esp', '0x9cb8260', this.checked)"><span class="slider"></span></label>
+            </div>
+            
+            <div class="item">
+                <span>VELOCITY 2.0</span>
+                <label class="switch"><input type="checkbox" onchange="cmd('speed', '0xa07f328', this.checked)"><span class="slider"></span></label>
+            </div>
+            
+            <button class="btn-game" onclick="run()">INICIAR AMBIENTE</button>
+            <button onclick="exit()" style="background:#200; color:#f44; font-size:9px; margin-top: 15px; border: 1px solid #411; opacity: 0.6;">DESCONECTAR</button>
         </div>
     </div>
 
     <script>
-        async function login() {
+        function auth() {
             const k = document.getElementById('key').value;
-            const m = document.getElementById('msg');
-            let h = window.Android ? Android.getDeviceId() : "WEB";
-
-            try {
-                // URL da sua Vercel
-                const res = await fetch(`https://nexus-vip-key.vercel.app/api/handler?key=${k}&hwid=${h}`);
-                const data = await res.json();
-                
-                if (data.success) {
-                    if (window.Android) Android.showToast("BEM VINDO AO TONNY MODS");
-                    document.getElementById('login-screen').classList.remove('active');
-                    document.getElementById('menu-screen').classList.add('active');
-                } else {
-                    m.innerText = "ERRO: " + data.message;
-                }
-            } catch (e) { m.innerText = "ERRO DE CONEXÃO - VERIFIQUE A VERCEL"; }
+            const s = document.getElementById('status');
+            if (!k) return;
+            s.innerText = "SINCRONIZANDO...";
+            s.style.color = "var(--neon)";
+            if (window.Android) { Android.proc(k); }
         }
 
-        function op(id, st) {
+        function onIn() {
+            document.getElementById('login-screen').classList.remove('active');
+            document.getElementById('menu-screen').classList.add('active');
+        }
+
+        function onOut(m) {
+            const s = document.getElementById('status');
+            s.innerText = m || "ACESSO NEGADO";
+            s.style.color = "#f44";
+        }
+
+        // Envia o nome e o offset real para o Android, mas não mostra no site
+        function cmd(name, offset, st) {
             if (window.Android) {
-                Android.aplicar(id, st);
-                Android.showToast(id.toUpperCase() + (st ? " ATIVADO" : " DESATIVADO"));
+                Android.exec(name, offset, st);
+                Android.msg(name.toUpperCase() + (st ? " ATIVADO" : " DESATIVADO"));
             }
         }
-        function game() { if (window.Android) Android.launch(); }
+        
+        function run() { if (window.Android) Android.boot(); }
+        function exit() { if (window.Android) Android.kill(); }
 
-        // Matrix Effect
         const c = document.getElementById('matrix');
         const x = c.getContext('2d');
         c.width = window.innerWidth; c.height = window.innerHeight;
-        const s = Array(Math.floor(c.width/16)).fill(0);
+        const drops = Array(Math.floor(c.width/16)).fill(1);
         function draw() {
             x.fillStyle = "rgba(0,0,0,0.05)"; x.fillRect(0,0,c.width,c.height);
-            x.fillStyle = "#0F0"; x.font = "15px monospace";
-            s.forEach((y, i) => {
-                x.fillText(Math.floor(Math.random()*2), i*16, y);
-                if (y > 500 + Math.random()*1000) s[i] = 0; else s[i] += 16;
+            x.fillStyle = "#0f0"; x.font = "15px monospace";
+            drops.forEach((y, i) => {
+                x.fillText(Math.floor(Math.random()*2), i*16, y*16);
+                if (y*16 > c.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
             });
         }
         setInterval(draw, 50);
