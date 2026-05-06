@@ -29,7 +29,6 @@
         
         input { background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 12px; width: 90%; margin-bottom: 20px; text-align: center; outline: none; border-radius: 5px; font-weight: bold; }
         button { background: var(--neon); color: #000; border: none; padding: 12px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase; transition: 0.3s; }
-        button:active { transform: scale(0.98); opacity: 0.8; }
         
         .btn-game { background: #ffaa00; color: #000; margin-top: 20px; box-shadow: 0 0 10px #ffaa00; }
 
@@ -57,28 +56,28 @@
             <div id="status" style="color: var(--neon);">SISTEMA PRONTO</div>
         </div>
 
-        <!-- TELA DE COMANDOS (MODS) -->
+        <!-- TELA DO MENU -->
         <div id="menu-screen" class="screen">
             <h1>NEXUS XITER V2</h1>
             
             <div class="item">
                 <span>LOCK TARGET</span>
-                <label class="switch"><input type="checkbox" onchange="cmd('aim', '0x946001c', this.checked)"><span class="slider"></span></label>
+                <label class="switch"><input type="checkbox" onchange="cmd('aim', this.checked)"><span class="slider"></span></label>
             </div>
             
             <div class="item">
                 <span>ZERO RECOIL</span>
-                <label class="switch"><input type="checkbox" onchange="cmd('recoil', '0x9cb8258', this.checked)"><span class="slider"></span></label>
+                <label class="switch"><input type="checkbox" onchange="cmd('recoil', this.checked)"><span class="slider"></span></label>
             </div>
             
             <div class="item">
                 <span>RENDER LINE</span>
-                <label class="switch"><input type="checkbox" onchange="cmd('esp', '0x9cb8260', this.checked)"><span class="slider"></span></label>
+                <label class="switch"><input type="checkbox" onchange="cmd('esp', this.checked)"><span class="slider"></span></label>
             </div>
             
             <div class="item">
                 <span>VELOCITY 2.0</span>
-                <label class="switch"><input type="checkbox" onchange="cmd('speed', '0xa07f328', this.checked)"><span class="slider"></span></label>
+                <label class="switch"><input type="checkbox" onchange="cmd('speed', this.checked)"><span class="slider"></span></label>
             </div>
             
             <button class="btn-game" onclick="run()">INICIAR AMBIENTE</button>
@@ -86,38 +85,10 @@
         </div>
     </div>
 
+    <!-- SCRIPTS -->
+    <script src="verify.js"></script>
     <script>
-        function auth() {
-            const k = document.getElementById('key').value;
-            const s = document.getElementById('status');
-            if (!k) return;
-            s.innerText = "SINCRONIZANDO...";
-            s.style.color = "var(--neon)";
-            if (window.Android) { Android.proc(k); }
-        }
-
-        function onIn() {
-            document.getElementById('login-screen').classList.remove('active');
-            document.getElementById('menu-screen').classList.add('active');
-        }
-
-        function onOut(m) {
-            const s = document.getElementById('status');
-            s.innerText = m || "ACESSO NEGADO";
-            s.style.color = "#f44";
-        }
-
-        // Envia o nome e o offset real para o Android, mas não mostra no site
-        function cmd(name, offset, st) {
-            if (window.Android) {
-                Android.exec(name, offset, st);
-                Android.msg(name.toUpperCase() + (st ? " ATIVADO" : " DESATIVADO"));
-            }
-        }
-        
-        function run() { if (window.Android) Android.boot(); }
-        function exit() { if (window.Android) Android.kill(); }
-
+        // Efeito Visual Matrix
         const c = document.getElementById('matrix');
         const x = c.getContext('2d');
         c.width = window.innerWidth; c.height = window.innerHeight;
