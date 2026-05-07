@@ -1,77 +1,176 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS VIP LOGIN</title>
+    <title>NEXUS LOGIN</title>
+
     <style>
-        body { background: #000; color: #0f6; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .box { border: 2px solid #0f6; padding: 20px; border-radius: 15px; box-shadow: 0 0 15px #0f6; text-align: center; background: rgba(0,0,0,0.8); }
-        input { background: #000; border: 1px solid #0f6; color: #0f6; padding: 10px; border-radius: 5px; margin-bottom: 15px; width: 80%; outline: none; }
-        button { background: #0f6; color: #000; border: none; padding: 10px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        canvas { position: fixed; top: 0; left: 0; z-index: -1; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Courier New, monospace; }
+        body { height: 100vh; display: flex; justify-content: center; align-items: center; background: #050505; overflow: hidden; }
+        canvas { position: fixed; inset: 0; z-index: -1; }
+
+        .login-box {
+            width: 92%; max-width: 390px; background: #0d0d0d; border: 2px solid #00ff66;
+            border-radius: 24px; padding: 28px 22px; box-shadow: 0 0 25px rgba(0, 255, 100, .4);
+            animation: glow 4s linear infinite;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 20px #00ff66; }
+            25% { box-shadow: 0 0 20px #00ffff; }
+            50% { box-shadow: 0 0 20px #ff00ff; }
+            75% { box-shadow: 0 0 20px #ffaa00; }
+            100% { box-shadow: 0 0 20px #00ff66; }
+        }
+
+        .title { text-align: center; font-size: 2rem; font-weight: bold; margin-bottom: 8px; color: #00ff66; text-shadow: 0 0 12px #00ff66; }
+        .subtitle { text-align: center; font-size: .8rem; color: #888; margin-bottom: 28px; }
+        .input-box { margin-bottom: 18px; }
+        
+        .input-box input {
+            width: 100%; height: 55px; background: #080808; border: 1px solid #00ff66;
+            border-radius: 14px; padding: 0 15px; font-size: 1rem; color: #00ff66;
+            outline: none; box-shadow: 0 0 10px rgba(0, 255, 100, .15);
+        }
+
+        .input-box input::placeholder { color: #3eff91; opacity: .6; }
+
+        .key-btn {
+            width: 100%; height: 56px; border: none; border-radius: 14px; font-size: 1.1rem;
+            font-weight: bold; background: linear-gradient(90deg, #00ff66, #00ffff, #ff00ff, #00ff66);
+            background-size: 400% 400%; animation: rgb 6s linear infinite; color: #000;
+            margin-top: 8px; cursor: pointer;
+        }
+
+        @keyframes rgb { 0% { background-position: 0% 50%; } 100% { background-position: 400% 50%; } }
+
+        .success {
+            margin-top: 18px; padding: 14px; border-radius: 12px; background: #061d10;
+            color: #00ff66; font-size: .85rem; text-align: center;
+            border: 1px solid rgba(0, 255, 100, .3); display: none;
+        }
+
+        .footer { margin-top: 18px; text-align: center; font-size: .7rem; color: #555; }
     </style>
 </head>
+
 <body>
-    <canvas id="m"></canvas>
-    <div class="box">
-        <h2>NEXUS VIP</h2>
-        <input type="text" id="keyInput" placeholder="DIGITE SUA KEY">
-        <br>
-        <button id="btn" onclick="autenticar()">LOGIN</button>
+
+<canvas id="matrix"></canvas>
+
+<div class="login-box">
+    <div class="title">NEXUS XITER 😈</div>
+    <div class="subtitle">SECURE LOGIN SYSTEM</div>
+
+    <div class="input-box">
+        <input type="text" id="keyInput" placeholder="ACCESS KEY">
     </div>
 
-    <script>
+    <button class="key-btn" id="btnEntrar" onclick="autenticar()">
+        ENTER PANEL
+    </button>
+
+    <div class="success" id="successBox">
+        LOGIN SUCCESSFUL • ACCESS GRANTED
+    </div>
+
+    <div class="footer">
+        PROTECTED LOGIN SYSTEM v5.0
+    </div>
+</div>
+
+<script>
     async function autenticar() {
-      const key = document.getElementById('keyInput').value.trim().toUpperCase();
-      const btn = document.getElementById('btn');
-      
-      // Pega o ID via ponte Java
-      const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "PC_DEBUG";
+        const keyInput = document.getElementById('keyInput');
+        const key = keyInput.value.trim().toUpperCase();
+        const successBox = document.getElementById('successBox');
+        const btn = document.getElementById('btnEntrar');
+        
+        // Pega o ID via ponte Java do Sketchware
+        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB_DEBUG";
 
-      if(!key) return alert("INSIRA A KEY!");
-      btn.innerText = "AGUARDE...";
-
-      try {
-        const response = await fetch(
-          "https://qudbsaujvnvwoybxarhp.supabase.co/functions/v1/validate-key",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1ZGJzYXVqdm52d295YnhhcmhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3ODY4NzIsImV4cCI6MjA5MzM2Mjg3Mn0.6TpmoQCaLNiSkW8wUj4s1-OATJp2qX9zii9escmKqYw"
-            },
-            body: JSON.stringify({ key, hwid })
-          }
-        );
-        const result = await response.json();
-
-        if (result.status === "valida") {
-          if (typeof Android !== 'undefined') Android.onLoginSuccess();
-          else alert("KEY VÁLIDA!");
-        } else {
-          alert("ERRO: " + result.status.toUpperCase());
-          btn.innerText = "LOGIN";
+        if (!key) {
+            alert("⚠️ INSIRA UMA CHAVE DE ACESSO!");
+            return;
         }
-      } catch (e) {
-        alert("ERRO DE CONEXÃO!");
-        btn.innerText = "LOGIN";
-      }
+
+        btn.innerText = "AUTHENTICATING...";
+        btn.disabled = true;
+
+        try {
+            const response = await fetch(
+                "https://qudbsaujvnvwoybxarhp.supabase.co/functions/v1/validate-key",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1ZGJzYXVqdm52d295YnhhcmhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3ODY4NzIsImV4cCI6MjA5MzM2Mjg3Mn0.6TpmoQCaLNiSkW8wUj4s1-OATJp2qX9zii9escmKqYw"
+                    },
+                    body: JSON.stringify({ key, hwid })
+                }
+            );
+            
+            const result = await response.json();
+
+            if (result.status === "valida") {
+                // Mostra o feedback visual no site
+                successBox.style.display = 'block';
+                btn.innerText = "ACCESS GRANTED";
+                
+                // Aguarda 1 segundo para o usuário ver o sucesso e chama o Java
+                setTimeout(() => {
+                    if (typeof Android !== 'undefined') {
+                        Android.onLoginSuccess();
+                    } else {
+                        alert("✅ SUCESSO!");
+                    }
+                }, 1200);
+
+            } else {
+                alert("❌ ERRO: " + result.status.toUpperCase());
+                btn.disabled = false;
+                btn.innerText = "ENTER PANEL";
+            }
+        } catch (e) {
+            alert("🔌 ERRO DE CONEXÃO COM O SERVIDOR");
+            btn.disabled = false;
+            btn.innerText = "ENTER PANEL";
+        }
     }
 
-    // Efeito Matrix Simples
-    const c = document.getElementById('m');
-    const q = c.getContext('2d');
-    c.width = window.innerWidth; c.height = window.innerHeight;
-    const s = Array(256).fill(0);
-    setInterval(() => {
-        q.fillStyle = 'rgba(0,0,0,0.05)'; q.fillRect(0,0,c.width,c.height);
-        q.fillStyle = '#0f6';
-        s.forEach((y, i) => {
-            q.fillText(String.fromCharCode(33+Math.random()*96), i*10, y);
-            s[i] = y > 758 + Math.random()*1e4 ? 0 : y + 10;
-        });
-    }, 33);
-    </script>
+    // Efeito Matrix
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const letters = 'NEXUS101010101';
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function draw() {
+        ctx.fillStyle = 'rgba(0,0,0,0.06)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#00ff66';
+        ctx.font = fontSize + 'px monospace';
+
+        for (let i = 0; i < drops.length; i++) {
+            const text = letters[Math.floor(Math.random() * letters.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }
+
+    setInterval(draw, 35);
+</script>
+
 </body>
 </html>
