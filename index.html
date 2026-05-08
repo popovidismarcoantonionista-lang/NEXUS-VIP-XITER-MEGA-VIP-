@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NEXUS VIP - FINAL OB53</title>
     <style>
-        /* RESET TOTAL */
+        /* --- ESTILIZAÇÃO E CENTRALIZAÇÃO --- */
         * {
             margin: 0;
             padding: 0;
@@ -24,7 +24,6 @@
             align-items: center;
         }
 
-        /* MATRIX BACKGROUND */
         canvas {
             position: fixed;
             top: 0;
@@ -32,7 +31,6 @@
             z-index: 1;
         }
 
-        /* PAINEL CENTRAL */
         .container {
             position: relative;
             z-index: 10;
@@ -47,25 +45,10 @@
             backdrop-filter: blur(10px);
         }
 
-        .title { 
-            color: #00ff66; 
-            font-size: 1.8rem; 
-            font-weight: bold; 
-            text-shadow: 0 0 15px #00ff66; 
-            margin-bottom: 5px; 
-        }
+        .title { color: #00ff66; font-size: 1.8rem; font-weight: bold; text-shadow: 0 0 15px #00ff66; margin-bottom: 5px; }
+        .subtitle { color: #555; font-size: 0.7rem; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase; }
 
-        .subtitle { 
-            color: #555; 
-            font-size: 0.7rem; 
-            margin-bottom: 30px; 
-            letter-spacing: 2px; 
-            text-transform: uppercase;
-        }
-
-        /* INPUTS */
-        .input-group { margin-bottom: 25px; }
-        .input-group input {
+        input {
             width: 100%;
             height: 55px;
             background: #000;
@@ -76,10 +59,9 @@
             font-size: 1rem;
             text-align: center;
             outline: none;
-            box-shadow: inset 0 0 5px rgba(0, 255, 102, 0.2);
+            margin-bottom: 25px;
         }
 
-        /* BOTÃO */
         .btn-action {
             width: 100%;
             height: 55px;
@@ -95,9 +77,9 @@
             transition: 0.3s;
         }
 
-        .btn-action:active { transform: scale(0.95); }
+        .btn-action:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        /* MENU UI */
+        /* --- MENU DE FUNÇÕES --- */
         #menu-content { display: none; }
         
         .feature-box {
@@ -111,13 +93,9 @@
             border-left: 5px solid #00ff66;
         }
 
-        .feature-box span {
-            color: #fff;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
+        .feature-box span { color: #fff; font-size: 0.85rem; font-weight: bold; }
 
-        /* SWITCH IOS STYLE */
+        /* SWITCH STYLE */
         .switch { position: relative; width: 45px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; inset: 0; background: #333; border-radius: 34px; transition: .4s; }
@@ -125,12 +103,7 @@
         input:checked + .slider { background: #00ff66; }
         input:checked + .slider:before { transform: translateX(21px); }
 
-        .footer-info {
-            margin-top: 20px;
-            font-size: 0.6rem;
-            color: #333;
-            letter-spacing: 2px;
-        }
+        .footer { margin-top: 20px; font-size: 0.6rem; color: #333; letter-spacing: 2px; }
     </style>
 </head>
 <body>
@@ -138,79 +111,69 @@
 <canvas id="matrix-bg"></canvas>
 
 <div class="container">
-    <!-- TELA DE LOGIN -->
     <div id="login-screen">
         <div class="title">NEXUS VIP</div>
         <div class="subtitle">Secure System OB53</div>
-        
-        <div class="input-group">
-            <input type="text" id="keyInput" placeholder="INSIRA SUA KEY" autocomplete="off">
-        </div>
-
+        <input type="text" id="keyInput" placeholder="INSIRA SUA KEY" autocomplete="off">
         <button class="btn-action" id="loginBtn" onclick="tentarLogin()">ENTRAR NO PAINEL</button>
     </div>
 
-    <!-- TELA DE MENU -->
     <div id="menu-content">
         <div class="title" style="font-size: 1.4rem;">PAINEL ATIVO</div>
-        <div class="subtitle">MOD MENU REAL • 64-BIT</div>
+        <div class="subtitle">64-BIT DUMP • BY MARKOLA</div>
 
         <div class="feature-box">
             <span>AIMLOCK (AUTO)</span>
-            <label class="switch">
-                <input type="checkbox" onchange="injetar('AimLock', '0x684ea34', this)">
-                <span class="slider"></span>
-            </label>
+            <label class="switch"><input type="checkbox" onchange="patch('AimLock', '0x684ea34', this)"><span class="slider"></span></label>
         </div>
 
         <div class="feature-box">
             <span>NO RECOIL REAL</span>
-            <label class="switch">
-                <input type="checkbox" onchange="injetar('NoRecoil', '0x6accffc', this)">
-                <span class="slider"></span>
-            </label>
+            <label class="switch"><input type="checkbox" onchange="patch('NoRecoil', '0x6accffc', this)"><span class="slider"></span></label>
         </div>
 
         <div class="feature-box">
-            <span>SPEED RUNNER</span>
-            <label class="switch">
-                <input type="checkbox" onchange="injetar('Speed', '0x72ab058', this)">
-                <span class="slider"></span>
-            </label>
+            <span>SPEED HACK</span>
+            <label class="switch"><input type="checkbox" onchange="patch('Speed', '0x72ab058', this)"><span class="slider"></span></label>
         </div>
 
         <div class="feature-box">
             <span>MEDKIT INSTANT</span>
-            <label class="switch">
-                <input type="checkbox" onchange="injetar('Medkit', '0x684ebd4', this)">
-                <span class="slider"></span>
-            </label>
+            <label class="switch"><input type="checkbox" onchange="patch('Medkit', '0x684ebd4', this)"><span class="slider"></span></label>
         </div>
 
-        <button class="btn-action" style="height: 45px; font-size: 0.8rem; margin-top: 10px;" onclick="iniciarFF()">ABRIR FREE FIRE</button>
+        <button class="btn-action" style="height: 45px; font-size: 0.8rem; margin-top: 10px;" onclick="abrirJogo()">ABRIR FREE FIRE</button>
     </div>
 
-    <div class="footer-info">PROTECTED BY NEXUS • BY MARKOLA</div>
+    <div class="footer">NEXUS VIP SYSTEM • v5.0</div>
 </div>
 
 <script>
-    // --- LÓGICA DE LOGIN ---
+    // --- LÓGICA DE LOGIN REAL ---
     async function tentarLogin() {
-        const key = document.getElementById('keyInput').value.trim();
+        const keyField = document.getElementById('keyInput');
+        const key = keyField.value.trim();
         const btn = document.getElementById('loginBtn');
 
         if (!key) {
-            enviarAviso("⚠️ Digite uma Key!");
+            alert("⚠️ Digite uma Key!");
             return;
         }
 
-        // Alterar estado do botão para evitar múltiplos cliques
+        // KEY DE TESTE PARA DESENVOLVEDOR (Pula o servidor)
+        if (key === "1010" || key === "NEXUS-ADMIN") {
+            liberarAcesso();
+            return;
+        }
+
         btn.disabled = true;
         btn.innerText = "VERIFICANDO...";
-        enviarAviso("📡 A aceder ao servidor...");
+        enviarToast("📡 Acedendo ao servidor...");
 
         try {
-            // Requisição ao Supabase utilizando a sua Secret Key
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 seg de limite
+
             const response = await fetch("https://qudbsaujvnvwoybxarhp.supabase.co/functions/v1/validate-key", {
                 method: "POST",
                 headers: { 
@@ -220,40 +183,40 @@
                 body: JSON.stringify({ 
                     key: key, 
                     hwid: (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB_TEST" 
-                })
+                }),
+                signal: controller.signal
             });
 
+            clearTimeout(timeoutId);
             const data = await response.json();
 
-            if (data.status === "valida") {
-                enviarAviso("✅ ACESSO LIBERADO!");
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('menu-content').style.display = 'block';
+            if (data.status === "valida" || data.status === "success") {
+                liberarAcesso();
             } else {
                 alert("❌ KEY INVÁLIDA!");
-                resetarBotao();
+                resetBtn();
             }
         } catch (error) {
             console.error(error);
-            // Plano B para teste
-            if (key === "1010") {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('menu-content').style.display = 'block';
-            } else {
-                alert("⚠️ ERRO DE CONEXÃO: Verifique a internet.");
-                resetarBotao();
-            }
+            alert("⚠️ ERRO DE CONEXÃO: O servidor não respondeu.");
+            resetBtn();
         }
     }
 
-    function resetarBotao() {
+    function liberarAcesso() {
+        enviarToast("✅ ACESSO LIBERADO!");
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('menu-content').style.display = 'block';
+    }
+
+    function resetBtn() {
         const btn = document.getElementById('loginBtn');
         btn.disabled = false;
         btn.innerText = "ENTRAR NO PAINEL";
     }
 
-    // --- FUNÇÕES ANDROID ---
-    function injetar(nome, offset, el) {
+    // --- FUNÇÕES DA PONTE ANDROID ---
+    function patch(nome, offset, el) {
         const hex = el.checked ? "20 00 80 D2 C0 03 5F D6" : "00 00 80 D2 C0 03 5F D6";
         if (typeof Android !== 'undefined') {
             Android.showToast(nome + ": " + (el.checked ? "ON" : "OFF"));
@@ -263,32 +226,33 @@
         }
     }
 
-    function iniciarFF() {
+    function abrirJogo() {
         if (typeof Android !== 'undefined') Android.openGame();
-        else alert("Jogo só abre no APK!");
+        else alert("Função disponível apenas no APK!");
     }
 
-    function enviarAviso(m) {
-        if (typeof Android !== 'undefined') Android.showToast(m);
-        else console.log(m);
+    function enviarToast(msg) {
+        if (typeof Android !== 'undefined') Android.showToast(msg);
+        else console.log(msg);
     }
 
-    // --- MATRIX BG ---
+    // --- EFEITO MATRIX ---
     const c = document.getElementById('matrix-bg');
     const ctx = c.getContext('2d');
     c.width = window.innerWidth;
     c.height = window.innerHeight;
-    const letters = Array(Math.floor(c.width / 20)).fill(1);
+    const columns = Array(Math.floor(c.width / 20)).fill(1);
 
     function draw() {
         ctx.fillStyle = 'rgba(0,0,0,0.05)';
         ctx.fillRect(0, 0, c.width, c.height);
         ctx.fillStyle = '#0f6';
         ctx.font = '15px monospace';
-        letters.forEach((y, i) => {
-            ctx.fillText(Math.floor(Math.random() * 2), i * 20, y * 20);
-            if (y * 20 > c.height && Math.random() > 0.975) letters[i] = 0;
-            letters[i]++;
+        columns.forEach((y, i) => {
+            const text = Math.floor(Math.random() * 2);
+            ctx.fillText(text, i * 20, y * 20);
+            if (y * 20 > c.height && Math.random() > 0.975) columns[i] = 0;
+            columns[i]++;
         });
     }
     setInterval(draw, 50);
