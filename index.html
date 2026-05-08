@@ -2,53 +2,134 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NEXUS VIP</title>
     <style>
-        body { background: #000; color: #0f6; font-family: monospace; text-align: center; padding-top: 50px; }
-        .box { border: 2px solid #0f6; padding: 20px; border-radius: 15px; display: inline-block; width: 80%; }
-        input { width: 90%; padding: 10px; margin: 10px 0; background: #000; border: 1px solid #0f6; color: #fff; text-align: center; }
-        button { width: 95%; padding: 10px; background: #0f6; color: #000; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; }
-        #menu { display: none; }
+        /* CENTRALIZAÇÃO TOTAL */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+        
+        body { 
+            background: #000; 
+            height: 100vh; /* Altura total da tela */
+            display: flex; 
+            justify-content: center; /* Centraliza horizontalmente */
+            align-items: center;     /* Centraliza verticalmente */
+            overflow: hidden;
+        }
+
+        .container {
+            width: 85%;
+            max-width: 330px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid #00ff66;
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
+        }
+
+        h2 { color: #00ff66; margin-bottom: 25px; letter-spacing: 2px; }
+
+        input {
+            width: 100%;
+            height: 45px;
+            background: #000;
+            border: 1px solid #00ff66;
+            border-radius: 8px;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        .btn {
+            width: 100%;
+            height: 45px;
+            background: #00ff66;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        /* MENU (Oculto por padrão) */
+        #menu-ui { display: none; }
+        
+        .mod-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #111;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #00ff66;
+        }
+
+        span { color: #fff; font-size: 14px; }
     </style>
 </head>
 <body>
 
-<div class="box" id="login-ui">
-    <h2>NEXUS LOGIN</h2>
-    <input type="text" id="key" placeholder="DIGITE SUA KEY">
-    <button onclick="logar()">ENTRAR</button>
-</div>
-
-<div class="box" id="menu" style="display:none;">
-    <h2>NEXUS MENU</h2>
-    <div style="margin: 10px; padding: 10px; border: 1px solid #333;">
-        <span>AIMLOCK</span>
-        <button style="width:50px; float:right;" onclick="Android.inject('Aim', '0x684ea34', '20 00 80 D2')">ON</button>
+<div class="container">
+    <div id="login-ui">
+        <h2>NEXUS LOGIN</h2>
+        <input type="text" id="key" placeholder="DIGITE SUA KEY">
+        <button class="btn" id="btnEntrar" onclick="fazerLogin()">ENTRAR</button>
     </div>
-    <br>
-    <button onclick="Android.openGame()">ABRIR JOGO</button>
+
+    <div id="menu-ui">
+        <h2>MOD MENU</h2>
+        
+        <div class="mod-item">
+            <span>AIMLOCK</span>
+            <button onclick="Android.inject('Aim', '0x684ea34', '20 00 80 D2')" style="background:#00ff66; border:none; padding:5px 10px; border-radius:5px;">ON</button>
+        </div>
+
+        <div class="mod-item">
+            <span>SPEED HACK</span>
+            <button onclick="Android.inject('Speed', '0x72ab058', '20 00 80 D2')" style="background:#00ff66; border:none; padding:5px 10px; border-radius:5px;">ON</button>
+        </div>
+
+        <button class="btn" style="background:#222; color:#fff; margin-top:15px;" onclick="Android.openGame()">ABRIR JOGO</button>
+    </div>
 </div>
 
 <script>
-    async function logar() {
-        const key = document.getElementById('key').value;
-        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB";
+    async function fazerLogin() {
+        const key = document.getElementById('key').value.trim();
+        const btn = document.getElementById('btnEntrar');
+
+        if(!key) return alert("Insira a Key!");
+
+        btn.disabled = true;
+        btn.innerText = "VERIFICANDO...";
+
+        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB_DEBUG";
 
         try {
-            // Chama a sua API da Vercel
-            const res = await fetch(`https://nexus-vip-key.vercel.app/api/handler?key=${key}&hwid=${hwid}`);
+            // URL da sua API na Vercel
+            const url = `https://nexus-vip-key.vercel.app/api/handler?key=${key}&hwid=${hwid}`;
+            const res = await fetch(url);
             const data = await res.json();
 
             if (data.success) {
                 document.getElementById('login-ui').style.display = 'none';
-                document.getElementById('menu').style.display = 'block';
+                document.getElementById('menu-ui').style.display = 'block';
             } else {
-                alert("Key Inválida!");
+                alert("❌ Key Inválida!");
+                btn.disabled = false;
+                btn.innerText = "ENTRAR";
             }
         } catch (e) {
-            alert("Erro de Conexão com o Servidor!");
+            alert("⚠️ Erro de Conexão!");
+            btn.disabled = false;
+            btn.innerText = "ENTRAR";
         }
     }
 </script>
+
 </body>
 </html>
