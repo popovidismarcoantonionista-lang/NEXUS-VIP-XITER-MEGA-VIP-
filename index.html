@@ -3,141 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS VIP REAL</title>
+    <title>NEXUS VIP - OB53 FINAL</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', monospace; }
-        body { background: #000; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        canvas { position: fixed; inset: 0; z-index: 1; }
-        
-        .panel { 
-            position: relative; z-index: 10; width: 90%; max-width: 350px; 
-            background: rgba(5, 5, 10, 0.98); border: 2px solid #00ff66; 
-            border-radius: 20px; padding: 30px; text-align: center; 
-            box-shadow: 0 0 25px rgba(0, 255, 102, 0.5); 
+        /* RESET E FONTE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .title { color: #00ff66; font-size: 1.8rem; text-shadow: 0 0 10px #00ff66; margin-bottom: 5px; }
-        .subtitle { color: #555; font-size: 0.7rem; margin-bottom: 25px; letter-spacing: 2px; }
-
-        input { 
-            width: 100%; height: 50px; background: #000; border: 1px solid #00ff66; 
-            border-radius: 10px; color: #fff; text-align: center; margin-bottom: 20px; outline: none; 
+        html, body {
+            background-color: #000;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .btn { 
-            width: 100%; height: 50px; border: none; border-radius: 10px; 
-            background: linear-gradient(90deg, #00ff66, #00ffff); 
-            color: #000; font-weight: bold; cursor: pointer; text-transform: uppercase; 
+        /* FUNDO MATRIX */
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
         }
 
+        /* CONTAINER PRINCIPAL CENTRALIZADO */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 340px;
+            background: rgba(5, 5, 10, 0.95);
+            border: 2px solid #00ff66;
+            border-radius: 20px;
+            padding: 30px 20px;
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.4);
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .title { 
+            color: #00ff66; 
+            font-size: 1.8rem; 
+            font-weight: bold; 
+            text-shadow: 0 0 15px #00ff66; 
+            margin-bottom: 5px; 
+        }
+
+        .subtitle { 
+            color: #555; 
+            font-size: 0.7rem; 
+            margin-bottom: 25px; 
+            letter-spacing: 2px; 
+            text-transform: uppercase;
+        }
+
+        /* LOGIN */
+        .input-box { margin-bottom: 20px; }
+        .input-box input {
+            width: 100%;
+            height: 50px;
+            background: #000;
+            border: 1px solid #00ff66;
+            border-radius: 10px;
+            padding: 0 15px;
+            color: #fff;
+            font-size: 1rem;
+            text-align: center;
+            outline: none;
+        }
+
+        .btn-main {
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #00ff66, #00ffff);
+            color: #000;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.3);
+        }
+
+        /* MENU DE FUNÇÕES */
         #menu-ui { display: none; }
-        .feature { 
-            display: flex; justify-content: space-between; align-items: center; 
-            background: #111; padding: 12px; border-radius: 8px; margin-bottom: 10px; 
-            border-left: 4px solid #00ff66; 
+        
+        .feature-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #00ff66;
         }
-        .feature span { color: #fff; font-size: 0.8rem; }
 
-        /* Switch */
-        .switch { position: relative; width: 40px; height: 20px; }
-        .switch input { opacity: 0; }
-        .slider { position: absolute; cursor: pointer; inset: 0; background: #333; border-radius: 20px; transition: .4s; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .4s; }
+        .feature-row span {
+            color: #eee;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        /* SWITCH */
+        .switch { position: relative; width: 42px; height: 22px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background: #333; border-radius: 30px; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .4s; }
         input:checked + .slider { background: #00ff66; }
         input:checked + .slider:before { transform: translateX(20px); }
+
+        .footer {
+            margin-top: 15px;
+            font-size: 0.6rem;
+            color: #444;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
-    <canvas id="matrix"></canvas>
 
-    <div class="panel">
-        <div id="login-ui">
-            <div class="title">NEXUS LOGIN</div>
-            <div class="subtitle">PREMIUM OB53 SYSTEM</div>
-            <input type="text" id="accessKey" placeholder="INSIRA SUA KEY VIP">
-            <button class="btn" onclick="validar()">ENTRAR NO PAINEL</button>
+<canvas id="matrix"></canvas>
+
+<div class="main-container">
+    <!-- TELA DE LOGIN -->
+    <div id="login-ui">
+        <div class="title">NEXUS VIP</div>
+        <div class="subtitle">Secure Auth OB53</div>
+        
+        <div class="input-box">
+            <input type="text" id="accessKey" placeholder="DIGITE SUA KEY" autocomplete="off">
         </div>
 
-        <div id="menu-ui">
-            <div class="title" style="font-size: 1.3rem;">NEXUS ATIVO</div>
-            <div class="subtitle">DUMP 64-BIT ONLINE</div>
-
-            <div class="feature">
-                <span>AIMLOCK 100%</span>
-                <label class="switch"><input type="checkbox" onchange="patch('Aim', '0x684ea34', this)"><span class="slider"></span></label>
-            </div>
-
-            <div class="feature">
-                <span>NO RECOIL</span>
-                <label class="switch"><input type="checkbox" onchange="patch('Recoil', '0x6accffc', this)"><span class="slider"></span></label>
-            </div>
-
-            <div class="feature">
-                <span>SPEED HACK</span>
-                <label class="switch"><input type="checkbox" onchange="patch('Speed', '0x72ab058', this)"><span class="slider"></span></label>
-            </div>
-
-            <button class="btn" style="margin-top: 10px; height: 40px; font-size: 0.8rem;" onclick="Android.openGame()">ABRIR JOGO</button>
-        </div>
+        <button class="btn-main" onclick="validarLogin()">ENTRAR NO PAINEL</button>
     </div>
 
-<script>
-    async function validar() {
-        const key = document.getElementById('accessKey').value.trim();
-        if (!key) return toast("Digite a Key!");
+    <!-- MENU DE FUNÇÕES -->
+    <div id="menu-ui">
+        <div class="title" style="font-size: 1.4rem;">NEXUS PANEL</div>
+        <div class="subtitle">64-BIT DUMP ACTIVE</div>
 
-        toast("📡 Verificando no Banco...");
+        <div class="feature-row">
+            <span>AIMLOCK (AUTO)</span>
+            <label class="switch"><input type="checkbox" onchange="togglePatch('AimLock', '0x684ea34', this)"><span class="slider"></span></label>
+        </div>
+
+        <div class="feature-row">
+            <span>NO RECOIL 100%</span>
+            <label class="switch"><input type="checkbox" onchange="togglePatch('NoRecoil', '0x6accffc', this)"><span class="slider"></span></label>
+        </div>
+
+        <div class="feature-row">
+            <span>SPEED HACK</span>
+            <label class="switch"><input type="checkbox" onchange="togglePatch('Speed', '0x72ab058', this)"><span class="slider"></span></label>
+        </div>
+
+        <div class="feature-row">
+            <span>FAST MEDKIT</span>
+            <label class="switch"><input type="checkbox" onchange="togglePatch('Medkit', '0x684ebd4', this)"><span class="slider"></span></label>
+        </div>
+
+        <button class="btn-main" style="height: 45px; font-size: 0.8rem; margin-top: 10px;" onclick="abrirJogo()">INICIAR FREE FIRE</button>
+    </div>
+
+    <div class="footer">PROTECTED BY NEXUS VIP • v5.0</div>
+</div>
+
+<script>
+    // --- SISTEMA DE LOGIN REAL ---
+    async function validarLogin() {
+        const key = document.getElementById('accessKey').value.trim();
+        if (!key) {
+            alert("⚠️ Digite a Key!");
+            return;
+        }
+
+        // Avisa o Android (opcional)
+        if (typeof Android !== 'undefined') Android.showToast("📡 Verificando Key...");
 
         try {
-            const res = await fetch("https://qudbsaujvnvwoybxarhp.supabase.co/functions/v1/validate-key", {
+            const response = await fetch("https://qudbsaujvnvwoybxarhp.supabase.co/functions/v1/validate-key", {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "apikey": "SUA_ANON_KEY_AQUI" },
+                headers: { 
+                    "Content-Type": "application/json",
+                    "apikey": "COLE_SUA_ANON_KEY_AQUI" 
+                },
                 body: JSON.stringify({ 
                     key: key, 
-                    hwid: (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB" 
+                    hwid: (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB_TEST" 
                 })
             });
-            const data = await res.json();
+
+            const data = await response.json();
 
             if (data.status === "valida") {
                 document.getElementById('login-ui').style.display = 'none';
                 document.getElementById('menu-ui').style.display = 'block';
-                toast("✅ ACESSO LIBERADO!");
+                if (typeof Android !== 'undefined') Android.showToast("✅ ACESSO LIBERADO!");
             } else {
-                toast("❌ KEY INVÁLIDA!");
+                alert("❌ KEY INVÁLIDA!");
             }
-        } catch (e) {
-            toast("⚠️ ERRO DE CONEXÃO!");
+        } catch (error) {
+            // Plano B: Apenas para teste local caso o Supabase esteja offline
+            console.error("Erro Supabase:", error);
+            if(key === "TESTE") {
+                document.getElementById('login-ui').style.display = 'none';
+                document.getElementById('menu-ui').style.display = 'block';
+            } else {
+                alert("⚠️ Erro de conexão! Verifique sua internet.");
+            }
         }
     }
 
-    function patch(nome, offset, el) {
+    // --- FUNÇÕES DE INJEÇÃO (OFFSETS DO DUMP) ---
+    function togglePatch(nome, offset, el) {
+        const status = el.checked ? "ATIVADO" : "DESATIVADO";
         const hex = el.checked ? "20 00 80 D2 C0 03 5F D6" : "00 00 80 D2 C0 03 5F D6";
+
         if (typeof Android !== 'undefined') {
-            Android.showToast(nome + (el.checked ? " ATIVADO" : " DESATIVADO"));
+            Android.showToast(nome + ": " + status);
             Android.inject(nome, offset, hex);
+        } else {
+            console.log(`Debug: Injetando ${nome} em ${offset} [${hex}]`);
         }
     }
 
-    function toast(m) {
-        if (typeof Android !== 'undefined') Android.showToast(m);
-        else console.log(m);
+    function abrirJogo() {
+        if (typeof Android !== 'undefined') Android.openGame();
+        else alert("Jogo abre apenas no APK!");
     }
 
-    // Matrix Effect
-    const c = document.getElementById('matrix');
-    const ctx = c.getContext('2d');
-    c.width = window.innerWidth; c.height = window.innerHeight;
-    const drops = Array(Math.floor(c.width/20)).fill(1);
-    setInterval(() => {
-        ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0,0,c.width,c.height);
+    // --- EFEITO MATRIX ---
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const chars = '01';
+    const drops = Array(Math.floor(canvas.width / 20)).fill(1);
+
+    function draw() {
+        ctx.fillStyle = 'rgba(0,0,0,0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = '#0f6';
+        ctx.font = '15px monospace';
         drops.forEach((y, i) => {
-            ctx.fillText(Math.floor(Math.random()*2), i*20, y*20);
-            if(y*20 > c.height && Math.random() > 0.975) drops[i] = 0;
+            ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * 20, y * 20);
+            if (y * 20 > canvas.height && Math.random() > 0.975) drops[i] = 0;
             drops[i]++;
         });
-    }, 50);
+    }
+    setInterval(draw, 50);
 </script>
+
 </body>
 </html>
