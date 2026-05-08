@@ -1,29 +1,42 @@
-import { createClient } from '@supabase/supabase-js';
+async function autenticar() {
+    const key = document.getElementById('keyInput').value.trim();
+    const status = document.getElementById('status'); // Se tiver um campo de status
+    
+    if (!key) {
+        alert("⚠️ Por favor, digite uma Key!");
+        return;
+    }
 
-export default async function handler(req, res) {
-    // ESSENCIAL PARA EVITAR "FALHA NA CONEXÃO" (CORS)
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-    if (req.method === 'OPTIONS') return res.status(200).end();
-
-    const { key, hwid } = req.query;
-    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+    // Pega o HWID do Android (Sketchware)
+    const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "Navegador_Teste";
 
     try {
-        const { data, error } = await supabase.from('licencas').select('*').eq('key', key).single();
-
-        if (error || !data) return res.json({ success: false, message: "Key não existe" });
-
-        if (data.hwid && data.hwid !== hwid) return res.json({ success: false, message: "HWID incompatível" });
-
-        if (!data.hwid) {
-            await supabase.from('licencas').update({ hwid: hwid }).eq('key', key);
+        // LINK CORRIGIDO ABAIXO:
+        const apiURL = `https://nexus-vip-key.vercel.app/api/handler?key=${key}&hwid=${hwid}`;
+        
+        const response = await fetch(apiURL);
+        
+        if (!response.ok) {
+            throw new Error("Servidor fora do ar");
         }
 
-        return res.json({ success: true, message: "Acesso Liberado" });
-    } catch (err) {
-        return res.json({ success: false, message: "Erro de servidor" });
+        const result = await response.json();
+
+        if (result.success) {
+            // Se o login for aceito
+            if (typeof Android !== 'undefined') {
+                Android.onLoginSuccess(); // Chama o comando no Sketchware
+            } else {
+                alert("✅ Sucesso! No APK o menu abriria agora.");
+                // window.location.href = "menu-vip.html"; // Opcional para PC
+            }
+        } else {
+            // Se a key for inválida ou HWID diferente
+            alert("❌ ERRO: " + result.message);
+        }
+
+    } catch (error) {
+        console.error(error);
+        alert("⚠️ FALHA NA CONEXÃO: Verifique se a sua API na Vercel está ativa e configurada corretamente.");
     }
 }
