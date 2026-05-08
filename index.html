@@ -3,132 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS VIP - LOGIN</title>
+    <title>NEXUS VIP LOGIN</title>
     <style>
-        /* Estilo Dark Nexus */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', monospace; }
+        /* LAYOUT AJUSTADO */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background: #000; color: #00ff66; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
         
-        .container {
-            width: 90%;
-            max-width: 360px;
-            background: rgba(10, 10, 15, 0.98);
+        .login-box {
+            width: 85%;
+            max-width: 320px;
+            background: #111;
+            padding: 30px 20px;
             border: 2px solid #00ff66;
             border-radius: 20px;
-            padding: 30px 20px;
             text-align: center;
-            box-shadow: 0 0 25px rgba(0, 255, 102, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
         }
 
-        .title { font-size: 1.8rem; font-weight: bold; text-shadow: 0 0 10px #00ff66; margin-bottom: 5px; }
-        .subtitle { color: #555; font-size: 0.7rem; margin-bottom: 25px; text-transform: uppercase; }
-
+        h2 { font-size: 1.5rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        
         input {
             width: 100%;
-            height: 50px;
+            height: 45px;
             background: #000;
             border: 1px solid #00ff66;
             border-radius: 10px;
-            padding: 0 15px;
             color: #fff;
-            font-size: 1rem;
             text-align: center;
-            outline: none;
             margin-bottom: 20px;
+            outline: none;
         }
 
-        .btn-login {
+        button {
             width: 100%;
-            height: 50px;
+            height: 45px;
             background: #00ff66;
             color: #000;
             border: none;
             border-radius: 10px;
-            font-weight: 900;
-            cursor: pointer;
+            font-weight: bold;
             text-transform: uppercase;
+            cursor: pointer;
         }
 
-        .btn-buy {
-            display: block;
-            margin-top: 15px;
-            color: #00ff66;
-            text-decoration: none;
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        #status { margin-top: 15px; font-size: 0.7rem; color: #888; }
+        button:disabled { background: #006622; color: #888; }
+        #status { margin-top: 15px; font-size: 0.7rem; color: #555; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="title">NEXUS VIP</div>
-    <div class="subtitle">SISTEMA DE AUTENTICAÇÃO</div>
-    
-    <input type="text" id="accessKey" placeholder="INSIRA SUA KEY">
-    
-    <button class="btn-login" id="loginBtn" onclick="fazerLogin()">ENTRAR NO MOD</button>
-    
-    <a href="https://nexus-vip-key.vercel.app/" target="_blank" class="btn-buy">NÃO TEM UMA KEY? COMPRE AQUI</a>
-    
-    <div id="status">AGUARDANDO ENTRADA...</div>
+<div class="login-box">
+    <h2>NEXUS VIP</h2>
+    <input type="text" id="keyInput" placeholder="COLE SUA KEY AQUI">
+    <button id="loginBtn" onclick="validarAcesso()">ENTRAR NO MOD</button>
+    <div id="status">AGUARDANDO AUTENTICAÇÃO...</div>
 </div>
 
 <script>
-    async function fazerLogin() {
-        const keyInput = document.getElementById('accessKey');
+    async function validarAcesso() {
+        const key = document.getElementById('keyInput').value.trim();
         const btn = document.getElementById('loginBtn');
         const status = document.getElementById('status');
-        const key = keyInput.value.trim();
 
         if (!key) {
-            alert("⚠️ Por favor, insira uma Key!");
+            alert("⚠️ Insira uma Key válida!");
             return;
         }
 
-        // Bloqueia o botão e avisa o Android
         btn.disabled = true;
         btn.innerText = "VERIFICANDO...";
-        status.innerText = "CONECTANDO AO SERVIDOR...";
-        
-        if (typeof Android !== 'undefined') Android.showToast("📡 Validando sua licença...");
+        status.innerText = "CONECTANDO À VERCEL...";
 
-        // Pega o ID do aparelho via Ponte Sketchware
-        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB_DEBUG";
+        // Pega o HWID do Java (Ponte Android)
+        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB_TEST";
 
         try {
-            // URL da sua API de validação na Vercel
-            // IMPORTANTE: Use o link da sua API de BACKEND aqui (aquela que tem o handler.js)
-            const apiURL = `https://nexus-vip-key.vercel.app/api/handler?key=${key}&hwid=${hwid}`;
+            // URL da sua API na Vercel
+            // IMPORTANTE: Use o link da sua API que faz a verificação no Supabase
+            const url = `https://nexus-vip-key.vercel.app/api/handler?key=${key}&hwid=${hwid}`;
 
-            const response = await fetch(apiURL);
+            const response = await fetch(url, { method: 'GET' });
+            
+            if (!response.ok) throw new Error("Erro no servidor");
+
             const data = await response.json();
 
+            // Lógica baseada no seu código de backend (success: true)
             if (data.success === true) {
                 status.innerText = "✅ ACESSO LIBERADO!";
                 if (typeof Android !== 'undefined') {
-                    Android.onLoginSuccess(); // Dispara o comando no seu Sketchware
+                    Android.onLoginSuccess(); // Dispara o Java para abrir o FloatingService
                 } else {
-                    alert("Sucesso! No Android o jogo abriria agora.");
+                    alert("Sucesso! (No APK o Mod abriria agora)");
                 }
             } else {
-                alert("❌ ERRO: " + data.message);
-                resetarInterface();
+                alert("❌ " + data.message);
+                resetBtn();
             }
         } catch (error) {
-            alert("⚠️ FALHA NA CONEXÃO: Verifique sua internet ou servidor.");
-            resetarInterface();
+            console.error(error);
+            alert("⚠️ FALHA NA CONEXÃO!\nVerifique se o servidor está online ou se há internet.");
+            resetBtn();
         }
-    }
 
-    function resetarInterface() {
-        const btn = document.getElementById('loginBtn');
-        const status = document.getElementById('status');
-        btn.disabled = false;
-        btn.innerText = "ENTRAR NO MOD";
-        status.innerText = "TENTE NOVAMENTE.";
+        function resetBtn() {
+            btn.disabled = false;
+            btn.innerText = "ENTRAR NO MOD";
+            status.innerText = "TENTE NOVAMENTE.";
+        }
     }
 </script>
 
