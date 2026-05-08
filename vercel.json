@@ -1,6 +1,14 @@
 {
-  "version": 2,
   "rewrites": [
-    { "source": "/api/verify", "destination": "/api.js" }
+    { "source": "/api/(.*)", "destination": "/api/$1" }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,OPTIONS,POST" }
+      ]
+    }
   ]
 }
