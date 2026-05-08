@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS VIP</title>
+    <title>NEXUS VIP LOGIN</title>
     <style>
-        /* CENTRALIZAÇÃO TOTAL E DESIGN */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+        /* DESIGN DO PAINEL */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
         
         body { 
             background: #000; 
@@ -14,31 +14,30 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            overflow: hidden;
             color: #0f6;
         }
 
-        .container {
+        .login-card {
             width: 85%;
-            max-width: 320px;
-            background: rgba(0, 0, 0, 0.9);
+            max-width: 300px;
+            padding: 25px;
+            background: rgba(0,0,0,0.8);
             border: 2px solid #0f6;
             border-radius: 15px;
-            padding: 30px 20px;
             text-align: center;
-            box-shadow: 0 0 15px #0f63;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
         }
 
-        h2 { margin-bottom: 20px; text-shadow: 0 0 10px #0f6; }
+        h2 { margin-bottom: 20px; font-size: 1.5rem; text-shadow: 0 0 10px #0f6; }
 
         input {
             width: 100%;
             padding: 12px;
+            margin-bottom: 15px;
             background: #111;
             border: 1px solid #0f6;
-            border-radius: 5px;
+            border-radius: 8px;
             color: #fff;
-            margin-bottom: 15px;
             text-align: center;
             outline: none;
         }
@@ -49,67 +48,73 @@
             background: #0f6;
             color: #000;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
+            text-transform: uppercase;
         }
 
-        .btn:disabled { background: #555; }
+        .btn:disabled { background: #444; color: #888; }
 
-        #menu-ui { display: none; }
+        #menu-area { display: none; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div id="login-ui">
-        <h2>NEXUS LOGIN</h2>
-        <input type="text" id="key" placeholder="SUA KEY AQUI">
-        <button class="btn" id="btnEntrar" onclick="autenticar()">ENTRAR</button>
+<div class="login-card">
+    <div id="login-area">
+        <h2>NEXUS VIP</h2>
+        <input type="text" id="keyInput" placeholder="INSIRA SUA KEY">
+        <button class="btn" id="btnEntrar" onclick="fazerLogin()">Entrar</button>
     </div>
 
-    <div id="menu-ui">
-        <h2>MOD MENU</h2>
-        <p style="color:#fff; font-size: 12px; margin-bottom: 15px;">CONECTADO COM SUCESSO</p>
-        <button class="btn" onclick="Android.openGame()">ABRIR FREE FIRE</button>
+    <div id="menu-area">
+        <h2>BEM-VINDO</h2>
+        <p style="color: #fff; margin-bottom: 15px; font-size: 13px;">SISTEMA ATIVADO</p>
+        <button class="btn" onclick="abrirJogo()">ABRIR FREE FIRE</button>
     </div>
 </div>
 
 <script>
-    async function autenticar() {
-        const keyInput = document.getElementById('key').value.trim();
+    async function fazerLogin() {
+        const key = document.getElementById('keyInput').value.trim();
         const btn = document.getElementById('btnEntrar');
 
-        if (!keyInput) return alert("Digite a Key!");
+        if (!key) return alert("Por favor, digite uma key!");
 
         btn.disabled = true;
         btn.innerText = "VERIFICANDO...";
 
-        // Pega o HWID do Sketchware via ponte Java
-        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "NAVEGADOR";
+        // Pega o HWID do celular via Sketchware
+        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "PC-TESTE";
 
         try {
-            // USANDO O NOVO LINK DA VERCEL (Ajustado para a pasta /api)
-            const response = await fetch(`https://nexus-vip-key.vercel.app/api?key=${keyInput}&hwid=${hwid}`);
-            
-            // Se o servidor retornar 404 aqui, o problema ainda é a pasta na Vercel
-            if (!response.ok) throw new Error("Erro 404 no Servidor");
-
+            // O LINK QUE FUNCIONOU NO SEU TESTE
+            const url = `https://nexus-vip-key.vercel.app/api/verify?key=${key}&hwid=${hwid}`;
+            const response = await fetch(url);
             const result = await response.json();
 
             if (result.success) {
-                document.getElementById('login-ui').style.display = 'none';
-                document.getElementById('menu-ui').style.display = 'block';
+                document.getElementById('login-area').style.display = 'none';
+                document.getElementById('menu-area').style.display = 'block';
             } else {
                 alert("ERRO: " + result.message);
                 btn.disabled = false;
-                btn.innerText = "ENTRAR";
+                btn.innerText = "Entrar";
             }
-        } catch (e) {
-            alert("⚠️ FALHA DE CONEXÃO: O link da API ainda está dando 404 na Vercel!");
+        } catch (error) {
+            alert("Falha na conexão com o servidor. Tente novamente.");
             btn.disabled = false;
-            btn.innerText = "ENTRAR";
+            btn.innerText = "Entrar";
+        }
+    }
+
+    function abrirJogo() {
+        // Função que você vai configurar no Sketchware para injetar o mod
+        if (typeof Android !== 'undefined') {
+            Android.openGame(); 
+        } else {
+            alert("Este botão só funciona dentro do App!");
         }
     }
 </script>
