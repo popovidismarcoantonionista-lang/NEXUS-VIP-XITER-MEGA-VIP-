@@ -1,49 +1,133 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS VIP - MENU</title>
     <style>
-        body { background: #050505; color: #00ff66; font-family: monospace; text-align: center; padding: 15px; }
-        .menu-box { border: 2px solid #00ff66; border-radius: 20px; padding: 20px; background: #0d0d0d; box-shadow: 0 0 15px #00ff66; }
-        .hack-item { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin: 12px 0; padding: 12px; border: 1px solid #222; border-radius: 12px; 
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', monospace; }
+        
+        body {
+            background: #050505;
+            color: #00ff66;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
         }
-        .btn-act { 
-            padding: 10px 18px; border-radius: 8px; border: none; font-weight: bold;
-            background: linear-gradient(90deg, #00ff66, #00ffff); color: #000; cursor: pointer;
+
+        /* Container do Painel */
+        .menu-box {
+            width: 100%;
+            max-width: 400px;
+            background: #0d0d0d;
+            border: 2px solid #00ff66;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 255, 100, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .header h1 { font-size: 1.5rem; text-shadow: 0 0 10px #00ff66; }
+        .header p { font-size: 0.7rem; color: #888; text-transform: uppercase; }
+
+        /* Estilo das Linhas de Funções */
+        .hack-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #080808;
+            border: 1px solid rgba(0, 255, 100, 0.1);
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .hack-name { font-size: 0.85rem; font-weight: bold; letter-spacing: 1px; }
+
+        /* Botão Ativar RGB */
+        .btn-act {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-weight: bold;
+            font-size: 0.7rem;
+            cursor: pointer;
+            background: linear-gradient(90deg, #00ff66, #00ffff, #ff00ff, #00ff66);
+            background-size: 400% 400%;
+            animation: rgb-flow 6s linear infinite;
+        }
+
+        @keyframes rgb-flow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 400% 50%; }
+        }
+
+        .btn-act:active { transform: scale(0.9); }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 0.6rem;
+            color: #444;
+            text-align: center;
         }
     </style>
 </head>
 <body>
+
     <div class="menu-box">
-        <h2 style="margin-bottom: 20px; text-shadow: 0 0 10px #00ff66;">NEXUS MENU VIP</h2>
-        
+        <div class="header">
+            <h1>NEXUS MENU 😈</h1>
+            <p>OB53 | 64-BIT | FF MAX</p>
+        </div>
+
         <div class="hack-item">
-            <span>FLY HEIGHT</span>
+            <span class="hack-name">FLY HEIGHT</span>
             <button class="btn-act" onclick="Android.inject('FLY', '0x5ff59f4', '20 00 80 D2 C0 03 5F D6')">ATIVAR</button>
         </div>
 
         <div class="hack-item">
-            <span>SPEED SHOOT</span>
+            <span class="hack-name">SPEED SHOOT</span>
             <button class="btn-act" onclick="Android.inject('SPEED', '0x68a10dc', '20 00 80 D2 C0 03 5F D6')">ATIVAR</button>
         </div>
 
         <div class="hack-item">
-            <span>FAST MEDKIT</span>
+            <span class="hack-name">FAST MEDKIT</span>
             <button class="btn-act" onclick="Android.inject('MEDKIT', '0x6a059d0', '20 00 80 D2 C0 03 5F D6')">ATIVAR</button>
         </div>
 
         <div class="hack-item">
-            <span>NO RECOIL</span>
+            <span class="hack-name">NO RECOIL</span>
             <button class="btn-act" onclick="Android.inject('RECOIL', '0x6accffc', '20 00 80 D2 C0 03 5F D6')">ATIVAR</button>
         </div>
 
         <div class="hack-item">
-            <span>SCAN ENEMY</span>
+            <span class="hack-name">SCAN WALLHACK</span>
             <button class="btn-act" onclick="Android.inject('SCAN', '0x68f0e70', '20 00 80 D2 C0 03 5F D6')">ATIVAR</button>
         </div>
+
+        <div class="hack-item">
+            <span class="hack-name">AIM LOCK (KNOCK)</span>
+            <button class="btn-act" onclick="Android.inject('AIM', '0x684ea34', '20 00 80 D2 C0 03 5F D6')">ATIVAR</button>
+        </div>
+
+        <div class="hack-item">
+            <span class="hack-name">ULTRA FPS</span>
+            <button class="btn-act" onclick="Android.inject('FPS', '0x7f826c8', '20 00 80 D2 C0 03 5F D6')">ATIVAR</button>
+        </div>
+
+        <div class="footer">
+            NEXUS VIP SYSTEM v5.0
+        </div>
     </div>
+
 </body>
 </html>
