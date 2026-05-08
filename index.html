@@ -2,65 +2,51 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS VIP - AUTH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', monospace; }
-        body { background: #000; color: #00ff66; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .card { border: 2px solid #00ff66; padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 340px; background: #050505; box-shadow: 0 0 20px #00ff6644; }
-        input { width: 100%; padding: 12px; margin: 20px 0; background: #000; border: 1px solid #00ff66; color: #fff; border-radius: 10px; text-align: center; outline: none; }
-        button { width: 100%; padding: 12px; background: #00ff66; color: #000; border: none; border-radius: 10px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
-        button:disabled { background: #004411; color: #666; }
-        #status { font-size: 10px; margin-top: 15px; color: #444; }
+        body { background: #000; color: #0f6; font-family: monospace; text-align: center; padding-top: 50px; }
+        .box { border: 2px solid #0f6; padding: 20px; border-radius: 15px; display: inline-block; width: 80%; }
+        input { width: 90%; padding: 10px; margin: 10px 0; background: #000; border: 1px solid #0f6; color: #fff; text-align: center; }
+        button { width: 95%; padding: 10px; background: #0f6; color: #000; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; }
+        #menu { display: none; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2 style="text-shadow: 0 0 10px #00ff66;">NEXUS VIP</h2>
-    <input type="text" id="keyInput" placeholder="INSIRA SUA KEY">
-    <button id="loginBtn" onclick="validar()">LOGAR NO MOD</button>
-    <div id="status">AGUARDANDO AUTENTICAÇÃO...</div>
+<div class="box" id="login-ui">
+    <h2>NEXUS LOGIN</h2>
+    <input type="text" id="key" placeholder="DIGITE SUA KEY">
+    <button onclick="logar()">ENTRAR</button>
+</div>
+
+<div class="box" id="menu" style="display:none;">
+    <h2>NEXUS MENU</h2>
+    <div style="margin: 10px; padding: 10px; border: 1px solid #333;">
+        <span>AIMLOCK</span>
+        <button style="width:50px; float:right;" onclick="Android.inject('Aim', '0x684ea34', '20 00 80 D2')">ON</button>
+    </div>
+    <br>
+    <button onclick="Android.openGame()">ABRIR JOGO</button>
 </div>
 
 <script>
-    async function validar() {
-        const key = document.getElementById('keyInput').value.trim();
-        const btn = document.getElementById('loginBtn');
-        const status = document.getElementById('status');
-
-        if (!key) return alert("⚠️ Digite a Key!");
-
-        btn.disabled = true;
-        btn.innerText = "VERIFICANDO...";
-
-        // Pega o ID do aparelho via Ponte Android do Sketchware
-        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB_TEST";
+    async function logar() {
+        const key = document.getElementById('key').value;
+        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB";
 
         try {
-            // URL da sua API na Vercel (Substitua pelo seu link real da Vercel)
-            const apiURL = `https://nexus-vip-key.vercel.app/api/handler?key=${key}&hwid=${hwid}`;
-            
-            const response = await fetch(apiURL);
-            const data = await response.json();
+            // Chama a sua API da Vercel
+            const res = await fetch(`https://nexus-vip-key.vercel.app/api/handler?key=${key}&hwid=${hwid}`);
+            const data = await res.json();
 
-            if (data.success === true) {
-                status.innerText = "✅ ACESSO LIBERADO!";
-                if (typeof Android !== 'undefined') {
-                    // Chama o método que você criou no Java
-                    Android.onLoginSuccess();
-                } else {
-                    alert("Sucesso! No APK o FloatingService abriria agora.");
-                }
+            if (data.success) {
+                document.getElementById('login-ui').style.display = 'none';
+                document.getElementById('menu').style.display = 'block';
             } else {
-                alert("❌ ERRO: " + data.message);
-                btn.disabled = false;
-                btn.innerText = "LOGAR NO MOD";
+                alert("Key Inválida!");
             }
-        } catch (err) {
-            alert("⚠️ FALHA NA CONEXÃO!\nVerifique se o servidor Vercel está ativo.");
-            btn.disabled = false;
-            btn.innerText = "LOGAR NO MOD";
+        } catch (e) {
+            alert("Erro de Conexão com o Servidor!");
         }
     }
 </script>
