@@ -3,114 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS VIP OB53</title>
+    <title>NEXUS VIP</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: monospace; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
         body { background: #000; color: #0f6; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        
-        .container { 
-            background: rgba(10,10,15,0.95); padding: 25px; border: 1px solid #0f6; 
-            border-radius: 15px; width: 90%; max-width: 350px; text-align: center; 
-            box-shadow: 0 0 20px #0f64; z-index: 10;
-        }
-
-        input { 
-            width: 100%; padding: 12px; margin: 15px 0; background: #000; 
-            border: 1px solid #0f6; color: #fff; border-radius: 8px; text-align: center; 
-        }
-
-        .btn { 
-            width: 100%; padding: 12px; background: #0f6; color: #000; 
-            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; 
-        }
-
-        /* Menu oculto inicialmente */
-        #menu-ui { display: none; margin-top: 15px; }
-        
-        .feature { 
-            display: flex; justify-content: space-between; align-items: center; 
-            background: #111; padding: 10px; margin-bottom: 8px; border-radius: 5px;
-            border-left: 3px solid #0f6;
-        }
-
-        /* Switch */
-        .switch { position: relative; width: 40px; height: 20px; }
-        .switch input { opacity: 0; }
-        .slider { position: absolute; cursor: pointer; inset: 0; background: #333; border-radius: 20px; transition: .4s; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .4s; }
-        input:checked + .slider { background: #0f6; }
-        input:checked + .slider:before { transform: translateX(20px); }
+        .login-card { background: #111; padding: 30px; border: 1px solid #0f6; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; border-bottom: 4px solid #0f6; }
+        input { width: 100%; padding: 12px; margin: 20px 0; background: #000; border: 1px solid #0f6; color: #fff; border-radius: 8px; text-align: center; outline: none; }
+        button { width: 100%; padding: 12px; background: #0f6; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:disabled { background: #063; color: #888; }
+        #status { font-size: 11px; margin-top: 15px; color: #555; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div id="login-ui">
-        <h2 style="text-shadow: 0 0 10px #0f6;">NEXUS LOGIN</h2>
-        <input type="text" id="key" placeholder="SUA KEY AQUI">
-        <button class="btn" id="loginBtn" onclick="validar()">ENTRAR</button>
-    </div>
-
-    <div id="menu-ui">
-        <h3 style="margin-bottom:15px;">MOD MENU ATIVO</h3>
-        
-        <div class="feature">
-            <span>AIMLOCK</span>
-            <label class="switch"><input type="checkbox" onchange="patch('Aim', '0x684ea34', this)"><span class="slider"></span></label>
-        </div>
-
-        <div class="feature">
-            <span>NO RECOIL</span>
-            <label class="switch"><input type="checkbox" onchange="patch('Recoil', '0x6accffc', this)"><span class="slider"></span></label>
-        </div>
-
-        <div class="feature">
-            <span>SPEED HACK</span>
-            <label class="switch"><input type="checkbox" onchange="patch('Speed', '0x72ab058', this)"><span class="slider"></span></label>
-        </div>
-
-        <button class="btn" style="margin-top:10px; background:#333; color:#fff;" onclick="Android.onLoginSuccess()">ABRIR JOGO</button>
-    </div>
+<div class="login-card">
+    <h2 style="letter-spacing: 2px;">NEXUS VIP</h2>
+    <input type="text" id="key" placeholder="INSIRA SUA KEY VIP">
+    <button id="btn" onclick="validar()">ENTRAR NO PAINEL</button>
+    <div id="status">SISTEMA ONLINE</div>
 </div>
 
 <script>
     async function validar() {
         const key = document.getElementById('key').value.trim();
-        const btn = document.getElementById('loginBtn');
-        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB_TEST";
+        const btn = document.getElementById('btn');
+        const statusDiv = document.getElementById('status');
 
-        if (!key) return alert("Digite a key!");
-        
+        if (!key) {
+            alert("⚠️ Digite uma Key!");
+            return;
+        }
+
+        // Bloqueia o botão para não bugar
         btn.disabled = true;
-        btn.innerText = "Verificando...";
+        btn.innerText = "VERIFICANDO...";
+        statusDiv.innerText = "Conectando à Vercel...";
+
+        // Pega o ID do aparelho (HWID) do Android
+        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB_DEBUG";
 
         try {
-            // Substitua pela URL da sua API na Vercel
-            const url = `https://SEU-PROJETO.vercel.app/api/handler?key=${key}&hwid=${hwid}`;
-            const res = await fetch(url);
-            const data = await res.json();
+            // URL da sua API na Vercel (AJUSTE O LINK ABAIXO)
+            const urlVercel = `https://SEU-PROJETO.vercel.app/api/handler?key=${key}&hwid=${hwid}`;
+            
+            // Faz a chamada para a Vercel
+            const response = await fetch(urlVercel);
+            
+            if (!response.ok) throw new Error("Erro no servidor Vercel");
 
+            const data = await response.json();
+
+            // Se a Vercel responder success: true
             if (data.success === true) {
-                document.getElementById('login-ui').style.display = 'none';
-                document.getElementById('menu-ui').style.display = 'block';
+                statusDiv.innerText = "✅ Acesso Liberado!";
+                if (typeof Android !== 'undefined') {
+                    Android.onLoginSuccess(); // Chama o Java do Sketchware
+                } else {
+                    alert("Acesso Liberado (Teste Web)");
+                }
             } else {
-                alert("Erro: " + data.message);
-                btn.disabled = false;
-                btn.innerText = "ENTRAR";
+                alert("❌ " + data.message);
+                resetar();
             }
         } catch (err) {
-            alert("Erro de conexão!");
-            btn.disabled = false;
-            btn.innerText = "ENTRAR";
+            alert("⚠️ Falha na conexão!");
+            resetar();
         }
-    }
 
-    function patch(nome, offset, el) {
-        const hex = el.checked ? "20 00 80 D2 C0 03 5F D6" : "00 00 80 D2 C0 03 5F D6";
-        if (typeof Android !== 'undefined') {
-            Android.showToast(nome + (el.checked ? " ATIVADO" : " DESATIVADO"));
-            // Envia o offset real para o Java
-            Android.inject(nome, offset, hex); 
+        function resetar() {
+            btn.disabled = false;
+            btn.innerText = "ENTRAR NO PAINEL";
+            statusDiv.innerText = "Aguardando nova tentativa...";
         }
     }
 </script>
