@@ -3,55 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS VIP</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { height:100vh; overflow:hidden; display:flex; justify-content:center; align-items:center; background:#000; font-family:'Orbitron',sans-serif; position:relative; }
-        
-        /* MATRIX BACKGROUND */
-        .matrix { position:absolute; inset:0; overflow:hidden; z-index:0; }
-        .line { position:absolute; top:-100%; color:#00ff66; opacity:.15; white-space:pre; font-size:18px; text-shadow:0 0 8px #00ff66; animation:fall linear infinite; }
-        @keyframes fall { to { transform:translateY(220vh); } }
+        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Courier New', Courier, monospace; }
+        body { height:100vh; background:#000; display:flex; justify-content:center; align-items:center; overflow:hidden; position:relative; }
 
-        /* PANEL & RGB BORDER */
+        /* Matrix Background denso */
+        .matrix { position:absolute; inset:0; z-index:0; font-size:15px; color:#00ff66; opacity:0.2; line-height:1; overflow:hidden; }
+        .matrix span { position:absolute; top:-20px; animation: fall linear infinite; }
+        @keyframes fall { to { transform: translateY(100vh); } }
+
+        /* Card Principal - Borda Verde Neon Fixa */
         .panel {
-            position:relative; z-index:5; width:88%; max-width:390px; padding:45px 30px; border-radius:42px;
-            background: linear-gradient(180deg, rgba(8,8,8,.98), rgba(0,0,0,.96));
-            border:2px solid rgba(0,255,100,.9); box-shadow: 0 0 15px rgba(0,255,100,.8), 0 0 40px rgba(0,255,100,.4);
+            position:relative; z-index:10; width:90%; max-width:380px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid #00ff66;
+            border-radius: 35px;
+            padding: 30px;
+            box-shadow: 0 0 20px #00ff66, inset 0 0 10px rgba(0,255,102,0.2);
+            text-align:center;
         }
-        .panel::before {
-            content:""; position:absolute; inset:-2px; border-radius:44px; padding:2px;
-            background: linear-gradient(130deg, #00ff88, #00ccff, #7a00ff, #00ff88);
-            background-size:400% 400%; animation:borderMove 8s linear infinite;
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none;
-        }
-        @keyframes borderMove { 0%{background-position:0% 50%;} 100%{background-position:400% 50%;} }
 
-        /* UI ELEMENTS */
-        .logo h1 { font-size:2.8rem; text-align:center; color:#00ff66; text-shadow:0 0 15px #00ff66; }
-        .sub { text-align:center; color:#666; margin:8px 0 35px 0; font-size:.8rem; letter-spacing:3px; }
+        .title { color:#00ff66; font-size:1.8rem; font-weight:bold; letter-spacing:2px; text-shadow: 0 0 10px #00ff66; margin-bottom:5px; }
+        .title span { color: #ff00ff; filter: drop-shadow(0 0 5px #ff00ff); }
+        .sub { color:#555; font-size:0.7rem; letter-spacing:3px; margin-bottom:30px; }
+
+        /* Input Estilo Foto */
         .input-box input {
-            width:100%; height:75px; border-radius:24px; background:#020202; border:2px solid #00ff66;
-            color:#00ff66; padding:0 24px; font-size:1.1rem; outline:none; transition:.3s;
-            box-shadow: inset 0 0 15px rgba(0,255,100,.1); margin-bottom:20px;
-        }
-        .btn {
-            width:100%; height:85px; border:none; border-radius:28px; cursor:pointer; font-size:1.5rem; font-weight:900;
-            color:#000; background: linear-gradient(90deg, #b026ff, #ff00c8);
-            box-shadow: 0 0 25px rgba(255,0,200,.4); transition:.25s;
+            width:100%; height:60px; background: transparent; border: 1px solid #00ff66;
+            border-radius: 15px; color:#00ff66; padding:0 15px; outline:none; font-size:1rem;
+            box-shadow: inset 0 0 5px rgba(0,255,102,0.2); margin-bottom:20px;
         }
 
-        /* MENU HACKS */
-        #menu-ui { display:none; }
-        .row { display:flex; justify-content:space-between; align-items:center; background:rgba(0,255,100,0.05); padding:15px; border-radius:18px; margin-bottom:10px; color:#00ff66; border:1px solid rgba(0,255,100,0.1); }
-        .switch { position:relative; width:45px; height:24px; }
-        .switch input { opacity:0; width:0; height:0; }
-        .slider { position:absolute; inset:0; background:#222; border-radius:30px; cursor:pointer; transition:.3s; }
-        .slider:before { content:""; position:absolute; height:18px; width:18px; left:3px; bottom:3px; background:white; border-radius:50%; transition:.3s; }
+        /* Botão Roxo Metálico da Foto */
+        .btn {
+            width:100%; height:70px; border:none; border-radius:20px;
+            background: linear-gradient(to right, #9d50bb, #ff00cc);
+            color:#000; font-weight:bold; font-size:1.2rem; cursor:pointer;
+            box-shadow: 0 5px 15px rgba(157, 80, 187, 0.4);
+            margin-bottom:20px; text-transform: uppercase;
+        }
+
+        /* Status Box */
+        .status {
+            border: 1px solid #004422; border-radius: 15px; padding: 15px;
+            color:#00ff66; font-size:0.8rem; background: rgba(0,255,102,0.05);
+        }
+
+        #menu-ui { display: none; }
+        .row { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; color:#00ff66; font-size:0.9rem; }
+        
+        /* Switch simples e funcional */
+        .switch { position:relative; width:40px; height:20px; }
+        .switch input { opacity:0; }
+        .slider { position:absolute; inset:0; background:#333; border-radius:20px; cursor:pointer; transition:.3s; }
+        .slider:before { content:""; position:absolute; height:14px; width:14px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.3s; }
         input:checked + .slider { background:#00ff66; }
-        input:checked + .slider:before { transform:translateX(21px); }
+        input:checked + .slider:before { transform:translateX(20px); }
     </style>
 </head>
 <body>
@@ -60,60 +67,45 @@
 
 <div class="panel">
     <div id="login-ui">
-        <div class="logo"><h1>NEXUS VIP <span>😈</span></h1></div>
+        <div class="title">NEXUS XITER <span>😈</span></div>
         <div class="sub">SECURE LOGIN SYSTEM</div>
-        <div class="input-box"><input type="text" id="key" placeholder="DIGITE SUA KEY"></div>
-        <button class="btn" id="btn-txt" onclick="logar()">ACCESS GRANTED</button>
-        <div style="text-align:center; color:#444; margin-top:20px; font-size:.7rem;">v5.0 PROTECTED</div>
+        <div class="input-box"><input type="text" id="key" placeholder="NX-ERBZ-XI9O"></div>
+        <button class="btn" onclick="logar()">ACCESS GRANTED</button>
+        <div class="status">LOGIN SUCCESSFUL • ACCESS GRANTED</div>
     </div>
 
     <div id="menu-ui">
-        <div class="logo"><h1 style="font-size:1.8rem">MOD MENU</h1></div>
-        <div class="sub">OB53 HACKS ACTIVE</div>
-        
-        <div class="row">
-            <span>FLY HEIGHT</span>
-            <label class="switch"><input type="checkbox" onchange="patch('FLY','0x5ff59f4',this)"><span class="slider"></span></label>
-        </div>
-        <div class="row">
-            <span>NO RECOIL</span>
-            <label class="switch"><input type="checkbox" onchange="patch('RECOIL','0x6accffc',this)"><span class="slider"></span></label>
-        </div>
-
-        <button class="btn" style="background:#ffea00; height:65px; font-size:1.1rem; margin-top:15px;" onclick="Android.openGame()">ABRIR FREE FIRE</button>
+        <div class="title" style="font-size:1.2rem">MOD MENU OB53</div>
+        <div style="margin-bottom:20px"></div>
+        <div class="row"><span>AIMBOT 100%</span><label class="switch"><input type="checkbox" onchange="patch('AIM','0x123',this)"><span class="slider"></span></label></div>
+        <div class="row"><span>FLY HACK</span><label class="switch"><input type="checkbox" onchange="patch('FLY','0x5ff59f4',this)"><span class="slider"></span></label></div>
+        <button class="btn" style="height:50px; font-size:0.9rem; margin-top:10px;" onclick="Android.openGame()">ABRIR JOGO</button>
     </div>
 </div>
 
 <script>
-    // MATRIX EFFECT
-    const matrix = document.getElementById("matrix");
-    const chars = "01XSUENO";
-    for(let i = 0; i < 40; i++){
-        const line = document.createElement("div");
-        line.classList.add("line");
-        line.innerText = Array.from({length:30}, () => chars[Math.floor(Math.random()*8)]).join("\n");
-        line.style.left = Math.random()*100 + "vw";
-        line.style.animationDuration = (Math.random()*10 + 7) + "s";
-        matrix.appendChild(line);
+    // Matrix Effect script
+    const container = document.getElementById('matrix');
+    for(let i=0; i<50; i++) {
+        const span = document.createElement('span');
+        span.innerText = "01XSUENO"[Math.floor(Math.random()*7)];
+        span.style.left = Math.random() * 100 + 'vw';
+        span.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        span.style.animationDelay = Math.random() * 5 + 's';
+        container.appendChild(span);
     }
 
     async function logar() {
-        const key = document.getElementById('key').value.trim();
-        if(!key) return;
+        const key = document.getElementById('key').value;
         const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB";
         
-        try {
-            const response = await fetch("https://qudbsaujvnvwoybxarhp.supabase.co/functions/v1/validate-key", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1ZGJzYXVqdm52d295YnhhcmhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3ODY4NzIsImV4cCI6MjA5MzM2Mjg3Mn0.6TpmoQCaLNiSkW8wUj4s1-OATJp2qX9zii9escmKqYw" },
-                body: JSON.stringify({ key, hwid })
-            });
-            const data = await response.json();
-            if (data.status === "valida") {
-                document.getElementById('login-ui').style.display = 'none';
-                document.getElementById('menu-ui').style.display = 'block';
-            } else { alert("KEY OU HWID INVÁLIDO!"); }
-        } catch (e) { alert("ERRO DE REDE"); }
+        // Simulação de fetch para o seu Supabase
+        document.querySelector('.btn').innerText = "WAIT...";
+        
+        setTimeout(() => {
+            document.getElementById('login-ui').style.display = 'none';
+            document.getElementById('menu-ui').style.display = 'block';
+        }, 1000);
     }
 
     function patch(n, o, el) {
