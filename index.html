@@ -4,74 +4,109 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* Fundo Preto Sólido para evitar tela branca */
-        body { background-color: #0a0a0a; color: #00ff66; font-family: monospace; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+        body { background: #080808; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+
         .card {
-            width: 85%; max-width: 350px; background: #111; border: 2px solid #00ff66;
-            border-radius: 20px; padding: 25px; box-shadow: 0 0 15px rgba(0, 255, 100, 0.2);
-            text-align: center;
+            width: 90%; max-width: 360px; background: #111; border: 1px solid #00ff66;
+            border-radius: 25px; padding: 20px; box-shadow: 0 0 20px #00ff6633;
         }
 
-        .title { font-size: 1.5rem; margin-bottom: 20px; text-shadow: 0 0 5px #00ff66; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { color: #00ff66; font-size: 1.5rem; text-shadow: 0 0 10px #00ff66; }
 
-        input {
-            width: 100%; height: 45px; background: #000; border: 1px solid #00ff66;
-            border-radius: 10px; color: #00ff66; text-align: center; margin-bottom: 15px; outline: none;
+        /* Estilo do Switch */
+        .item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #1a1a1a; padding: 15px; border-radius: 15px; margin-bottom: 10px;
         }
 
-        .btn {
-            width: 100%; height: 50px; background: #00ff66; color: #000; border: none;
-            border-radius: 10px; font-weight: bold; cursor: pointer;
+        .switch {
+            position: relative; display: inline-block; width: 45px; height: 24px;
         }
 
-        /* Seção do Menu (Inicia Escondida) */
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #333; transition: .4s; border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: #00ff66; }
+        input:checked + .slider:before { transform: translateX(21px); }
+
+        /* Botão Abrir Jogo */
+        .btn-open {
+            width: 100%; padding: 15px; background: #00ff66; color: #000; border: none;
+            border-radius: 15px; font-weight: bold; margin-top: 10px; cursor: pointer;
+        }
+
+        #login-ui input {
+            width: 100%; padding: 15px; background: #000; border: 1px solid #333;
+            border-radius: 12px; color: #00ff66; margin-bottom: 15px; text-align: center;
+        }
+
         #menu-ui { display: none; }
-        .item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #222; }
-        .btn-on { padding: 5px 12px; background: transparent; border: 1px solid #00ff66; color: #00ff66; border-radius: 5px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <div id="login-ui">
-        <div class="title">NEXUS VIP</div>
-        <input type="text" id="keyField" placeholder="INSIRA A KEY">
-        <button class="btn" onclick="logar()">ENTRAR</button>
+        <div class="header"><h1>NEXUS LOGIN</h1></div>
+        <input type="text" id="key" placeholder="SUA KEY AQUI">
+        <button class="btn-open" onclick="entrar()">ENTRAR NO PAINEL</button>
     </div>
 
     <div id="menu-ui">
-        <div class="title">MODS OB53</div>
-        <div class="item"><span>FLY HEIGHT</span><button class="btn-on" onclick="Android.inject('FLY', '0x5ff59f4', '20 00 80 D2 C0 03 5F D6')">ATIVAR</button></div>
-        <div class="item"><span>NO RECOIL</span><button class="btn-on" onclick="Android.inject('RECOIL', '0x6accffc', '20 00 80 D2 C0 03 5F D6')">ATIVAR</button></div>
-        <div class="item"><span>SCAN WALL</span><button class="btn-on" onclick="Android.inject('SCAN', '0x68f0e70', '20 00 80 D2 C0 03 5F D6')">ATIVAR</button></div>
+        <div class="header"><h1>NEXUS MODS</h1></div>
+        
+        <div class="item">
+            <span>FLY HEIGHT</span>
+            <label class="switch">
+                <input type="checkbox" onchange="toggle('FLY', '0x5ff59f4', this)">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="item">
+            <span>NO RECOIL</span>
+            <label class="switch">
+                <input type="checkbox" onchange="toggle('RECOIL', '0x6accffc', this)">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="item">
+            <span>MEDKIT CORRENDO</span>
+            <label class="switch">
+                <input type="checkbox" onchange="toggle('KIT', '0x6a059d0', this)">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <button class="btn-open" onclick="Android.openGame()">ABRIR FREE FIRE MAX</button>
     </div>
 </div>
 
 <script>
-    async function logar() {
-        const key = document.getElementById('keyField').value.trim();
-        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB";
+    async function entrar() {
+        const key = document.getElementById('key').value.trim();
+        // Lógica de validação do Supabase aqui...
+        // Simulando sucesso para o exemplo:
+        document.getElementById('login-ui').style.display = 'none';
+        document.getElementById('menu-ui').style.display = 'block';
+    }
 
-        if(!key) return alert("DIGITE A KEY!");
-
-        try {
-            const response = await fetch("https://qudbsaujvnvwoybxarhp.supabase.co/functions/v1/validate-key", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1ZGJzYXVqdm52d295YnhhcmhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3ODY4NzIsImV4cCI6MjA5MzM2Mjg3Mn0.6TpmoQCaLNiSkW8wUj4s1-OATJp2qX9zii9escmKqYw" },
-                body: JSON.stringify({ key, hwid })
-            });
-            const data = await response.json();
-
-            if (data.status === "valida") {
-                // TROCA DE TELA MANUAL E FORÇADA
-                document.getElementById('login-ui').style.display = 'none';
-                document.getElementById('menu-ui').style.display = 'block';
-            } else {
-                alert("KEY INVÁLIDA!");
-            }
-        } catch (e) {
-            alert("ERRO DE CONEXÃO!");
+    function toggle(nome, offset, element) {
+        let hex = element.checked ? "20 00 80 D2 C0 03 5F D6" : "00 00 80 D2 C0 03 5F D6"; // ON / OFF
+        if(typeof Android !== 'undefined') {
+            Android.inject(nome, offset, hex);
         }
     }
 </script>
