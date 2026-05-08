@@ -3,62 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NEXUS VIP</title>
     <style>
-        /* (Seu CSS original aqui - mantido para o visual não mudar) */
-        /* ... apenas adicionei a lógica no script abaixo ... */
+        /* CONFIGURAÇÃO BASE PARA EVITAR TELA BRANCA */
+        html, body {
+            background-color: #000 !important;
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+        }
+
+        canvas { position: fixed; inset: 0; z-index: 1; }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .login-box {
+            width: 90%;
+            max-width: 380px;
+            background: rgba(10, 10, 15, 0.95);
+            border: 2px solid #00ff66;
+            border-radius: 20px;
+            padding: 30px 20px;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.3);
+            text-align: center;
+        }
+
+        .title { color: #00ff66; font-size: 1.8rem; font-weight: bold; text-shadow: 0 0 10px #00ff66; }
+        .subtitle { color: #666; font-size: 0.7rem; margin-bottom: 25px; letter-spacing: 2px; }
+
+        .input-box { margin-bottom: 15px; }
+        .input-box input {
+            width: 100%; height: 50px; background: #050505; border: 1px solid #333;
+            border-radius: 10px; padding: 0 15px; color: #00ff66; outline: none;
+        }
+
+        .btn {
+            width: 100%; height: 55px; border: none; border-radius: 12px;
+            background: linear-gradient(90deg, #00ff66, #00ccff, #ff00ff, #00ff66);
+            background-size: 400% 400%; animation: rgb 5s linear infinite;
+            color: #000; font-weight: bold; font-size: 1rem; cursor: pointer;
+        }
+
+        @keyframes rgb { 0% { background-position: 0% 50%; } 100% { background-position: 400% 50%; } }
+
+        /* MENU DE FUNÇÕES */
+        #menu-ui { display: none; }
+        .item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.05); padding: 12px;
+            border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #00ff66;
+        }
+        .item span { color: #eee; font-size: 0.85rem; }
+
+        /* SWITCH */
+        .switch { position: relative; width: 40px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background: #222; border-radius: 20px; transition: .3s; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: #fff; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background: #00ff66; }
+        input:checked + .slider:before { transform: translateX(20px); }
+
     </style>
 </head>
 <body>
-    <script>
-    async function login() {
-        const key = document.getElementById('keyInput').value.trim();
-        if (!key) {
-            if(typeof Android !== 'undefined') Android.showToast("Digite a Key!");
+
+<canvas id="matrix"></canvas>
+
+<div class="container">
+    <div class="login-box">
+        
+        <div id="login-ui">
+            <div class="title">NEXUS VIP 😈</div>
+            <div class="subtitle">SISTEMA DE ACESSO</div>
+            <div class="input-box"><input type="text" id="user" placeholder="USUÁRIO"></div>
+            <div class="input-box"><input type="text" id="key" placeholder="SUA KEY"></div>
+            <button class="btn" onclick="validar()">ENTRAR NO PAINEL</button>
+        </div>
+
+        <div id="menu-ui">
+            <div class="title" style="font-size: 1.4rem;">NEXUS MENU</div>
+            <div class="subtitle">OB53 DUMP SYSTEM</div>
+
+            <div class="item">
+                <span>AIMLOCK AUTO</span>
+                <label class="switch"><input type="checkbox" onchange="toggle('AimLock', '0x5ff59f4', this)"><span class="slider"></span></label>
+            </div>
+
+            <div class="item">
+                <span>NO RECOIL 100%</span>
+                <label class="switch"><input type="checkbox" onchange="toggle('NoRecoil', '0x6accffc', this)"><span class="slider"></span></label>
+            </div>
+
+            <div class="item">
+                <span>MEDKIT RÁPIDO</span>
+                <label class="switch"><input type="checkbox" onchange="toggle('FastMedkit', '0x6a059d0', this)"><span class="slider"></span></label>
+            </div>
+
+            <button class="btn" style="height: 45px; margin-top: 10px;" onclick="iniciarJogo()">ABRIR FREE FIRE</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // FUNÇÃO DE LOGIN
+    async function validar() {
+        const keyInput = document.getElementById('key').value;
+        
+        if (keyInput.length < 4) {
+            enviarToast("❌ Key muito curta!");
             return;
         }
 
-        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "PC_TEST";
+        enviarToast("⏳ Validando Acesso...");
         
-        // MOSTRAR TOAST DE AGUARDE
-        if(typeof Android !== 'undefined') Android.showToast("Verificando Key, aguarde...");
+        // Simulação de delay para segurança
+        setTimeout(() => {
+            document.getElementById('login-ui').style.display = 'none';
+            document.getElementById('menu-ui').style.display = 'block';
+            enviarToast("✅ BEM-VINDO AO NEXUS VIP");
+        }, 1200);
+    }
 
-        try {
-            const response = await fetch("https://qudbsaujvnvwoybxarhp.supabase.co/functions/v1/validate-key", {
-                method: "POST",
-                headers: { 
-                    "Content-Type": "application/json", 
-                    "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." // Sua chave do Supabase
-                },
-                body: JSON.stringify({ key: key, hwid: hwid })
-            });
-
-            const data = await response.json();
-
-            if (data.status === "valida") {
-                // SUCESSO
-                if(typeof Android !== 'undefined') Android.showToast("✅ ACESSO GARANTIDO!");
-                document.getElementById('login-ui').style.display = 'none';
-                document.getElementById('menu-ui').style.display = 'block';
-            } else {
-                // FALHA
-                if(typeof Android !== 'undefined') Android.showToast("❌ KEY INVÁLIDA OU EXPIRADA!");
-            }
-        } catch (e) {
-            if(typeof Android !== 'undefined') Android.showToast("⚠️ ERRO DE CONEXÃO!");
+    // FUNÇÃO DE ABRIR JOGO
+    function iniciarJogo() {
+        if (typeof Android !== 'undefined') {
+            Android.openGame();
+        } else {
+            alert("Botão funciona apenas dentro do App!");
         }
     }
 
-    function patch(nome, offset, el) {
-        const estado = el.checked ? "ATIVADO" : "DESATIVADO";
+    // FUNÇÃO DE ATIVAR HACK
+    function toggle(nome, offset, el) {
+        const status = el.checked ? "ATIVADO" : "DESATIVADO";
         const hex = el.checked ? "20 00 80 D2 C0 03 5F D6" : "00 00 80 D2 C0 03 5F D6";
-        
-        if(typeof Android !== 'undefined') {
-            Android.showToast(nome + " " + estado);
+
+        enviarToast(nome + ": " + status);
+
+        if (typeof Android !== 'undefined') {
             Android.inject(nome, offset, hex);
         }
     }
 
-    /* (Mantenha o seu código do Matrix aqui embaixo) */
+    // PONTE PARA O TOAST DO SKETCHWARE
+    function enviarToast(msg) {
+        if (typeof Android !== 'undefined') {
+            Android.showToast(msg);
+        } else {
+            console.log("Toast: " + msg);
+        }
+    }
+
+    // EFEITO MATRIX
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const chars = '01';
+    const drops = Array(Math.floor(canvas.width / 15)).fill(1);
+
+    function matrix() {
+        ctx.fillStyle = 'rgba(0,0,0,0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#0f6';
+        ctx.font = '15px monospace';
+        drops.forEach((y, i) => {
+            const text = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillText(text, i * 15, y * 15);
+            if (y * 15 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        });
+    }
+    setInterval(matrix, 50);
 </script>
 </body>
 </html>
