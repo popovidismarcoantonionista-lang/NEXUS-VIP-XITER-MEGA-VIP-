@@ -1,394 +1,116 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-
-<title>NEXUS PANEL</title>
-
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
-}
+    * { margin:0; padding:0; box-sizing:border-box; font-family: 'Courier New', Courier, monospace; }
+    body { height:100vh; background:#000; display:flex; justify-content:center; align-items:center; overflow:hidden; position:relative; }
 
-body{
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    overflow:hidden;
-    background:#050505;
-    color:white;
-}
+    /* Matrix Canvas Background */
+    #m { position:absolute; inset:0; z-index:0; }
 
-/* FUNDO RGB */
-body::before{
-    content:"";
-    position:absolute;
-    width:500px;
-    height:500px;
-    background:#00ff88;
-    filter:blur(180px);
-    opacity:.18;
-    animation:rgbMove 8s infinite alternate;
-}
-
-@keyframes rgbMove{
-    0%{
-        transform:translate(-200px,-150px);
-        background:#00ff88;
+    /* Card Principal - Fiel à Foto */
+    .panel {
+        position:relative; z-index:10; width:90%; max-width:380px;
+        background: rgba(10, 10, 10, 0.95);
+        border: 2px solid #00ff66; /* Borda verde neon fixa */
+        border-radius: 35px;
+        padding: 30px;
+        box-shadow: 0 0 25px #00ff66; /* Brilho externo verde */
+        text-align:center;
     }
-    50%{
-        transform:translate(200px,100px);
-        background:#00aaff;
+
+    .logo h1 { color:#00ff66; font-size:2rem; font-weight:bold; text-shadow: 0 0 10px #00ff66; }
+    .logo span { color: #ff00ff; filter: drop-shadow(0 0 5px #ff00ff); } /* Emoji roxo/rosa */
+    .sub { color:#666; font-size:0.7rem; letter-spacing:3px; margin: 10px 0 30px 0; }
+
+    /* Input Estilo Foto */
+    .input-box input {
+        width:100%; height:65px; background: transparent; border: 1px solid #00ff66;
+        border-radius: 20px; color:#00ff66; padding:0 20px; outline:none; font-size:1rem;
+        margin-bottom:20px; box-shadow: inset 0 0 5px rgba(0,255,102,0.1);
     }
-    100%{
-        transform:translate(-100px,200px);
-        background:#a855ff;
+
+    /* Botão Gradiente Metálico da Foto */
+    .btn {
+        width:100%; height:75px; border:none; border-radius:22px;
+        background: linear-gradient(to right, #9d50bb, #ff00cc); /* Roxo para Rosa */
+        color:#000; font-weight:bold; font-size:1.3rem; cursor:pointer;
+        box-shadow: 0 5px 15px rgba(157, 80, 187, 0.4);
+        margin-bottom:20px; text-transform: uppercase;
     }
-}
 
-.panel{
-    position:relative;
-    width:92%;
-    max-width:390px;
-
-    background:rgba(15,15,15,.82);
-    backdrop-filter:blur(15px);
-
-    border:1px solid rgba(255,255,255,.08);
-
-    border-radius:30px;
-
-    padding:22px;
-
-    box-shadow:
-    0 0 30px rgba(0,255,136,.10),
-    inset 0 0 30px rgba(255,255,255,.03);
-
-    z-index:2;
-}
-
-/* TOPO */
-
-.logo{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    margin-bottom:25px;
-}
-
-.logo-circle{
-    width:75px;
-    height:75px;
-    border-radius:50%;
-
-    background:linear-gradient(135deg,#00ff88,#00aaff);
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    font-size:28px;
-    font-weight:bold;
-    color:#000;
-
-    box-shadow:
-    0 0 25px rgba(0,255,136,.4);
-}
-
-.logo h1{
-    margin-top:12px;
-    font-size:1.3rem;
-    letter-spacing:2px;
-}
-
-.logo p{
-    color:#888;
-    font-size:.8rem;
-    margin-top:4px;
-}
-
-/* INPUT */
-
-.input-box{
-    margin-bottom:18px;
-}
-
-.input-box input{
-    width:100%;
-    height:55px;
-
-    background:#0d0d0d;
-
-    border:1px solid rgba(255,255,255,.08);
-
-    border-radius:16px;
-
-    padding:0 18px;
-
-    color:#00ff88;
-
-    outline:none;
-
-    transition:.25s;
-}
-
-.input-box input:focus{
-    border-color:#00ff88;
-
-    box-shadow:
-    0 0 15px rgba(0,255,136,.25);
-}
-
-/* BOTÃO */
-
-.btn{
-    width:100%;
-    height:55px;
-
-    border:none;
-
-    border-radius:16px;
-
-    background:linear-gradient(135deg,#00ff88,#00d26f);
-
-    color:#000;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-    transition:.25s;
-}
-
-.btn:hover{
-    transform:translateY(-2px);
-
-    box-shadow:
-    0 10px 25px rgba(0,255,136,.25);
-}
-
-/* MENU */
-
-#menu-ui{
-    display:none;
-}
-
-.section-title{
-    color:#00ff88;
-    margin-bottom:15px;
-    font-size:.95rem;
-    letter-spacing:1px;
-}
-
-.row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    background:rgba(255,255,255,.03);
-
-    border:1px solid rgba(255,255,255,.04);
-
-    padding:15px;
-
-    border-radius:18px;
-
-    margin-bottom:12px;
-
-    transition:.25s;
-}
-
-.row:hover{
-    background:rgba(255,255,255,.05);
-}
-
-.row span{
-    font-size:.92rem;
-    font-weight:600;
-}
-
-/* SWITCH */
-
-.switch{
-    position:relative;
-    width:52px;
-    height:28px;
-}
-
-.switch input{
-    opacity:0;
-    width:0;
-    height:0;
-}
-
-.slider{
-    position:absolute;
-    inset:0;
-
-    background:#262626;
-
-    border-radius:30px;
-
-    cursor:pointer;
-
-    transition:.3s;
-}
-
-.slider:before{
-    content:"";
-
-    position:absolute;
-
-    width:22px;
-    height:22px;
-
-    left:3px;
-    top:3px;
-
-    border-radius:50%;
-
-    background:white;
-
-    transition:.3s;
-}
-
-.switch input:checked + .slider{
-    background:#00ff88;
-
-    box-shadow:
-    0 0 12px rgba(0,255,136,.45);
-}
-
-.switch input:checked + .slider:before{
-    transform:translateX(24px);
-}
-
-/* FOOTER */
-
-.footer{
-    margin-top:18px;
-    text-align:center;
-    color:#666;
-    font-size:.75rem;
-}
+    /* Caixa de Status Verde */
+    .status {
+        border: 1px solid #004422; border-radius: 18px; padding: 18px;
+        color:#00ff66; font-size:0.85rem; background: rgba(0,255,102,0.05);
+    }
+
+    /* Menu de Hacks */
+    #menu-ui { display: none; }
+    .row { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; color:#00ff66; }
+    .switch { position:relative; width:40px; height:20px; }
+    .switch input { opacity:0; }
+    .slider { position:absolute; inset:0; background:#333; border-radius:20px; cursor:pointer; }
+    .slider:before { content:""; position:absolute; height:14px; width:14px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.3s; }
+    input:checked + .slider { background:#00ff66; }
+    input:checked + .slider:before { transform:translateX(20px); }
 </style>
 </head>
-
 <body>
 
+<canvas id="m"></canvas>
+
 <div class="panel">
-
-    <!-- LOGIN -->
     <div id="login-ui">
-
-        <div class="logo">
-            <div class="logo-circle">N</div>
-            <h1>NEXUS PANEL</h1>
-            <p>Premium Gaming Interface</p>
-        </div>
-
-        <div class="input-box">
-            <input type="text" id="key" placeholder="Digite sua Key">
-        </div>
-
-        <button class="btn" onclick="logar()">
-            ENTRAR NO PAINEL
-        </button>
-
-        <div class="footer">
-            Sistema seguro • Interface Premium
-        </div>
-
+        <div class="logo"><h1>NEXUS XITER <span>😈</span></h1></div>
+        <div class="sub">SECURE LOGIN SYSTEM</div>
+        <div class="input-box"><input type="text" id="key" placeholder="NX-ERBZ-XI9O"></div>
+        <button class="btn" onclick="logar()">LOGIN MOD</button>
+        <div class="status">LOGIN SUCCESSFUL • ACCESS GRANTED</div>
     </div>
 
-    <!-- MENU -->
     <div id="menu-ui">
-
-        <div class="logo">
-            <div class="logo-circle">N</div>
-            <h1>NEXUS MENU</h1>
-            <p>Painel conectado</p>
-        </div>
-
-        <div class="section-title">
-            FUNÇÕES
-        </div>
-
-        <div class="row">
-            <span>AIM ASSIST</span>
-
-            <label class="switch">
-                <input type="checkbox">
-                <span class="slider"></span>
-            </label>
-        </div>
-
-        <div class="row">
-            <span>VISUAL BOOST</span>
-
-            <label class="switch">
-                <input type="checkbox">
-                <span class="slider"></span>
-            </label>
-        </div>
-
-        <div class="row">
-            <span>FPS BOOST</span>
-
-            <label class="switch">
-                <input type="checkbox">
-                <span class="slider"></span>
-            </label>
-        </div>
-
-        <div class="row">
-            <span>ULTRA GRAPHICS</span>
-
-            <label class="switch">
-                <input type="checkbox">
-                <span class="slider"></span>
-            </label>
-        </div>
-
-        <button class="btn" style="margin-top:10px;">
-            ABRIR JOGO
-        </button>
-
+        <div class="logo"><h1>MOD MENU</h1></div>
+        <div class="sub">HACKS ATIVOS</div>
+        <div class="row"><span>AIMBOT 100%</span><label class="switch"><input type="checkbox" onchange="patch('AIM','0x123',this)"><span class="slider"></span></label></div>
+        <div class="row"><span>FLY HACK</span><label class="switch"><input type="checkbox" onchange="patch('FLY','0x5ff59f4',this)"><span class="slider"></span></label></div>
+        <button class="btn" style="height:55px; font-size:1rem;" onclick="Android.openGame()">ABRIR JOGO</button>
     </div>
-
 </div>
 
 <script>
+    // Matrix Effect fluído (Canvas)
+    const c = document.getElementById('m');
+    const q = c.getContext('2d');
+    c.width = window.innerWidth; c.height = window.innerHeight;
+    const s = 16; const d = Array(Math.ceil(c.width/s)).fill(1);
+    function draw() {
+        q.fillStyle = "rgba(0,0,0,0.05)"; q.fillRect(0,0,c.width,c.height);
+        q.fillStyle = "#00ff66"; q.font = s+"px monospace";
+        d.forEach((y, i) => {
+            q.fillText("01XSUENO"[Math.floor(Math.random()*8)], i*s, y*s);
+            if (y*s > c.height && Math.random() > 0.975) d[i] = 0;
+            d[i]++;
+        });
+    }
+    setInterval(draw, 35);
 
-async function logar(){
-
-    const key = document.getElementById('key').value.trim();
-
-    if(key.length < 3){
-
-        alert("Digite uma key válida");
-        return;
+    async function logar() {
+        const btn = document.querySelector('.btn');
+        btn.innerText = "WAIT...";
+        // Simulação de login - após 1s libera o menu
+        setTimeout(() => {
+            document.getElementById('login-ui').style.display='none';
+            document.getElementById('menu-ui').style.display='block';
+        }, 1000);
     }
 
-    const btn = document.querySelector('.btn');
-
-    btn.innerHTML = "CONECTANDO...";
-    btn.style.opacity = ".7";
-
-    setTimeout(()=>{
-
-        document.getElementById('login-ui').style.display = "none";
-        document.getElementById('menu-ui').style.display = "block";
-
-    },1200);
-}
-
+    function patch(n, o, el) {
+        let hex = el.checked ? "20 00 80 D2 C0 03 5F D6" : "00 00 80 D2 C0 03 5F D6";
+        if(typeof Android !== 'undefined') Android.inject(n, o, hex);
+    }
 </script>
-
 </body>
 </html>
