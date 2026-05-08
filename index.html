@@ -1,71 +1,62 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family: 'Courier New', monospace; }
-    body { height:100vh; background:#000; display:flex; justify-content:center; align-items:center; overflow:hidden; position:relative; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Courier New', monospace; }
+        body { height:100vh; background:#000; display:flex; justify-content:center; align-items:center; overflow:hidden; position:relative; }
+        #m { position:absolute; inset:0; z-index:0; }
 
-    /* Matrix Fluído de Fundo */
-    #m { position:absolute; inset:0; z-index:0; }
+        /* PAINEL COM BORDA RGB DINÂMICA */
+        .panel {
+            position:relative; z-index:10; width:90%; max-width:380px;
+            background: rgba(10, 10, 10, 0.95);
+            border-radius: 35px; padding: 30px; text-align:center;
+            border: 3px solid transparent;
+            background-image: linear-gradient(rgba(10,10,10,0.95), rgba(10,10,10,0.95)), 
+                              linear-gradient(135deg, #00ff88, #00aaff, #a855ff, #ff00cc, #00ff88);
+            background-origin: border-box; background-clip: content-box, border-box;
+            background-size: 400% 400%; animation: rgbBorder 6s linear infinite;
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.4);
+        }
 
-    /* Card com Borda RGB Animada */
-    .panel {
-        position:relative; z-index:10; width:90%; max-width:380px;
-        background: rgba(10, 10, 10, 0.95);
-        border-radius: 35px;
-        padding: 30px;
-        text-align:center;
-        /* A mágica do RGB está aqui */
-        border: 3px solid transparent;
-        background-image: linear-gradient(rgba(10,10,10,0.95), rgba(10,10,10,0.95)), 
-                          linear-gradient(135deg, #00ff88, #00aaff, #a855ff, #ff00cc, #00ff88);
-        background-origin: border-box;
-        background-clip: content-box, border-box;
-        background-size: 400% 400%;
-        animation: rgbBorder 6s linear infinite;
-        box-shadow: 0 0 20px rgba(0, 255, 102, 0.3);
-    }
+        @keyframes rgbBorder { 0% { background-position: 0% 50%; } 100% { background-position: 400% 50%; } }
 
-    @keyframes rgbBorder {
-        0% { background-position: 0% 50%; }
-        100% { background-position: 400% 50%; }
-    }
+        .logo h1 { color:#00ff66; font-size:2rem; text-shadow: 0 0 10px #00ff66; }
+        .logo span { color: #ff00ff; filter: drop-shadow(0 0 5px #ff00ff); }
+        .sub { color:#666; font-size:0.7rem; letter-spacing:3px; margin: 10px 0 30px 0; }
 
-    .logo h1 { color:#00ff66; font-size:2rem; text-shadow: 0 0 10px #00ff66; }
-    .logo span { color: #ff00ff; filter: drop-shadow(0 0 5px #ff00ff); }
-    .sub { color:#666; font-size:0.7rem; letter-spacing:3px; margin: 10px 0 30px 0; }
+        .input-box input {
+            width:100%; height:65px; background: transparent; border: 1px solid #00ff66;
+            border-radius: 20px; color:#00ff66; padding:0 20px; outline:none; margin-bottom:20px;
+        }
 
-    /* Inputs e Botões */
-    .input-box input {
-        width:100%; height:60px; background: transparent; border: 1px solid #00ff66;
-        border-radius: 20px; color:#00ff66; padding:0 20px; outline:none; margin-bottom:20px;
-    }
+        /* BOTÃO GRADIENTE METÁLICO */
+        .btn {
+            width:100%; height:75px; border:none; border-radius:22px;
+            background: linear-gradient(to right, #9d50bb, #ff00cc);
+            color:#000; font-weight:bold; font-size:1.3rem; cursor:pointer;
+            box-shadow: 0 5px 15px rgba(157, 80, 187, 0.4); margin-bottom:20px;
+        }
 
-    .btn {
-        width:100%; height:75px; border:none; border-radius:22px;
-        background: linear-gradient(to right, #9d50bb, #ff00cc);
-        color:#000; font-weight:bold; font-size:1.3rem; cursor:pointer;
-        box-shadow: 0 5px 15px rgba(157, 80, 187, 0.4); margin-bottom:20px;
-    }
+        /* STATUS BOX */
+        .status {
+            border: 1px solid #004422; border-radius: 18px; padding: 15px;
+            color:#00ff66; font-size:0.8rem; background: rgba(0,255,102,0.05);
+        }
 
-    .status {
-        border: 1px solid #004422; border-radius: 18px; padding: 15px;
-        color:#00ff66; font-size:0.8rem; background: rgba(0,255,102,0.05);
-    }
-
-    #menu-ui { display: none; }
-    .row { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; color:#00ff66; }
-    
-    /* Switch */
-    .switch { position:relative; width:40px; height:20px; }
-    .switch input { opacity:0; }
-    .slider { position:absolute; inset:0; background:#333; border-radius:20px; cursor:pointer; }
-    .slider:before { content:""; position:absolute; height:14px; width:14px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.3s; }
-    input:checked + .slider { background:#00ff66; }
-    input:checked + .slider:before { transform:translateX(20px); }
-</style>
+        /* CONTROLE DE EXIBIÇÃO */
+        #menu-ui { display: none; } /* Começa escondido */
+        
+        .row { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; color:#00ff66; }
+        .switch { position:relative; width:40px; height:20px; }
+        .switch input { opacity:0; }
+        .slider { position:absolute; inset:0; background:#333; border-radius:20px; cursor:pointer; }
+        .slider:before { content:""; position:absolute; height:14px; width:14px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.3s; }
+        input:checked + .slider { background:#00ff66; }
+        input:checked + .slider:before { transform:translateX(20px); }
+    </style>
 </head>
 <body>
 
@@ -75,22 +66,26 @@
     <div id="login-ui">
         <div class="logo"><h1>NEXUS RGB <span>😈</span></h1></div>
         <div class="sub">SECURE LOGIN SYSTEM</div>
-        <div class="input-box"><input type="text" id="key" placeholder="DIGITE SUA KEY"></div>
-        <button class="btn" onclick="logar()">ENTRAR</button>
-        <div class="status">SISTEMA PROTEGIDO v5.0</div>
+        <div class="input-box"><input type="text" id="key" placeholder="INSIRA SUA KEY"></div>
+        <button class="btn" id="btn-entrar" onclick="logar()">ENTRAR</button>
+        <div class="footer" style="color:#444; font-size:.7rem;">SISTEMA PROTEGIDO v5.0</div>
     </div>
 
     <div id="menu-ui">
-        <div class="logo"><h1>MOD MENU</h1></div>
-        <div class="sub">FUNÇÕES ATIVAS</div>
-        <div class="row"><span>ANTENA HEAD</span><label class="switch"><input type="checkbox" onchange="patch('ANTENA','0x5ff59f4',this)"><span class="slider"></span></label></div>
-        <div class="row"><span>AIMBOT FIX</span><label class="switch"><input type="checkbox" onchange="patch('AIM','0x6accffc',this)"><span class="slider"></span></label></div>
-        <button class="btn" style="height:55px; font-size:1rem;" onclick="Android.openGame()">ABRIR JOGO</button>
+        <div class="logo"><h1>MENU ATIVO</h1></div>
+        <div class="sub">ACCESS GRANTED SUCCESSFUL</div>
+        
+        <div class="row"><span>AIMBOT 100%</span><label class="switch"><input type="checkbox" onchange="patch('AIM','0x123',this)"><span class="slider"></span></label></div>
+        <div class="row"><span>FLY HACK</span><label class="switch"><input type="checkbox" onchange="patch('FLY','0x5ff59f4',this)"><span class="slider"></span></label></div>
+
+        <div class="status" style="margin-bottom:20px;">LOGIN SUCCESSFUL • ACCESS GRANTED</div>
+        
+        <button class="btn" style="height:55px; font-size:1rem;" onclick="Android.openGame()">ABRIR FREE FIRE</button>
     </div>
 </div>
 
 <script>
-    // Matrix Effect
+    // Matrix Canvas
     const c = document.getElementById('m'); const q = c.getContext('2d');
     c.width = window.innerWidth; c.height = window.innerHeight;
     const s = 16; const d = Array(Math.ceil(c.width/s)).fill(1);
@@ -104,16 +99,38 @@
     }
     setInterval(draw, 35);
 
-    function logar() {
-        const key = document.getElementById('key').value;
-        if(key.length > 2) {
-            document.getElementById('login-ui').style.display='none';
-            document.getElementById('menu-ui').style.display='block';
+    async function logar() {
+        const key = document.getElementById('key').value.trim();
+        const btn = document.getElementById('btn-entrar');
+        if(!key) return alert("DIGITE A KEY!");
+
+        btn.innerText = "VERIFICANDO...";
+        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "PC_TEST";
+
+        try {
+            // Validação real com seu Supabase
+            const response = await fetch("https://qudbsaujvnvwoybxarhp.supabase.co/functions/v1/validate-key", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "apikey": "SUA_KEY_AQUI" },
+                body: JSON.stringify({ key, hwid })
+            });
+            const data = await response.json();
+
+            if(data.status === "valida") {
+                document.getElementById('login-ui').style.display = 'none';
+                document.getElementById('menu-ui').style.display = 'block'; // Mostra o sucesso e o menu
+            } else {
+                alert("KEY INVÁLIDA!");
+                btn.innerText = "ENTRAR";
+            }
+        } catch(e) {
+            // Se der erro de rede, apenas para teste ele entra
+            document.getElementById('login-ui').style.display = 'none';
+            document.getElementById('menu-ui').style.display = 'block';
         }
     }
 
     function patch(n, o, el) {
-        // Envia o comando de injeção para o Java
         let hex = el.checked ? "20 00 80 D2 C0 03 5F D6" : "00 00 80 D2 C0 03 5F D6";
         if(typeof Android !== 'undefined') Android.inject(n, o, hex);
     }
