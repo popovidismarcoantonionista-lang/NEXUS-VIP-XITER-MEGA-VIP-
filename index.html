@@ -4,37 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Courier New', Courier, monospace; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Courier New', monospace; }
         body { height:100vh; background:#000; display:flex; justify-content:center; align-items:center; overflow:hidden; position:relative; }
 
-        /* Matrix Background denso */
-        .matrix { position:absolute; inset:0; z-index:0; font-size:15px; color:#00ff66; opacity:0.2; line-height:1; overflow:hidden; }
-        .matrix span { position:absolute; top:-20px; animation: fall linear infinite; }
-        @keyframes fall { to { transform: translateY(100vh); } }
+        /* NOVO: Canvas Matrix de alta performance */
+        #matrix-canvas { position:absolute; inset:0; z-index:0; width:100%; height:100%; }
 
-        /* Card Principal - Borda Verde Neon Fixa */
+        /* Card Principal - Borda Neon Fixa da foto */
         .panel {
             position:relative; z-index:10; width:90%; max-width:380px;
-            background: rgba(10, 10, 10, 0.95);
+            background: rgba(8, 8, 8, 0.96);
             border: 2px solid #00ff66;
             border-radius: 35px;
             padding: 30px;
-            box-shadow: 0 0 20px #00ff66, inset 0 0 10px rgba(0,255,102,0.2);
+            box-shadow: 0 0 25px rgba(0,255,102,0.7), inset 0 0 10px rgba(0,255,102,0.1);
             text-align:center;
+            backdrop-filter: blur(5px);
         }
 
         .title { color:#00ff66; font-size:1.8rem; font-weight:bold; letter-spacing:2px; text-shadow: 0 0 10px #00ff66; margin-bottom:5px; }
         .title span { color: #ff00ff; filter: drop-shadow(0 0 5px #ff00ff); }
-        .sub { color:#555; font-size:0.7rem; letter-spacing:3px; margin-bottom:30px; }
+        .sub { color:#666; font-size:0.7rem; letter-spacing:3px; margin-bottom:30px; }
 
         /* Input Estilo Foto */
         .input-box input {
             width:100%; height:60px; background: transparent; border: 1px solid #00ff66;
             border-radius: 15px; color:#00ff66; padding:0 15px; outline:none; font-size:1rem;
-            box-shadow: inset 0 0 5px rgba(0,255,102,0.2); margin-bottom:20px;
+            box-shadow: inset 0 0 5px rgba(0,255,102,0.1); margin-bottom:20px;
         }
 
-        /* Botão Roxo Metálico da Foto */
+        /* Botão Roxo/Rosa Metálico exato da foto */
         .btn {
             width:100%; height:70px; border:none; border-radius:20px;
             background: linear-gradient(to right, #9d50bb, #ff00cc);
@@ -52,7 +51,6 @@
         #menu-ui { display: none; }
         .row { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; color:#00ff66; font-size:0.9rem; }
         
-        /* Switch simples e funcional */
         .switch { position:relative; width:40px; height:20px; }
         .switch input { opacity:0; }
         .slider { position:absolute; inset:0; background:#333; border-radius:20px; cursor:pointer; transition:.3s; }
@@ -63,7 +61,7 @@
 </head>
 <body>
 
-<div class="matrix" id="matrix"></div>
+<canvas id="matrix-canvas"></canvas>
 
 <div class="panel">
     <div id="login-ui">
@@ -77,35 +75,65 @@
     <div id="menu-ui">
         <div class="title" style="font-size:1.2rem">MOD MENU OB53</div>
         <div style="margin-bottom:20px"></div>
-        <div class="row"><span>AIMBOT 100%</span><label class="switch"><input type="checkbox" onchange="patch('AIM','0x123',this)"><span class="slider"></span></label></div>
         <div class="row"><span>FLY HACK</span><label class="switch"><input type="checkbox" onchange="patch('FLY','0x5ff59f4',this)"><span class="slider"></span></label></div>
+        <div class="row"><span>NO RECOIL</span><label class="switch"><input type="checkbox" onchange="patch('RECOIL','0x6accffc',this)"><span class="slider"></span></label></div>
         <button class="btn" style="height:50px; font-size:0.9rem; margin-top:10px;" onclick="Android.openGame()">ABRIR JOGO</button>
     </div>
 </div>
 
 <script>
-    // Matrix Effect script
-    const container = document.getElementById('matrix');
-    for(let i=0; i<50; i++) {
-        const span = document.createElement('span');
-        span.innerText = "01XSUENO"[Math.floor(Math.random()*7)];
-        span.style.left = Math.random() * 100 + 'vw';
-        span.style.animationDuration = (Math.random() * 3 + 2) + 's';
-        span.style.animationDelay = Math.random() * 5 + 's';
-        container.appendChild(span);
+    // Matrix Effect via Canvas - Alta Performance e Fluidez
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('getDeviceId') ? ctx.getContext('2d') : canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const chars = "01XSUENO";
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+    const drops = [];
+
+    for (let i = 0; i < columns; i++) {
+        drops[i] = 1;
     }
+
+    function drawMatrix() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; // Cria o rastro
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#00ff66"; // Cor dos caracteres
+        ctx.font = fontSize + "px monospace";
+
+        for (let i = 0; i < drops.length; i++) {
+            const text = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0; // Reseta a coluna
+            }
+            drops[i]++;
+        }
+    }
+
+    setInterval(drawMatrix, 33); // Taxa de atualização (aprox. 30 FPS)
+
+    // Ajusta o canvas no redimensionamento
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
 
     async function logar() {
         const key = document.getElementById('key').value;
         const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB";
         
-        // Simulação de fetch para o seu Supabase
         document.querySelector('.btn').innerText = "WAIT...";
         
         setTimeout(() => {
             document.getElementById('login-ui').style.display = 'none';
             document.getElementById('menu-ui').style.display = 'block';
-        }, 1000);
+        }, 1200);
     }
 
     function patch(n, o, el) {
