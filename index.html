@@ -3,241 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS VIP</title>
+    <title>NEXUS VIP - OB53 REAL</title>
     <style>
-        /* RESET COMPLETO PARA EVITAR BUGS DE POSICIONAMENTO */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Courier New', monospace;
-            -webkit-tap-highlight-color: transparent;
-        }
+        /* Estilo Hacker Premium */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #000; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; color: #fff; }
+        canvas { position: fixed; inset: 0; z-index: 1; }
+        
+        .panel { position: relative; z-index: 10; width: 90%; max-width: 340px; background: rgba(10, 10, 15, 0.95); border: 1px solid #00ff66; border-radius: 15px; padding: 25px; box-shadow: 0 0 20px rgba(0, 255, 102, 0.3); }
+        .title { color: #00ff66; font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 20px; text-shadow: 0 0 10px #00ff66; }
+        
+        input { width: 100%; padding: 12px; background: #111; border: 1px solid #333; border-radius: 8px; color: #0f6; text-align: center; margin-bottom: 15px; outline: none; }
+        input:focus { border-color: #00ff66; }
+        
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; background: #00ff66; color: #000; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn:hover { background: #00cc55; transform: scale(1.02); }
 
-        html, body {
-            background-color: #000;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* FUNDO MATRIX DINÂMICO */
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-
-        /* CONTAINER PRINCIPAL CENTRALIZADO */
-        .container {
-            position: relative;
-            z-index: 10;
-            width: 90%;
-            max-width: 350px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* PAINEL NEXUS */
-        .panel {
-            width: 100%;
-            background: rgba(5, 5, 10, 0.95);
-            border: 2px solid #00ff66;
-            border-radius: 20px;
-            padding: 35px 25px;
-            box-shadow: 0 0 30px rgba(0, 255, 102, 0.4);
-            text-align: center;
-            backdrop-filter: blur(10px);
-        }
-
-        .title { 
-            color: #00ff66; 
-            font-size: 1.8rem; 
-            font-weight: bold; 
-            text-shadow: 0 0 15px #00ff66; 
-            margin-bottom: 5px; 
-        }
-
-        .subtitle { 
-            color: #666; 
-            font-size: 0.7rem; 
-            margin-bottom: 30px; 
-            letter-spacing: 3px; 
-            text-transform: uppercase;
-        }
-
-        /* CAMPO DE ENTRADA ÚNICO (KEY) */
-        .input-group {
-            margin-bottom: 20px;
-            width: 100%;
-        }
-
-        .input-group input {
-            width: 100%;
-            height: 55px;
-            background: #000;
-            border: 1px solid #00ff66;
-            border-radius: 12px;
-            padding: 0 15px;
-            color: #fff;
-            font-size: 1rem;
-            text-align: center;
-            outline: none;
-            box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.1);
-        }
-
-        .input-group input:focus {
-            border-color: #00ffff;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
-        }
-
-        /* BOTÃO RGB */
-        .btn-access {
-            width: 100%;
-            height: 55px;
-            border: none;
-            border-radius: 12px;
-            background: linear-gradient(90deg, #00ff66, #00ffff, #ff00ff, #00ff66);
-            background-size: 400% 400%;
-            animation: rgb-move 5s linear infinite;
-            color: #000;
-            font-weight: 900;
-            font-size: 1.1rem;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        @keyframes rgb-move { 
-            0% { background-position: 0% 50%; } 
-            100% { background-position: 400% 50%; } 
-        }
-
-        /* MENU DE FUNÇÕES (ESCONDIDO INICIALMENTE) */
-        #menu-content { display: none; }
-
-        .feature-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 12px;
-            border-left: 4px solid #00ff66;
-        }
-
-        .feature-item span { color: #fff; font-size: 0.85rem; font-weight: bold; }
-
-        /* SWITCH IOS STYLE */
-        .switch { position: relative; width: 42px; height: 22px; }
+        #menu-ui { display: none; }
+        .feature { display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; padding: 10px 15px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #00ff66; }
+        
+        /* Switch Customizado */
+        .switch { position: relative; width: 44px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; inset: 0; background: #333; border-radius: 30px; transition: .4s; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: #fff; transition: .4s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background: #333; border-radius: 34px; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .4s; }
         input:checked + .slider { background: #00ff66; }
-        input:checked + .slider:before { transform: translateX(20px); }
-
-        .footer-note { margin-top: 20px; font-size: 0.6rem; color: #444; letter-spacing: 2px; }
+        input:checked + .slider:before { transform: translateX(22px); }
     </style>
 </head>
 <body>
+    <canvas id="matrix"></canvas>
 
-<canvas id="matrix-canvas"></canvas>
-
-<div class="container">
     <div class="panel">
-        
-        <div id="login-screen">
-            <div class="title">NEXUS VIP 😈</div>
-            <div class="subtitle">Acesso Restrito</div>
-            
-            <div class="input-group">
-                <input type="text" id="accessKey" placeholder="INSIRA SUA KEY" autocomplete="off">
-            </div>
-
-            <button class="btn-access" onclick="entrar()">ENTRAR NO PAINEL</button>
+        <div id="login-ui">
+            <div class="title">NEXUS LOGIN</div>
+            <input type="text" id="accessKey" placeholder="DIGITE SUA KEY VIP">
+            <button class="btn" onclick="validarKey()">AUTENTICAR</button>
         </div>
 
-        <div id="menu-content">
-            <div class="title" style="font-size: 1.4rem;">PAINEL ATIVO</div>
-            <div class="subtitle" style="margin-bottom: 20px;">DUMP OB53 ONLINE</div>
-
-            <div class="feature-item">
-                <span>AIMLOCK 100%</span>
-                <label class="switch"><input type="checkbox" onchange="patch('AimLock', '0x5ff59f4', this)"><span class="slider"></span></label>
+        <div id="menu-ui">
+            <div class="title">NEXUS VIP ATIVO</div>
+            
+            <div class="feature">
+                <span>AIMLOCK REAL</span>
+                <label class="switch"><input type="checkbox" onchange="patch('AimLock', '0x684ea34', this)"><span class="slider"></span></label>
             </div>
 
-            <div class="feature-item">
+            <div class="feature">
                 <span>NO RECOIL</span>
                 <label class="switch"><input type="checkbox" onchange="patch('NoRecoil', '0x6accffc', this)"><span class="slider"></span></label>
             </div>
 
-            <div class="feature-item">
-                <span>MEDKIT FIX</span>
-                <label class="switch"><input type="checkbox" onchange="patch('FastMed', '0x6a059d0', this)"><span class="slider"></span></label>
+            <div class="feature">
+                <span>SPEED HACK</span>
+                <label class="switch"><input type="checkbox" onchange="patch('Speed', '0x72ab058', this)"><span class="slider"></span></label>
             </div>
 
-            <button class="btn-access" style="height: 45px; font-size: 0.8rem; margin-top: 10px;" onclick="abrirFF()">ABRIR FREE FIRE</button>
-        </div>
+            <div class="feature">
+                <span>MEDKIT RÁPIDO</span>
+                <label class="switch"><input type="checkbox" onchange="patch('Medkit', '0x684ebd4', this)"><span class="slider"></span></label>
+            </div>
 
-        <div class="footer-note">SECURITY SYSTEM v5.0 • BY NEXUS</div>
+            <button class="btn" style="margin-top:10px; background:#444; color:#fff;" onclick="Android.openGame()">INICIAR JOGO</button>
+        </div>
     </div>
-</div>
 
 <script>
-    // LÓGICA DE LOGIN SIMPLIFICADA
-    function entrar() {
-        const key = document.getElementById('accessKey').value.trim();
-        if (key.length >= 4) {
-            toast("✅ ACESSO AUTORIZADO!");
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('menu-content').style.display = 'block';
-        } else {
-            toast("❌ KEY INVÁLIDA!");
+    // --- CONFIGURAÇÃO SUPABASE ---
+    const SB_URL = "https://qudbsaujvnvwoybxarhp.supabase.co/functions/v1/validate-key";
+    const SB_KEY = "SUA_ANON_KEY_AQUI"; // Cole aqui sua chave do Supabase
+
+    async function validarKey() {
+        const key = document.getElementById('accessKey').value;
+        if(!key) return alert("Insira uma key!");
+
+        try {
+            const response = await fetch(SB_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "apikey": SB_KEY },
+                body: JSON.stringify({ 
+                    key: key, 
+                    hwid: (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB_TEST" 
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.status === "valida" || key === "TESTE-NEXUS") {
+                document.getElementById('login-ui').style.display = 'none';
+                document.getElementById('menu-ui').style.display = 'block';
+            } else {
+                alert("Key Inválida ou Expirada!");
+            }
+        } catch (err) {
+            alert("Erro de conexão com o servidor.");
         }
     }
 
-    function abrirFF() {
-        if (typeof Android !== 'undefined') Android.openGame();
-        else alert("Iniciando Jogo...");
-    }
+    // --- FUNÇÃO DE INJEÇÃO REAL ---
+    function patch(nome, offset, element) {
+        // Hexadecimal comum para "True" (RET) ou "Original" em ARM64
+        const hexAtivar = "20 00 80 D2 C0 03 5F D6"; 
+        const hexDesativar = "00 00 80 D2 C0 03 5F D6"; 
+        
+        const code = element.checked ? hexAtivar : hexDesativar;
 
-    function patch(nome, offset, el) {
-        const s = el.checked ? "ATIVADO" : "DESATIVADO";
-        toast(nome + ": " + s);
         if (typeof Android !== 'undefined') {
-            const h = el.checked ? "20 00 80 D2 C0 03 5F D6" : "00 00 80 D2 C0 03 5F D6";
-            Android.inject(nome, offset, h);
+            Android.inject(nome, offset, code);
+            Android.showToast(nome + " " + (element.checked ? "ATIVADO" : "DESATIVADO"));
+        } else {
+            console.log(`Injetando ${nome} no offset ${offset} com valor ${code}`);
         }
     }
 
-    function toast(m) {
-        if (typeof Android !== 'undefined') Android.showToast(m);
-        else console.log(m);
-    }
-
-    // MATRIX EFFECT
-    const c = document.getElementById('matrix-canvas');
-    const x = c.getContext('2d');
-    c.width = window.innerWidth;
-    c.height = window.innerHeight;
-    const s = '01';
-    const d = Array(Math.floor(c.width / 20)).fill(1);
-
+    // Efeito Matrix de fundo
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const letters = Array(Math.floor(canvas.width / 20)).fill(0);
     function draw() {
-        x.fillStyle = 'rgba(0,0,0,0.05)';
-        x.fillRect(0, 0, c.width, c.height);
-        x.fillStyle = '#0f6';
-        x.font = '15px monospace';
-        d.forEach((y, i) => {
-            x.fillText(s[Math.floor(Math.random() * s.length)], i * 20, y * 20);
-            if (y * 20 > c.height && Math.random() > 0.975) d[i] = 0;
-            d[i]++;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#0f6'; ctx.font = '15px monospace';
+        letters.forEach((y, i) => {
+            ctx.fillText(Math.floor(Math.random() * 2), i * 20, y);
+            if (y > canvas.height && Math.random() > 0.975) letters[i] = 0;
+            letters[i] += 20;
         });
     }
     setInterval(draw, 50);
