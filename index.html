@@ -1,145 +1,394 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Courier New', monospace; }
-        body { height:100vh; background:#000; display:flex; justify-content:center; align-items:center; overflow:hidden; position:relative; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
-        /* NOVO: Canvas Matrix de alta performance */
-        #matrix-canvas { position:absolute; inset:0; z-index:0; width:100%; height:100%; }
+<title>NEXUS PANEL</title>
 
-        /* Card Principal - Borda Neon Fixa da foto */
-        .panel {
-            position:relative; z-index:10; width:90%; max-width:380px;
-            background: rgba(8, 8, 8, 0.96);
-            border: 2px solid #00ff66;
-            border-radius: 35px;
-            padding: 30px;
-            box-shadow: 0 0 25px rgba(0,255,102,0.7), inset 0 0 10px rgba(0,255,102,0.1);
-            text-align:center;
-            backdrop-filter: blur(5px);
-        }
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
 
-        .title { color:#00ff66; font-size:1.8rem; font-weight:bold; letter-spacing:2px; text-shadow: 0 0 10px #00ff66; margin-bottom:5px; }
-        .title span { color: #ff00ff; filter: drop-shadow(0 0 5px #ff00ff); }
-        .sub { color:#666; font-size:0.7rem; letter-spacing:3px; margin-bottom:30px; }
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    background:#050505;
+    color:white;
+}
 
-        /* Input Estilo Foto */
-        .input-box input {
-            width:100%; height:60px; background: transparent; border: 1px solid #00ff66;
-            border-radius: 15px; color:#00ff66; padding:0 15px; outline:none; font-size:1rem;
-            box-shadow: inset 0 0 5px rgba(0,255,102,0.1); margin-bottom:20px;
-        }
+/* FUNDO RGB */
+body::before{
+    content:"";
+    position:absolute;
+    width:500px;
+    height:500px;
+    background:#00ff88;
+    filter:blur(180px);
+    opacity:.18;
+    animation:rgbMove 8s infinite alternate;
+}
 
-        /* Botão Roxo/Rosa Metálico exato da foto */
-        .btn {
-            width:100%; height:70px; border:none; border-radius:20px;
-            background: linear-gradient(to right, #9d50bb, #ff00cc);
-            color:#000; font-weight:bold; font-size:1.2rem; cursor:pointer;
-            box-shadow: 0 5px 15px rgba(157, 80, 187, 0.4);
-            margin-bottom:20px; text-transform: uppercase;
-        }
+@keyframes rgbMove{
+    0%{
+        transform:translate(-200px,-150px);
+        background:#00ff88;
+    }
+    50%{
+        transform:translate(200px,100px);
+        background:#00aaff;
+    }
+    100%{
+        transform:translate(-100px,200px);
+        background:#a855ff;
+    }
+}
 
-        /* Status Box */
-        .status {
-            border: 1px solid #004422; border-radius: 15px; padding: 15px;
-            color:#00ff66; font-size:0.8rem; background: rgba(0,255,102,0.05);
-        }
+.panel{
+    position:relative;
+    width:92%;
+    max-width:390px;
 
-        #menu-ui { display: none; }
-        .row { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; color:#00ff66; font-size:0.9rem; }
-        
-        .switch { position:relative; width:40px; height:20px; }
-        .switch input { opacity:0; }
-        .slider { position:absolute; inset:0; background:#333; border-radius:20px; cursor:pointer; transition:.3s; }
-        .slider:before { content:""; position:absolute; height:14px; width:14px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.3s; }
-        input:checked + .slider { background:#00ff66; }
-        input:checked + .slider:before { transform:translateX(20px); }
-    </style>
+    background:rgba(15,15,15,.82);
+    backdrop-filter:blur(15px);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:30px;
+
+    padding:22px;
+
+    box-shadow:
+    0 0 30px rgba(0,255,136,.10),
+    inset 0 0 30px rgba(255,255,255,.03);
+
+    z-index:2;
+}
+
+/* TOPO */
+
+.logo{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.logo-circle{
+    width:75px;
+    height:75px;
+    border-radius:50%;
+
+    background:linear-gradient(135deg,#00ff88,#00aaff);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:28px;
+    font-weight:bold;
+    color:#000;
+
+    box-shadow:
+    0 0 25px rgba(0,255,136,.4);
+}
+
+.logo h1{
+    margin-top:12px;
+    font-size:1.3rem;
+    letter-spacing:2px;
+}
+
+.logo p{
+    color:#888;
+    font-size:.8rem;
+    margin-top:4px;
+}
+
+/* INPUT */
+
+.input-box{
+    margin-bottom:18px;
+}
+
+.input-box input{
+    width:100%;
+    height:55px;
+
+    background:#0d0d0d;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:16px;
+
+    padding:0 18px;
+
+    color:#00ff88;
+
+    outline:none;
+
+    transition:.25s;
+}
+
+.input-box input:focus{
+    border-color:#00ff88;
+
+    box-shadow:
+    0 0 15px rgba(0,255,136,.25);
+}
+
+/* BOTÃO */
+
+.btn{
+    width:100%;
+    height:55px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:linear-gradient(135deg,#00ff88,#00d26f);
+
+    color:#000;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+
+    box-shadow:
+    0 10px 25px rgba(0,255,136,.25);
+}
+
+/* MENU */
+
+#menu-ui{
+    display:none;
+}
+
+.section-title{
+    color:#00ff88;
+    margin-bottom:15px;
+    font-size:.95rem;
+    letter-spacing:1px;
+}
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    background:rgba(255,255,255,.03);
+
+    border:1px solid rgba(255,255,255,.04);
+
+    padding:15px;
+
+    border-radius:18px;
+
+    margin-bottom:12px;
+
+    transition:.25s;
+}
+
+.row:hover{
+    background:rgba(255,255,255,.05);
+}
+
+.row span{
+    font-size:.92rem;
+    font-weight:600;
+}
+
+/* SWITCH */
+
+.switch{
+    position:relative;
+    width:52px;
+    height:28px;
+}
+
+.switch input{
+    opacity:0;
+    width:0;
+    height:0;
+}
+
+.slider{
+    position:absolute;
+    inset:0;
+
+    background:#262626;
+
+    border-radius:30px;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.slider:before{
+    content:"";
+
+    position:absolute;
+
+    width:22px;
+    height:22px;
+
+    left:3px;
+    top:3px;
+
+    border-radius:50%;
+
+    background:white;
+
+    transition:.3s;
+}
+
+.switch input:checked + .slider{
+    background:#00ff88;
+
+    box-shadow:
+    0 0 12px rgba(0,255,136,.45);
+}
+
+.switch input:checked + .slider:before{
+    transform:translateX(24px);
+}
+
+/* FOOTER */
+
+.footer{
+    margin-top:18px;
+    text-align:center;
+    color:#666;
+    font-size:.75rem;
+}
+</style>
 </head>
+
 <body>
 
-<canvas id="matrix-canvas"></canvas>
-
 <div class="panel">
+
+    <!-- LOGIN -->
     <div id="login-ui">
-        <div class="title">NEXUS XITER <span>😈</span></div>
-        <div class="sub">SECURE LOGIN SYSTEM</div>
-        <div class="input-box"><input type="text" id="key" placeholder="NX-ERBZ-XI9O"></div>
-        <button class="btn" onclick="logar()">ACCESS GRANTED</button>
-        <div class="status">LOGIN SUCCESSFUL • ACCESS GRANTED</div>
+
+        <div class="logo">
+            <div class="logo-circle">N</div>
+            <h1>NEXUS PANEL</h1>
+            <p>Premium Gaming Interface</p>
+        </div>
+
+        <div class="input-box">
+            <input type="text" id="key" placeholder="Digite sua Key">
+        </div>
+
+        <button class="btn" onclick="logar()">
+            ENTRAR NO PAINEL
+        </button>
+
+        <div class="footer">
+            Sistema seguro • Interface Premium
+        </div>
+
     </div>
 
+    <!-- MENU -->
     <div id="menu-ui">
-        <div class="title" style="font-size:1.2rem">MOD MENU OB53</div>
-        <div style="margin-bottom:20px"></div>
-        <div class="row"><span>FLY HACK</span><label class="switch"><input type="checkbox" onchange="patch('FLY','0x5ff59f4',this)"><span class="slider"></span></label></div>
-        <div class="row"><span>NO RECOIL</span><label class="switch"><input type="checkbox" onchange="patch('RECOIL','0x6accffc',this)"><span class="slider"></span></label></div>
-        <button class="btn" style="height:50px; font-size:0.9rem; margin-top:10px;" onclick="Android.openGame()">ABRIR JOGO</button>
+
+        <div class="logo">
+            <div class="logo-circle">N</div>
+            <h1>NEXUS MENU</h1>
+            <p>Painel conectado</p>
+        </div>
+
+        <div class="section-title">
+            FUNÇÕES
+        </div>
+
+        <div class="row">
+            <span>AIM ASSIST</span>
+
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="row">
+            <span>VISUAL BOOST</span>
+
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="row">
+            <span>FPS BOOST</span>
+
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="row">
+            <span>ULTRA GRAPHICS</span>
+
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <button class="btn" style="margin-top:10px;">
+            ABRIR JOGO
+        </button>
+
     </div>
+
 </div>
 
 <script>
-    // Matrix Effect via Canvas - Alta Performance e Fluidez
-    const canvas = document.getElementById('matrix-canvas');
-    const ctx = canvas.getContext('getDeviceId') ? ctx.getContext('2d') : canvas.getContext('2d');
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+async function logar(){
 
-    const chars = "01XSUENO";
-    const fontSize = 16;
-    const columns = canvas.width / fontSize;
-    const drops = [];
+    const key = document.getElementById('key').value.trim();
 
-    for (let i = 0; i < columns; i++) {
-        drops[i] = 1;
+    if(key.length < 3){
+
+        alert("Digite uma key válida");
+        return;
     }
 
-    function drawMatrix() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; // Cria o rastro
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const btn = document.querySelector('.btn');
 
-        ctx.fillStyle = "#00ff66"; // Cor dos caracteres
-        ctx.font = fontSize + "px monospace";
+    btn.innerHTML = "CONECTANDO...";
+    btn.style.opacity = ".7";
 
-        for (let i = 0; i < drops.length; i++) {
-            const text = chars[Math.floor(Math.random() * chars.length)];
-            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+    setTimeout(()=>{
 
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                drops[i] = 0; // Reseta a coluna
-            }
-            drops[i]++;
-        }
-    }
+        document.getElementById('login-ui').style.display = "none";
+        document.getElementById('menu-ui').style.display = "block";
 
-    setInterval(drawMatrix, 33); // Taxa de atualização (aprox. 30 FPS)
+    },1200);
+}
 
-    // Ajusta o canvas no redimensionamento
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-
-    async function logar() {
-        const key = document.getElementById('key').value;
-        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB";
-        
-        document.querySelector('.btn').innerText = "WAIT...";
-        
-        setTimeout(() => {
-            document.getElementById('login-ui').style.display = 'none';
-            document.getElementById('menu-ui').style.display = 'block';
-        }, 1200);
-    }
-
-    function patch(n, o, el) {
-        let hex = el.checked ? "20 00 80 D2 C0 03 5F D6" : "00 00 80 D2 C0 03 5F D6";
-        if(typeof Android !== 'undefined') Android.inject(n, o, hex);
-    }
 </script>
+
 </body>
 </html>
