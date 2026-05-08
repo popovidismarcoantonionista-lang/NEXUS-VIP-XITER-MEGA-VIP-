@@ -1,57 +1,29 @@
 import { createClient } from '@supabase/supabase-js';
 
 export default async function handler(req, res) {
-    // 1. Configuração de Headers (CORS)
+    // ESSENCIAL PARA EVITAR "FALHA NA CONEXÃO" (CORS)
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    // Responde a requisições de pre-verificação
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
-
-    // 2. Inicializa o Supabase com as variáveis da Vercel
-    const supabase = createClient(
-        process.env.SUPABASE_URL || '', 
-        process.env.SUPABASE_KEY || ''
-    );
+    if (req.method === 'OPTIONS') return res.status(200).end();
 
     const { key, hwid } = req.query;
-
-    // 3. Validação básica
-    if (!key || !hwid) {
-        return res.status(200).json({ 
-            success: false, 
-            message: "Aguardando parâmetros key e hwid..." 
-        });
-    }
+    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
     try {
-        // 4. Consulta ao banco
-        const { data, error } = await supabase
-            .from('licencas')
-            .select('*')
-            .eq('key', key)
-            .single();
+        const { data, error } = await supabase.from('licencas').select('*').eq('key', key).single();
 
-        if (error || !data) {
-            return res.status(200).json({ success: false, message: "Key não encontrada" });
-        }
+        if (error || !data) return res.json({ success: false, message: "Key não existe" });
 
-        // 5. Verificação de HWID
-        if (data.hwid && data.hwid !== hwid) {
-            return res.status(200).json({ success: false, message: "HWID não confere" });
-        }
+        if (data.hwid && data.hwid !== hwid) return res.json({ success: false, message: "HWID incompatível" });
 
-        // 6. Vincula HWID se a key for virgem
         if (!data.hwid) {
             await supabase.from('licencas').update({ hwid: hwid }).eq('key', key);
         }
 
-        return res.status(200).json({ success: true, message: "Acesso Liberado" });
-
+        return res.json({ success: true, message: "Acesso Liberado" });
     } catch (err) {
-        return res.status(500).json({ success: false, message: "Erro interno no servidor" });
+        return res.json({ success: false, message: "Erro de servidor" });
     }
 }
