@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS VIP - OB53 FINAL</title>
+    <title>NEXUS VIP - FINAL OB53</title>
     <style>
-        /* RESET E FONTE */
+        /* RESET TOTAL */
         * {
             margin: 0;
             padding: 0;
@@ -24,7 +24,7 @@
             align-items: center;
         }
 
-        /* FUNDO MATRIX */
+        /* MATRIX BACKGROUND */
         canvas {
             position: fixed;
             top: 0;
@@ -32,19 +32,19 @@
             z-index: 1;
         }
 
-        /* CONTAINER PRINCIPAL CENTRALIZADO */
-        .main-container {
+        /* PAINEL CENTRAL */
+        .container {
             position: relative;
             z-index: 10;
             width: 90%;
-            max-width: 340px;
-            background: rgba(5, 5, 10, 0.95);
+            max-width: 350px;
+            background: rgba(5, 5, 10, 0.98);
             border: 2px solid #00ff66;
             border-radius: 20px;
-            padding: 30px 20px;
-            box-shadow: 0 0 25px rgba(0, 255, 102, 0.4);
+            padding: 35px 20px;
+            box-shadow: 0 0 30px rgba(0, 255, 102, 0.4);
             text-align: center;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
         }
 
         .title { 
@@ -58,142 +58,164 @@
         .subtitle { 
             color: #555; 
             font-size: 0.7rem; 
-            margin-bottom: 25px; 
+            margin-bottom: 30px; 
             letter-spacing: 2px; 
             text-transform: uppercase;
         }
 
-        /* LOGIN */
-        .input-box { margin-bottom: 20px; }
-        .input-box input {
+        /* INPUTS */
+        .input-group { margin-bottom: 25px; }
+        .input-group input {
             width: 100%;
-            height: 50px;
+            height: 55px;
             background: #000;
             border: 1px solid #00ff66;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 0 15px;
             color: #fff;
             font-size: 1rem;
             text-align: center;
             outline: none;
+            box-shadow: inset 0 0 5px rgba(0, 255, 102, 0.2);
         }
 
-        .btn-main {
+        /* BOTÃO */
+        .btn-action {
             width: 100%;
-            height: 50px;
+            height: 55px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             background: linear-gradient(90deg, #00ff66, #00ffff);
             color: #000;
-            font-weight: bold;
+            font-weight: 900;
             font-size: 1rem;
             cursor: pointer;
             text-transform: uppercase;
-            box-shadow: 0 0 10px rgba(0, 255, 102, 0.3);
+            letter-spacing: 1px;
+            transition: 0.3s;
         }
 
-        /* MENU DE FUNÇÕES */
-        #menu-ui { display: none; }
+        .btn-action:active { transform: scale(0.95); }
+
+        /* MENU UI */
+        #menu-content { display: none; }
         
-        .feature-row {
+        .feature-box {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: rgba(255, 255, 255, 0.05);
-            padding: 12px 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border-left: 4px solid #00ff66;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border-left: 5px solid #00ff66;
         }
 
-        .feature-row span {
-            color: #eee;
+        .feature-box span {
+            color: #fff;
             font-size: 0.85rem;
             font-weight: bold;
         }
 
-        /* SWITCH */
-        .switch { position: relative; width: 42px; height: 22px; }
+        /* SWITCH IOS STYLE */
+        .switch { position: relative; width: 45px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; inset: 0; background: #333; border-radius: 30px; transition: .4s; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .4s; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background: #333; border-radius: 34px; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .4s; }
         input:checked + .slider { background: #00ff66; }
-        input:checked + .slider:before { transform: translateX(20px); }
+        input:checked + .slider:before { transform: translateX(21px); }
 
-        .footer {
-            margin-top: 15px;
+        .footer-info {
+            margin-top: 20px;
             font-size: 0.6rem;
-            color: #444;
-            letter-spacing: 1px;
+            color: #333;
+            letter-spacing: 2px;
         }
     </style>
 </head>
 <body>
 
-<canvas id="matrix"></canvas>
+<canvas id="matrix-bg"></canvas>
 
-<div class="main-container">
+<div class="container">
     <!-- TELA DE LOGIN -->
-    <div id="login-ui">
+    <div id="login-screen">
         <div class="title">NEXUS VIP</div>
-        <div class="subtitle">Secure Auth OB53</div>
+        <div class="subtitle">Secure System OB53</div>
         
-        <div class="input-box">
-            <input type="text" id="accessKey" placeholder="DIGITE SUA KEY" autocomplete="off">
+        <div class="input-group">
+            <input type="text" id="keyInput" placeholder="INSIRA SUA KEY" autocomplete="off">
         </div>
 
-        <button class="btn-main" onclick="validarLogin()">ENTRAR NO PAINEL</button>
+        <button class="btn-action" id="loginBtn" onclick="tentarLogin()">ENTRAR NO PAINEL</button>
     </div>
 
-    <!-- MENU DE FUNÇÕES -->
-    <div id="menu-ui">
-        <div class="title" style="font-size: 1.4rem;">NEXUS PANEL</div>
-        <div class="subtitle">64-BIT DUMP ACTIVE</div>
+    <!-- TELA DE MENU -->
+    <div id="menu-content">
+        <div class="title" style="font-size: 1.4rem;">PAINEL ATIVO</div>
+        <div class="subtitle">MOD MENU REAL • 64-BIT</div>
 
-        <div class="feature-row">
+        <div class="feature-box">
             <span>AIMLOCK (AUTO)</span>
-            <label class="switch"><input type="checkbox" onchange="togglePatch('AimLock', '0x684ea34', this)"><span class="slider"></span></label>
+            <label class="switch">
+                <input type="checkbox" onchange="injetar('AimLock', '0x684ea34', this)">
+                <span class="slider"></span>
+            </label>
         </div>
 
-        <div class="feature-row">
-            <span>NO RECOIL 100%</span>
-            <label class="switch"><input type="checkbox" onchange="togglePatch('NoRecoil', '0x6accffc', this)"><span class="slider"></span></label>
+        <div class="feature-box">
+            <span>NO RECOIL REAL</span>
+            <label class="switch">
+                <input type="checkbox" onchange="injetar('NoRecoil', '0x6accffc', this)">
+                <span class="slider"></span>
+            </label>
         </div>
 
-        <div class="feature-row">
-            <span>SPEED HACK</span>
-            <label class="switch"><input type="checkbox" onchange="togglePatch('Speed', '0x72ab058', this)"><span class="slider"></span></label>
+        <div class="feature-box">
+            <span>SPEED RUNNER</span>
+            <label class="switch">
+                <input type="checkbox" onchange="injetar('Speed', '0x72ab058', this)">
+                <span class="slider"></span>
+            </label>
         </div>
 
-        <div class="feature-row">
-            <span>FAST MEDKIT</span>
-            <label class="switch"><input type="checkbox" onchange="togglePatch('Medkit', '0x684ebd4', this)"><span class="slider"></span></label>
+        <div class="feature-box">
+            <span>MEDKIT INSTANT</span>
+            <label class="switch">
+                <input type="checkbox" onchange="injetar('Medkit', '0x684ebd4', this)">
+                <span class="slider"></span>
+            </label>
         </div>
 
-        <button class="btn-main" style="height: 45px; font-size: 0.8rem; margin-top: 10px;" onclick="abrirJogo()">INICIAR FREE FIRE</button>
+        <button class="btn-action" style="height: 45px; font-size: 0.8rem; margin-top: 10px;" onclick="iniciarFF()">ABRIR FREE FIRE</button>
     </div>
 
-    <div class="footer">PROTECTED BY NEXUS VIP • v5.0</div>
+    <div class="footer-info">PROTECTED BY NEXUS • BY MARKOLA</div>
 </div>
 
 <script>
-    // --- SISTEMA DE LOGIN REAL ---
-    async function validarLogin() {
-        const key = document.getElementById('accessKey').value.trim();
+    // --- LÓGICA DE LOGIN ---
+    async function tentarLogin() {
+        const key = document.getElementById('keyInput').value.trim();
+        const btn = document.getElementById('loginBtn');
+
         if (!key) {
-            alert("⚠️ Digite a Key!");
+            enviarAviso("⚠️ Digite uma Key!");
             return;
         }
 
-        // Avisa o Android (opcional)
-        if (typeof Android !== 'undefined') Android.showToast("📡 Verificando Key...");
+        // Alterar estado do botão para evitar múltiplos cliques
+        btn.disabled = true;
+        btn.innerText = "VERIFICANDO...";
+        enviarAviso("📡 A aceder ao servidor...");
 
         try {
+            // Requisição ao Supabase utilizando a sua Secret Key
             const response = await fetch("https://qudbsaujvnvwoybxarhp.supabase.co/functions/v1/validate-key", {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
-                    "apikey": "sb_secret_OQ1QZukb0PDVu_xo8yIpgA_EANy-lGV" 
+                    "Authorization": "Bearer Sb_secret_OQ1QZukb0PDVu_xo8yIpgA_EANy-lGV"
                 },
                 body: JSON.stringify({ 
                     key: key, 
@@ -204,63 +226,72 @@
             const data = await response.json();
 
             if (data.status === "valida") {
-                document.getElementById('login-ui').style.display = 'none';
-                document.getElementById('menu-ui').style.display = 'block';
-                if (typeof Android !== 'undefined') Android.showToast("✅ ACESSO LIBERADO!");
+                enviarAviso("✅ ACESSO LIBERADO!");
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('menu-content').style.display = 'block';
             } else {
                 alert("❌ KEY INVÁLIDA!");
+                resetarBotao();
             }
         } catch (error) {
-            // Plano B: Apenas para teste local caso o Supabase esteja offline
-            console.error("Erro Supabase:", error);
-            if(key === "TESTE") {
-                document.getElementById('login-ui').style.display = 'none';
-                document.getElementById('menu-ui').style.display = 'block';
+            console.error(error);
+            // Plano B para teste
+            if (key === "1010") {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('menu-content').style.display = 'block';
             } else {
-                alert("⚠️ Erro de conexão! Verifique sua internet.");
+                alert("⚠️ ERRO DE CONEXÃO: Verifique a internet.");
+                resetarBotao();
             }
         }
     }
 
-    // --- FUNÇÕES DE INJEÇÃO (OFFSETS DO DUMP) ---
-    function togglePatch(nome, offset, el) {
-        const status = el.checked ? "ATIVADO" : "DESATIVADO";
-        const hex = el.checked ? "20 00 80 D2 C0 03 5F D6" : "00 00 80 D2 C0 03 5F D6";
+    function resetarBotao() {
+        const btn = document.getElementById('loginBtn');
+        btn.disabled = false;
+        btn.innerText = "ENTRAR NO PAINEL";
+    }
 
+    // --- FUNÇÕES ANDROID ---
+    function injetar(nome, offset, el) {
+        const hex = el.checked ? "20 00 80 D2 C0 03 5F D6" : "00 00 80 D2 C0 03 5F D6";
         if (typeof Android !== 'undefined') {
-            Android.showToast(nome + ": " + status);
+            Android.showToast(nome + ": " + (el.checked ? "ON" : "OFF"));
             Android.inject(nome, offset, hex);
         } else {
-            console.log(`Debug: Injetando ${nome} em ${offset} [${hex}]`);
+            console.log(`Injetando ${nome} em ${offset} -> ${hex}`);
         }
     }
 
-    function abrirJogo() {
+    function iniciarFF() {
         if (typeof Android !== 'undefined') Android.openGame();
-        else alert("Jogo abre apenas no APK!");
+        else alert("Jogo só abre no APK!");
     }
 
-    // --- EFEITO MATRIX ---
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    const chars = '01';
-    const drops = Array(Math.floor(canvas.width / 20)).fill(1);
+    function enviarAviso(m) {
+        if (typeof Android !== 'undefined') Android.showToast(m);
+        else console.log(m);
+    }
+
+    // --- MATRIX BG ---
+    const c = document.getElementById('matrix-bg');
+    const ctx = c.getContext('2d');
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+    const letters = Array(Math.floor(c.width / 20)).fill(1);
 
     function draw() {
         ctx.fillStyle = 'rgba(0,0,0,0.05)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, c.width, c.height);
         ctx.fillStyle = '#0f6';
         ctx.font = '15px monospace';
-        drops.forEach((y, i) => {
-            ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * 20, y * 20);
-            if (y * 20 > canvas.height && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
+        letters.forEach((y, i) => {
+            ctx.fillText(Math.floor(Math.random() * 2), i * 20, y * 20);
+            if (y * 20 > c.height && Math.random() > 0.975) letters[i] = 0;
+            letters[i]++;
         });
     }
     setInterval(draw, 50);
 </script>
-
 </body>
 </html>
