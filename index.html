@@ -3,32 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS VIP - OB53 REAL</title>
+    <title>NEXUS VIP REAL</title>
     <style>
-        /* Estilo Hacker Premium */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #000; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; color: #fff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', monospace; }
+        body { background: #000; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
         canvas { position: fixed; inset: 0; z-index: 1; }
         
-        .panel { position: relative; z-index: 10; width: 90%; max-width: 340px; background: rgba(10, 10, 15, 0.95); border: 1px solid #00ff66; border-radius: 15px; padding: 25px; box-shadow: 0 0 20px rgba(0, 255, 102, 0.3); }
-        .title { color: #00ff66; font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 20px; text-shadow: 0 0 10px #00ff66; }
-        
-        input { width: 100%; padding: 12px; background: #111; border: 1px solid #333; border-radius: 8px; color: #0f6; text-align: center; margin-bottom: 15px; outline: none; }
-        input:focus { border-color: #00ff66; }
-        
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; background: #00ff66; color: #000; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn:hover { background: #00cc55; transform: scale(1.02); }
+        .panel { 
+            position: relative; z-index: 10; width: 90%; max-width: 350px; 
+            background: rgba(5, 5, 10, 0.98); border: 2px solid #00ff66; 
+            border-radius: 20px; padding: 30px; text-align: center; 
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.5); 
+        }
+
+        .title { color: #00ff66; font-size: 1.8rem; text-shadow: 0 0 10px #00ff66; margin-bottom: 5px; }
+        .subtitle { color: #555; font-size: 0.7rem; margin-bottom: 25px; letter-spacing: 2px; }
+
+        input { 
+            width: 100%; height: 50px; background: #000; border: 1px solid #00ff66; 
+            border-radius: 10px; color: #fff; text-align: center; margin-bottom: 20px; outline: none; 
+        }
+
+        .btn { 
+            width: 100%; height: 50px; border: none; border-radius: 10px; 
+            background: linear-gradient(90deg, #00ff66, #00ffff); 
+            color: #000; font-weight: bold; cursor: pointer; text-transform: uppercase; 
+        }
 
         #menu-ui { display: none; }
-        .feature { display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; padding: 10px 15px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #00ff66; }
-        
-        /* Switch Customizado */
-        .switch { position: relative; width: 44px; height: 22px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; inset: 0; background: #333; border-radius: 34px; transition: .4s; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .4s; }
+        .feature { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: #111; padding: 12px; border-radius: 8px; margin-bottom: 10px; 
+            border-left: 4px solid #00ff66; 
+        }
+        .feature span { color: #fff; font-size: 0.8rem; }
+
+        /* Switch */
+        .switch { position: relative; width: 40px; height: 20px; }
+        .switch input { opacity: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background: #333; border-radius: 20px; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .4s; }
         input:checked + .slider { background: #00ff66; }
-        input:checked + .slider:before { transform: translateX(22px); }
+        input:checked + .slider:before { transform: translateX(20px); }
     </style>
 </head>
 <body>
@@ -37,21 +53,23 @@
     <div class="panel">
         <div id="login-ui">
             <div class="title">NEXUS LOGIN</div>
-            <input type="text" id="accessKey" placeholder="DIGITE SUA KEY VIP">
-            <button class="btn" onclick="validarKey()">AUTENTICAR</button>
+            <div class="subtitle">PREMIUM OB53 SYSTEM</div>
+            <input type="text" id="accessKey" placeholder="INSIRA SUA KEY VIP">
+            <button class="btn" onclick="validar()">ENTRAR NO PAINEL</button>
         </div>
 
         <div id="menu-ui">
-            <div class="title">NEXUS VIP ATIVO</div>
-            
+            <div class="title" style="font-size: 1.3rem;">NEXUS ATIVO</div>
+            <div class="subtitle">DUMP 64-BIT ONLINE</div>
+
             <div class="feature">
-                <span>AIMLOCK REAL</span>
-                <label class="switch"><input type="checkbox" onchange="patch('AimLock', '0x684ea34', this)"><span class="slider"></span></label>
+                <span>AIMLOCK 100%</span>
+                <label class="switch"><input type="checkbox" onchange="patch('Aim', '0x684ea34', this)"><span class="slider"></span></label>
             </div>
 
             <div class="feature">
                 <span>NO RECOIL</span>
-                <label class="switch"><input type="checkbox" onchange="patch('NoRecoil', '0x6accffc', this)"><span class="slider"></span></label>
+                <label class="switch"><input type="checkbox" onchange="patch('Recoil', '0x6accffc', this)"><span class="slider"></span></label>
             </div>
 
             <div class="feature">
@@ -59,78 +77,67 @@
                 <label class="switch"><input type="checkbox" onchange="patch('Speed', '0x72ab058', this)"><span class="slider"></span></label>
             </div>
 
-            <div class="feature">
-                <span>MEDKIT RÁPIDO</span>
-                <label class="switch"><input type="checkbox" onchange="patch('Medkit', '0x684ebd4', this)"><span class="slider"></span></label>
-            </div>
-
-            <button class="btn" style="margin-top:10px; background:#444; color:#fff;" onclick="Android.openGame()">INICIAR JOGO</button>
+            <button class="btn" style="margin-top: 10px; height: 40px; font-size: 0.8rem;" onclick="Android.openGame()">ABRIR JOGO</button>
         </div>
     </div>
 
 <script>
-    // --- CONFIGURAÇÃO SUPABASE ---
-    const SB_URL = "https://qudbsaujvnvwoybxarhp.supabase.co/functions/v1/validate-key";
-    const SB_KEY = "SUA_ANON_KEY_AQUI"; // Cole aqui sua chave do Supabase
+    async function validar() {
+        const key = document.getElementById('accessKey').value.trim();
+        if (!key) return toast("Digite a Key!");
 
-    async function validarKey() {
-        const key = document.getElementById('accessKey').value;
-        if(!key) return alert("Insira uma key!");
+        toast("📡 Verificando no Banco...");
 
         try {
-            const response = await fetch(SB_URL, {
+            const res = await fetch("https://qudbsaujvnvwoybxarhp.supabase.co/functions/v1/validate-key", {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "apikey": SB_KEY },
+                headers: { "Content-Type": "application/json", "apikey": "SUA_ANON_KEY_AQUI" },
                 body: JSON.stringify({ 
                     key: key, 
-                    hwid: (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB_TEST" 
+                    hwid: (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB" 
                 })
             });
+            const data = await res.json();
 
-            const result = await response.json();
-
-            if (result.status === "valida" || key === "TESTE-NEXUS") {
+            if (data.status === "valida") {
                 document.getElementById('login-ui').style.display = 'none';
                 document.getElementById('menu-ui').style.display = 'block';
+                toast("✅ ACESSO LIBERADO!");
             } else {
-                alert("Key Inválida ou Expirada!");
+                toast("❌ KEY INVÁLIDA!");
             }
-        } catch (err) {
-            alert("Erro de conexão com o servidor.");
+        } catch (e) {
+            toast("⚠️ ERRO DE CONEXÃO!");
         }
     }
 
-    // --- FUNÇÃO DE INJEÇÃO REAL ---
-    function patch(nome, offset, element) {
-        // Hexadecimal comum para "True" (RET) ou "Original" em ARM64
-        const hexAtivar = "20 00 80 D2 C0 03 5F D6"; 
-        const hexDesativar = "00 00 80 D2 C0 03 5F D6"; 
-        
-        const code = element.checked ? hexAtivar : hexDesativar;
-
+    function patch(nome, offset, el) {
+        const hex = el.checked ? "20 00 80 D2 C0 03 5F D6" : "00 00 80 D2 C0 03 5F D6";
         if (typeof Android !== 'undefined') {
-            Android.inject(nome, offset, code);
-            Android.showToast(nome + " " + (element.checked ? "ATIVADO" : "DESATIVADO"));
-        } else {
-            console.log(`Injetando ${nome} no offset ${offset} com valor ${code}`);
+            Android.showToast(nome + (el.checked ? " ATIVADO" : " DESATIVADO"));
+            Android.inject(nome, offset, hex);
         }
     }
 
-    // Efeito Matrix de fundo
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    const letters = Array(Math.floor(canvas.width / 20)).fill(0);
-    function draw() {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#0f6'; ctx.font = '15px monospace';
-        letters.forEach((y, i) => {
-            ctx.fillText(Math.floor(Math.random() * 2), i * 20, y);
-            if (y > canvas.height && Math.random() > 0.975) letters[i] = 0;
-            letters[i] += 20;
-        });
+    function toast(m) {
+        if (typeof Android !== 'undefined') Android.showToast(m);
+        else console.log(m);
     }
-    setInterval(draw, 50);
+
+    // Matrix Effect
+    const c = document.getElementById('matrix');
+    const ctx = c.getContext('2d');
+    c.width = window.innerWidth; c.height = window.innerHeight;
+    const drops = Array(Math.floor(c.width/20)).fill(1);
+    setInterval(() => {
+        ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0,0,c.width,c.height);
+        ctx.fillStyle = '#0f6';
+        drops.forEach((y, i) => {
+            ctx.fillText(Math.floor(Math.random()*2), i*20, y*20);
+            if(y*20 > c.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        });
+    }, 50);
 </script>
 </body>
 </html>
