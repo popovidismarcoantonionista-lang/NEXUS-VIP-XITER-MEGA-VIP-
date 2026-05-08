@@ -2,113 +2,271 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>NEXUS IOS PANEL</title>
-<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NEXUS VIP UI</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:"SF Pro Display",sans-serif; }
-    body { height:100vh; display:flex; justify-content:center; align-items:center; overflow:hidden; background:#000; position:relative; }
-
-    /* FUNDO MATRIX */
-    #m { position:absolute; inset:0; z-index:0; opacity: 0.4; }
-
-    /* PAINEL COM BORDA RGB GIGANTE */
-    .panel {
-        position:relative; z-index:5; width:92%; max-width:390px; padding:30px 24px; border-radius:38px;
-        background: rgba(15, 15, 20, 0.9); backdrop-filter:blur(30px);
-        border: 2px solid transparent;
-        background-image: linear-gradient(rgba(15,15,20,0.95), rgba(15,15,20,0.95)), 
-                          linear-gradient(135deg, #00ff88, #00c6ff, #8f5cff, #ff00cc, #00ff88);
-        background-origin: border-box; background-clip: content-box, border-box;
-        background-size: 400% 400%; animation: rgbMove 6s linear infinite;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    * { 
+        margin: 0; padding: 0; box-sizing: border-box; 
     }
-    @keyframes rgbMove { 0% { background-position: 0% 50%; } 100% { background-position: 400% 50%; } }
-
-    /* UI ELEMENTS */
-    .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; }
-    .avatar { width:58px; height:58px; border-radius:18px; background: linear-gradient(135deg, #00c6ff, #8f5cff); display:flex; justify-content:center; align-items:center; color:#fff; font-size:1.5rem; font-weight:700; }
-    .user h1 { color:#fff; font-size:1.1rem; }
-    .user p { color:#bdbdbd; font-size:.82rem; }
-    .card { padding:20px; border-radius:28px; background: rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); margin-bottom:15px; }
-    .input { width:100%; height:60px; border-radius:20px; background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); padding:0 15px; color:#fff; outline:none; }
-    .btn { width:100%; height:65px; border:none; border-radius:24px; cursor:pointer; font-size:1rem; font-weight:700; color:#fff; background: linear-gradient(135deg, #00c6ff, #8f5cff); margin-top:10px; }
     
-    /* SWITCHES */
-    #menu-ui { display: none; }
-    .option { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
-    .option span { color:#fff; font-size:.95rem; }
-    .switch { position:relative; width:50px; height:28px; }
-    .switch input { display:none; }
-    .slider { position:absolute; inset:0; border-radius:30px; background:#3c3c43; transition:.3s; cursor:pointer; }
-    .slider::before { content:""; position:absolute; width:22px; height:22px; border-radius:50%; background:#fff; top:3px; left:3px; transition:.3s; }
-    input:checked + .slider { background:#34c759; }
-    input:checked + .slider::before { transform:translateX(22px); }
+    body { 
+        height: 100vh; 
+        background: #000; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        overflow: hidden; 
+        position: relative; 
+        font-family: 'Orbitron', sans-serif;
+    }
 
-    .status-badge { padding:8px 12px; border-radius:12px; background: rgba(0,255,140,0.1); border:1px solid rgba(0,255,140,0.3); color:#00ff95; font-size:.7rem; font-weight:700; }
+    /* ================= FUNDO MATRIX (CANVAS) ================= */
+    #matrix-bg { 
+        position: absolute; 
+        inset: 0; 
+        z-index: 1; 
+        opacity: 0.85;
+    }
+
+    /* ================= AMBIENT GLOW & PARTICLES ================= */
+    .ambient-glow {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center, rgba(0, 255, 102, 0.08) 0%, transparent 60%);
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    /* ================= PAINEL GLASSMORPHISM ================= */
+    .panel-wrapper {
+        position: relative;
+        z-index: 10;
+        width: 90%;
+        max-width: 400px;
+    }
+
+    .panel {
+        position: relative;
+        background: rgba(8, 8, 12, 0.85); /* Fundo super escuro com transparência */
+        backdrop-filter: blur(25px); /* Efeito de vidro luxuoso */
+        -webkit-backdrop-filter: blur(25px);
+        border-radius: 30px;
+        padding: 40px 30px;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0, 255, 102, 0.05);
+    }
+
+    /* A BORDA RGB CORRIGIDA (FINA E BRILHANTE) */
+    .panel::before {
+        content: "";
+        position: absolute;
+        inset: -2px; /* Espessura exata da borda */
+        border-radius: 32px; /* Um pouco maior que o painel para arredondar perfeito */
+        background: linear-gradient(135deg, #00ff66, #0066ff, #a800ff, #00ff66);
+        background-size: 300% 300%;
+        animation: rgbBorder 5s linear infinite;
+        z-index: -1; /* Fica atrás do painel */
+        filter: drop-shadow(0 0 15px rgba(0, 255, 102, 0.4)); /* Bloom da borda */
+    }
+
+    @keyframes rgbBorder {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 300% 50%; }
+    }
+
+    /* ================= TEXTOS ================= */
+    .title {
+        color: #00ff66;
+        font-size: 2.2rem;
+        font-weight: 900;
+        letter-spacing: 2px;
+        text-shadow: 0 0 15px #00ff66, 0 0 30px rgba(0,255,102,0.5); /* Efeito holográfico/neon */
+        margin-bottom: 5px;
+    }
+
+    .subtitle {
+        color: #7a7a7a;
+        font-family: Arial, sans-serif;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 4px;
+        margin-bottom: 35px;
+        text-transform: uppercase;
+    }
+
+    /* ================= INPUT PREMIUM ================= */
+    .input-box {
+        position: relative;
+        margin-bottom: 25px;
+    }
+
+    .input-box input {
+        width: 100%;
+        height: 65px;
+        background: #030303;
+        border: 1px solid rgba(0, 255, 102, 0.6);
+        border-radius: 18px;
+        color: #00ff66;
+        padding: 0 20px;
+        font-size: 1.1rem;
+        font-family: 'Orbitron', sans-serif;
+        outline: none;
+        box-shadow: inset 0 0 15px rgba(0, 255, 102, 0.15), 0 0 10px rgba(0, 255, 102, 0.1); /* Inner glow suave */
+        transition: 0.3s;
+    }
+
+    .input-box input::placeholder {
+        color: rgba(0, 255, 102, 0.3);
+        letter-spacing: 1px;
+    }
+
+    .input-box input:focus {
+        border-color: #00ff66;
+        box-shadow: inset 0 0 20px rgba(0, 255, 102, 0.3), 0 0 20px rgba(0, 255, 102, 0.4);
+    }
+
+    /* ================= BOTÃO GLOSSY ================= */
+    .btn {
+        width: 100%;
+        height: 70px;
+        border: none;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #ff00cc, #7000ff);
+        color: #fff;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+        cursor: pointer;
+        text-transform: uppercase;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(255, 0, 204, 0.4), inset 0 2px 5px rgba(255,255,255,0.3); /* Profundidade e reflexo */
+        transition: 0.2s;
+    }
+
+    .btn:active {
+        transform: scale(0.97);
+        box-shadow: 0 5px 15px rgba(255, 0, 204, 0.4);
+    }
+
+    /* Reflexo superior do botão (efeito glossy) */
+    .btn::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 40%;
+        background: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0));
+        border-radius: 18px 18px 0 0;
+    }
+
+    /* ================= STATUS BOX ================= */
+    .status-box {
+        margin-top: 25px;
+        padding: 15px;
+        border-radius: 14px;
+        background: rgba(0, 255, 102, 0.08);
+        border: 1px solid rgba(0, 255, 102, 0.3);
+        color: #00ff66;
+        font-family: Arial, sans-serif;
+        font-size: 0.8rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+        box-shadow: inset 0 0 15px rgba(0, 255, 102, 0.05);
+        display: none; /* Inicia oculto */
+    }
+
 </style>
 </head>
 <body>
 
-<canvas id="m"></canvas>
+<canvas id="matrix-bg"></canvas>
+<div class="ambient-glow"></div>
 
-<div class="panel">
-    <div class="top">
-        <div style="display:flex; align-items:center; gap:12px;">
-            <div class="avatar">N</div>
-            <div class="user"><h1>NEXUS IOS</h1><p id="sub-text">Premium System</p></div>
+<div class="panel-wrapper">
+    <div class="panel">
+        <div class="title">NEXUS VIP <span style="font-size: 1.8rem; filter: hue-rotate(270deg);">😈</span></div>
+        <div class="subtitle">Secure Login System</div>
+
+        <div class="input-box">
+            <input type="text" id="key-input" placeholder="DIGITE SUA KEY">
         </div>
-        <div class="status-badge">ONLINE</div>
-    </div>
 
-    <div id="login-ui">
-        <div class="card">
-            <input type="text" id="key" class="input" placeholder="Digite sua Key">
-            <button class="btn" onclick="logar()">Entrar no Painel</button>
+        <button class="btn" id="login-btn" onclick="simulateLogin()">ACCESS GRANTED</button>
+
+        <div class="status-box" id="status-msg">
+            LOGIN SUCCESSFUL • ACCESS GRANTED
         </div>
     </div>
-
-    <div id="menu-ui">
-        <div class="card">
-            <div class="option"><span>AIMBOT IOS</span><label class="switch"><input type="checkbox" onchange="patch('AIM','0x123',this)"><span class="slider"></span></label></div>
-            <div class="option"><span>FLY HACK</span><label class="switch"><input type="checkbox" onchange="patch('FLY','0x5ff59f4',this)"><span class="slider"></span></label></div>
-            <div class="option"><span>NO RECOIL</span><label class="switch"><input type="checkbox" onchange="patch('RECOIL','0x6accffc',this)"><span class="slider"></span></label></div>
-        </div>
-        <div class="status-badge" style="width:100%; text-align:center; margin-bottom:15px; padding:15px;">ACCESS GRANTED</div>
-        <button class="btn" onclick="Android.openGame()">ABRIR JOGO</button>
-    </div>
-
-    <div class="footer" style="text-align:center; color:#555; font-size:.7rem;">NEXUS SYSTEM • iOS UI v6.0</div>
 </div>
 
 <script>
-    // Matrix Background
-    const c = document.getElementById('m'); const q = c.getContext('2d');
-    c.width = window.innerWidth; c.height = window.innerHeight;
-    const s = 16; const d = Array(Math.ceil(c.width/s)).fill(1);
-    function draw() {
-        q.fillStyle = "rgba(0,0,0,0.05)"; q.fillRect(0,0,c.width,c.height);
-        q.fillStyle = "#00ff66"; q.font = s+"px monospace";
-        d.forEach((y, i) => {
-            q.fillText("01XSUENO"[Math.floor(Math.random()*8)], i*s, y*s);
-            if (y*s > c.height && Math.random() > 0.975) d[i] = 0; d[i]++;
-        });
-    }
-    setInterval(draw, 35);
+    // ================= SCRIPT DO MATRIX RAIN =================
+    const canvas = document.getElementById('matrix-bg');
+    const ctx = canvas.getContext('2d');
 
-    function logar() {
-        const key = document.getElementById('key').value;
-        if(key.length > 2) {
-            document.getElementById('login-ui').style.display='none';
-            document.getElementById('menu-ui').style.display='block';
-            document.getElementById('sub-text').innerText = "Access Granted";
-        } else { alert("Key Inválida!"); }
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Caracteres Hacker / Katakana
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+    const drops = Array.from({ length: columns }).fill(1);
+
+    function drawMatrix() {
+        // Rastro escuro para dar o efeito de desvanecimento
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Cor e estilo do texto
+        ctx.fillStyle = '#00ff66';
+        ctx.font = fontSize + 'px monospace';
+
+        for (let i = 0; i < drops.length; i++) {
+            const text = chars.charAt(Math.floor(Math.random() * chars.length));
+            
+            // Desenha o caractere
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+            // Reseta a gota de forma aleatória para o topo
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
     }
 
-    function patch(n, o, el) {
-        let hex = el.checked ? "20 00 80 D2 C0 03 5F D6" : "00 00 80 D2 C0 03 5F D6";
-        if(typeof Android !== 'undefined') Android.inject(n, o, hex);
+    setInterval(drawMatrix, 40);
+
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    // ================= SIMULAÇÃO DE LOGIN =================
+    function simulateLogin() {
+        const btn = document.getElementById('login-btn');
+        const statusMsg = document.getElementById('status-msg');
+        const input = document.getElementById('key-input');
+
+        if (input.value.trim() === '') {
+            input.style.borderColor = '#ff0055';
+            return;
+        }
+
+        input.style.borderColor = '#00ff66';
+        btn.innerText = 'AUTHENTICATING...';
+        btn.style.opacity = '0.8';
+
+        setTimeout(() => {
+            btn.innerText = 'ACCESS GRANTED';
+            btn.style.opacity = '1';
+            statusMsg.style.display = 'block';
+        }, 1500);
     }
 </script>
+
 </body>
 </html>
