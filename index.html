@@ -1,272 +1,213 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>NEXUS VIP UI</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
-<style>
-    * { 
-        margin: 0; padding: 0; box-sizing: border-box; 
-    }
-    
-    body { 
-        height: 100vh; 
-        background: #000; 
-        display: flex; 
-        justify-content: center; 
-        align-items: center; 
-        overflow: hidden; 
-        position: relative; 
-        font-family: 'Orbitron', sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NEXUS DUMP</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: #000;
+            color: #00ffcc;
+            font-family: 'Orbitron', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    /* ================= FUNDO MATRIX (CANVAS) ================= */
-    #matrix-bg { 
-        position: absolute; 
-        inset: 0; 
-        z-index: 1; 
-        opacity: 0.85;
-    }
+        .matrix { 
+            position: absolute; inset: 0; overflow: hidden; z-index: 0; 
+            background: linear-gradient(transparent, rgba(0, 255, 204, 0.02));
+        }
+        .matrix span {
+            position: absolute; color: #00ffcc; font-size: 13px; 
+            opacity: 0.15; animation: fall linear infinite; 
+            text-shadow: 0 0 8px #00ffcc;
+        }
+        @keyframes fall { to { transform: translateY(100vh); } }
 
-    /* ================= AMBIENT GLOW & PARTICLES ================= */
-    .ambient-glow {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle at center, rgba(0, 255, 102, 0.08) 0%, transparent 60%);
-        z-index: 2;
-        pointer-events: none;
-    }
+        .panel {
+            width: 94%; max-width: 430px;
+            background: rgba(3, 3, 12, 0.97);
+            border: 2px solid #00ffcc;
+            border-radius: 20px;
+            padding: 24px 20px;
+            box-shadow: 0 0 60px rgba(0, 255, 204, 0.65),
+                        inset 0 0 25px rgba(0, 255, 204, 0.15);
+            position: relative; z-index: 2;
+        }
 
-    /* ================= PAINEL GLASSMORPHISM ================= */
-    .panel-wrapper {
-        position: relative;
-        z-index: 10;
-        width: 90%;
-        max-width: 400px;
-    }
+        .header { text-align: center; margin-bottom: 26px; }
+        .header h1 { 
+            font-size: 2.25rem; letter-spacing: 5px; 
+            text-shadow: 0 0 25px #00ffcc; 
+        }
+        .subtitle { color: #00ff88; font-size: 0.95rem; margin-top: 4px; }
 
-    .panel {
-        position: relative;
-        background: rgba(8, 8, 12, 0.85); /* Fundo super escuro com transparência */
-        backdrop-filter: blur(25px); /* Efeito de vidro luxuoso */
-        -webkit-backdrop-filter: blur(25px);
-        border-radius: 30px;
-        padding: 40px 30px;
-        text-align: center;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0, 255, 102, 0.05);
-    }
+        #key {
+            width: 100%; background: rgba(15,15,35,0.9); border: 2px solid #00ffcc;
+            border-radius: 14px; padding: 18px; color: #fff; font-size: 1.1rem;
+            text-align: center; margin-bottom: 20px; outline: none;
+        }
+        #key:focus { border-color: #00ff88; box-shadow: 0 0 15px #00ff88; }
 
-    /* A BORDA RGB CORRIGIDA (FINA E BRILHANTE) */
-    .panel::before {
-        content: "";
-        position: absolute;
-        inset: -2px; /* Espessura exata da borda */
-        border-radius: 32px; /* Um pouco maior que o painel para arredondar perfeito */
-        background: linear-gradient(135deg, #00ff66, #0066ff, #a800ff, #00ff66);
-        background-size: 300% 300%;
-        animation: rgbBorder 5s linear infinite;
-        z-index: -1; /* Fica atrás do painel */
-        filter: drop-shadow(0 0 15px rgba(0, 255, 102, 0.4)); /* Bloom da borda */
-    }
+        .btn, .btn-start {
+            width: 100%; padding: 17px; background: linear-gradient(90deg, #00ffcc, #00ccaa);
+            color: #000; font-size: 1.25rem; font-weight: 700; border: none;
+            border-radius: 14px; cursor: pointer; text-transform: uppercase;
+            letter-spacing: 2px; box-shadow: 0 0 30px rgba(0, 255, 204, 0.6);
+            transition: 0.2s;
+        }
+        .btn:active, .btn-start:active { transform: scale(0.96); }
 
-    @keyframes rgbBorder {
-        0% { background-position: 0% 50%; }
-        100% { background-position: 300% 50%; }
-    }
+        .section { margin: 24px 0; }
+        .section-title { 
+            color: #00ff88; font-size: 0.98rem; margin-bottom: 14px; 
+            text-transform: uppercase; letter-spacing: 3px; border-bottom: 1px solid #00ffcc33; padding-bottom: 6px;
+        }
 
-    /* ================= TEXTOS ================= */
-    .title {
-        color: #00ff66;
-        font-size: 2.2rem;
-        font-weight: 900;
-        letter-spacing: 2px;
-        text-shadow: 0 0 15px #00ff66, 0 0 30px rgba(0,255,102,0.5); /* Efeito holográfico/neon */
-        margin-bottom: 5px;
-    }
+        .feature {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 18px; background: rgba(20,20,45,0.85);
+            margin-bottom: 10px; border-radius: 12px; border-left: 5px solid #00ffcc;
+            transition: 0.3s;
+        }
+        .feature:hover { background: rgba(30,30,60,0.9); transform: translateX(5px); }
 
-    .subtitle {
-        color: #7a7a7a;
-        font-family: Arial, sans-serif;
-        font-size: 0.75rem;
-        font-weight: 600;
-        letter-spacing: 4px;
-        margin-bottom: 35px;
-        text-transform: uppercase;
-    }
-
-    /* ================= INPUT PREMIUM ================= */
-    .input-box {
-        position: relative;
-        margin-bottom: 25px;
-    }
-
-    .input-box input {
-        width: 100%;
-        height: 65px;
-        background: #030303;
-        border: 1px solid rgba(0, 255, 102, 0.6);
-        border-radius: 18px;
-        color: #00ff66;
-        padding: 0 20px;
-        font-size: 1.1rem;
-        font-family: 'Orbitron', sans-serif;
-        outline: none;
-        box-shadow: inset 0 0 15px rgba(0, 255, 102, 0.15), 0 0 10px rgba(0, 255, 102, 0.1); /* Inner glow suave */
-        transition: 0.3s;
-    }
-
-    .input-box input::placeholder {
-        color: rgba(0, 255, 102, 0.3);
-        letter-spacing: 1px;
-    }
-
-    .input-box input:focus {
-        border-color: #00ff66;
-        box-shadow: inset 0 0 20px rgba(0, 255, 102, 0.3), 0 0 20px rgba(0, 255, 102, 0.4);
-    }
-
-    /* ================= BOTÃO GLOSSY ================= */
-    .btn {
-        width: 100%;
-        height: 70px;
-        border: none;
-        border-radius: 18px;
-        background: linear-gradient(135deg, #ff00cc, #7000ff);
-        color: #fff;
-        font-family: 'Orbitron', sans-serif;
-        font-weight: 700;
-        font-size: 1.2rem;
-        letter-spacing: 1px;
-        cursor: pointer;
-        text-transform: uppercase;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 10px 25px rgba(255, 0, 204, 0.4), inset 0 2px 5px rgba(255,255,255,0.3); /* Profundidade e reflexo */
-        transition: 0.2s;
-    }
-
-    .btn:active {
-        transform: scale(0.97);
-        box-shadow: 0 5px 15px rgba(255, 0, 204, 0.4);
-    }
-
-    /* Reflexo superior do botão (efeito glossy) */
-    .btn::after {
-        content: "";
-        position: absolute;
-        top: 0; left: 0; right: 0; height: 40%;
-        background: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0));
-        border-radius: 18px 18px 0 0;
-    }
-
-    /* ================= STATUS BOX ================= */
-    .status-box {
-        margin-top: 25px;
-        padding: 15px;
-        border-radius: 14px;
-        background: rgba(0, 255, 102, 0.08);
-        border: 1px solid rgba(0, 255, 102, 0.3);
-        color: #00ff66;
-        font-family: Arial, sans-serif;
-        font-size: 0.8rem;
-        font-weight: bold;
-        letter-spacing: 1px;
-        box-shadow: inset 0 0 15px rgba(0, 255, 102, 0.05);
-        display: none; /* Inicia oculto */
-    }
-
-</style>
+        .switch { position: relative; width: 52px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; inset: 0; background: #222;
+            border-radius: 50px; transition: .4s;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 22px; width: 22px;
+            left: 3px; bottom: 3px; background: #ddd; border-radius: 50%; transition: .4s;
+        }
+        input:checked + .slider { background: #00ffcc; }
+        input:checked + .slider:before { transform: translateX(24px); background: #000; }
+    </style>
 </head>
 <body>
 
-<canvas id="matrix-bg"></canvas>
-<div class="ambient-glow"></div>
+    <div class="matrix" id="matrix"></div>
 
-<div class="panel-wrapper">
-    <div class="panel">
-        <div class="title">NEXUS VIP <span style="font-size: 1.8rem; filter: hue-rotate(270deg);">😈</span></div>
-        <div class="subtitle">Secure Login System</div>
-
-        <div class="input-box">
-            <input type="text" id="key-input" placeholder="DIGITE SUA KEY">
+    <!-- LOGIN -->
+    <div class="panel" id="login-ui">
+        <div class="header">
+            <h1>NEXUS</h1>
+            <p class="subtitle">VIP DUMP • OB53</p>
         </div>
-
-        <button class="btn" id="login-btn" onclick="simulateLogin()">ACCESS GRANTED</button>
-
-        <div class="status-box" id="status-msg">
-            LOGIN SUCCESSFUL • ACCESS GRANTED
-        </div>
+        <input type="text" id="key" placeholder="DIGITE SUA KEY" autocomplete="off">
+        <button class="btn" onclick="logar()">VALIDAR KEY</button>
     </div>
-</div>
+
+    <!-- MENU -->
+    <div class="panel" id="menu-ui" style="display:none;">
+        <div class="header">
+            <h1>NEXUS DUMP</h1>
+        </div>
+
+        <div class="section">
+            <div class="section-title">COMBATE</div>
+            <div class="feature"><span>AimLock 100%</span><label class="switch"><input type="checkbox" onchange="patch('AimLock', '0x5ff59f4', this)"><span class="slider"></span></label></div>
+            <div class="feature"><span>Aimbot Tiro</span><label class="switch"><input type="checkbox" onchange="patch('Aimbot', '0x0000000', this)"><span class="slider"></span></label></div>
+            <div class="feature"><span>No Recoil</span><label class="switch"><input type="checkbox" onchange="patch('No Recoil', '0x6accffc', this)"><span class="slider"></span></label></div>
+            <div class="feature"><span>No Spread</span><label class="switch"><input type="checkbox" onchange="patch('No Spread', '0x0000000', this)"><span class="slider"></span></label></div>
+            <div class="feature"><span>Fast Shoot</span><label class="switch"><input type="checkbox" onchange="patch('Fast Shoot', '0x0000000', this)"><span class="slider"></span></label></div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">MOVIMENTAÇÃO</div>
+            <div class="feature"><span>Velocidade Correr</span><label class="switch"><input type="checkbox" onchange="patch('Speed Hack', '0x0000000', this)"><span class="slider"></span></label></div>
+            <div class="feature"><span>Pulo Alto</span><label class="switch"><input type="checkbox" onchange="patch('High Jump', '0x0000000', this)"><span class="slider"></span></label></div>
+            <div class="feature"><span>Fly Hacker</span><label class="switch"><input type="checkbox" onchange="patch('Fly', '0x5ff59f4', this)"><span class="slider"></span></label></div>
+            <div class="feature"><span>Teleport</span><label class="switch"><input type="checkbox" onchange="patch('Teleport', '0x0000000', this)"><span class="slider"></span></label></div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">VISUAL & MAPA</div>
+            <div class="feature"><span>Antena Head</span><label class="switch"><input type="checkbox" onchange="patch('Antena Head', '0x0000000', this)"><span class="slider"></span></label></div>
+            <div class="feature"><span>Corpo Branco</span><label class="switch"><input type="checkbox" onchange="patch('Corpo Branco', '0x0000000', this)"><span class="slider"></span></label></div>
+            <div class="feature"><span>Wallhack / ESP</span><label class="switch"><input type="checkbox" onchange="patch('Wallhack', '0x0000000', this)"><span class="slider"></span></label></div>
+            <div class="feature"><span>Remover Árvores</span><label class="switch"><input type="checkbox" onchange="patch('Remover Árvores', '0x0000000', this)"><span class="slider"></span></label></div>
+            <div class="feature"><span>Fast Medkit</span><label class="switch"><input type="checkbox" onchange="patch('Fast Medkit', '0x6a059d0', this)"><span class="slider"></span></label></div>
+            <div class="feature"><span>Infinite Ammo</span><label class="switch"><input type="checkbox" onchange="patch('Infinite Ammo', '0x0000000', this)"><span class="slider"></span></label></div>
+        </div>
+
+        <button class="btn-start" onclick="openFreeFire()">INICIAR FREE FIRE MAX</button>
+    </div>
 
 <script>
-    // ================= SCRIPT DO MATRIX RAIN =================
-    const canvas = document.getElementById('matrix-bg');
-    const ctx = canvas.getContext('2d');
+    // Matrix Rain
+    function createMatrixRain() {
+        const container = document.getElementById('matrix');
+        setInterval(() => {
+            const span = document.createElement('span');
+            span.textContent = Math.random() > 0.5 ? '1' : '0';
+            span.style.left = Math.random() * 100 + 'vw';
+            span.style.animationDuration = (Math.random() * 9 + 7) + 's';
+            container.appendChild(span);
+            setTimeout(() => span.remove(), 18000);
+        }, 65);
+    }
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    async function logar() {
+        const key = document.getElementById('key').value.trim();
+        if (!key) return alert("Digite sua key!");
 
-    // Caracteres Hacker / Katakana
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-    const fontSize = 16;
-    const columns = canvas.width / fontSize;
-    const drops = Array.from({ length: columns }).fill(1);
+        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB";
 
-    function drawMatrix() {
-        // Rastro escuro para dar o efeito de desvanecimento
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        try {
+            const response = await fetch("https://qudbsaujvnvwoybxarhp.supabase.co/functions/v1/validate-key", {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json", 
+                    "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1ZGJzYXVqdm52d295YnhhcmhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3ODY4NzIsImV4cCI6MjA5MzM2Mjg3Mn0.6TpmoQCaLNiSkW8wUj4s1-OATJp2qX9zii9escmKqYw" 
+                },
+                body: JSON.stringify({ key, hwid })
+            });
+            const data = await response.json();
 
-        // Cor e estilo do texto
-        ctx.fillStyle = '#00ff66';
-        ctx.font = fontSize + 'px monospace';
-
-        for (let i = 0; i < drops.length; i++) {
-            const text = chars.charAt(Math.floor(Math.random() * chars.length));
-            
-            // Desenha o caractere
-            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-            // Reseta a gota de forma aleatória para o topo
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                drops[i] = 0;
+            if (data.status === "valida") {
+                document.getElementById('login-ui').style.display = 'none';
+                document.getElementById('menu-ui').style.display = 'block';
+            } else {
+                alert("❌ KEY INVÁLIDA OU EXPIRADA!");
             }
-            drops[i]++;
+        } catch (e) {
+            alert("Erro de conexão com o servidor.");
         }
     }
 
-    setInterval(drawMatrix, 40);
+    function patch(nome, offset, el) {
+        const hex = el.checked ? "20 00 80 D2 C0 03 5F D6" : "00 00 80 D2 C0 03 5F D6";
+        if (typeof Android !== 'undefined') {
+            Android.inject(nome, offset, hex);
+            console.log(`[NEXUS] ${nome} | ${offset} → ${el.checked ? 'ON' : 'OFF'}`);
+        }
+    }
 
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+    function openFreeFire() {
+        if (typeof Android !== 'undefined') {
+            Android.openGame("com.dts.freefiremax");
+        } else {
+            alert("🚀 Free Fire Max iniciado!");
+        }
+    }
+
+    // Enter key
+    document.getElementById('key').addEventListener('keypress', e => {
+        if (e.key === 'Enter') logar();
     });
 
-    // ================= SIMULAÇÃO DE LOGIN =================
-    function simulateLogin() {
-        const btn = document.getElementById('login-btn');
-        const statusMsg = document.getElementById('status-msg');
-        const input = document.getElementById('key-input');
-
-        if (input.value.trim() === '') {
-            input.style.borderColor = '#ff0055';
-            return;
-        }
-
-        input.style.borderColor = '#00ff66';
-        btn.innerText = 'AUTHENTICATING...';
-        btn.style.opacity = '0.8';
-
-        setTimeout(() => {
-            btn.innerText = 'ACCESS GRANTED';
-            btn.style.opacity = '1';
-            statusMsg.style.display = 'block';
-        }, 1500);
-    }
+    window.onload = createMatrixRain;
 </script>
-
 </body>
 </html>
