@@ -1,118 +1,348 @@
 <!DOCTYPE html>
-<html lang="pt-br" style="background-color: #000;">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NEXUS XITER</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
 <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:Consolas, monospace; }
-    body { height:100vh; overflow:hidden; display:flex; justify-content:center; align-items:center; background:#000; color:#00ff66; }
 
-    /* Efeito Matrix Animado */
-    .matrix { position:absolute; inset:0; overflow:hidden; z-index:0; }
-    .matrix span { position:absolute; top:-100%; color:#00ff66; opacity:.15; font-size:20px; animation:fall linear infinite; }
-    @keyframes fall { 100% { transform:translateY(220vh); } }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-    /* Borda RGB Pulsante */
-    .border-glow {
-        position: relative; padding: 4px; border-radius: 35px; z-index: 2;
-        background: linear-gradient(135deg, #00ff66, #ff00ff, #00aaff, #00ff66);
-        background-size: 300% 300%; animation: move-rgb 5s linear infinite;
-        box-shadow: 0 0 25px rgba(0, 255, 102, 0.4);
+body{
+    overflow:hidden;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#000;
+    font-family:'Share Tech Mono', monospace;
+    position:relative;
+}
+
+/* MATRIX BACKGROUND */
+
+.matrix{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    z-index:0;
+}
+
+.column{
+    position:absolute;
+    top:-100%;
+    color:#00ff66;
+    font-size:22px;
+    line-height:22px;
+    white-space:pre;
+    opacity:.16;
+    animation:fall linear infinite;
+    text-shadow:0 0 8px #00ff66;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(220vh);
     }
-    @keyframes move-rgb { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+}
 
-    .panel {
-        position:relative; width:100%; max-width:380px; padding:35px 25px;
-        border-radius:32px; background:rgba(0,0,0,.95); backdrop-filter:blur(8px); text-align:center;
+/* MAIN PANEL */
+
+.panel{
+    position:relative;
+    z-index:2;
+
+    width:92%;
+    max-width:390px;
+
+    border-radius:38px;
+
+    padding:38px 28px;
+
+    background:rgba(0,0,0,.94);
+
+    border:3px solid #00ff66;
+
+    box-shadow:
+    0 0 15px #00ff66,
+    0 0 35px rgba(255,255,0,.45),
+    0 0 90px rgba(0,255,100,.25);
+
+    overflow:hidden;
+}
+
+/* GLOW */
+
+.panel::before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+
+    border-radius:40px;
+
+    background:linear-gradient(
+        130deg,
+        rgba(255,255,0,.15),
+        transparent,
+        rgba(0,255,100,.12)
+    );
+
+    pointer-events:none;
+}
+
+/* TITLE */
+
+.title{
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.title h1{
+    color:#00ff66;
+    font-size:3rem;
+    letter-spacing:3px;
+
+    text-shadow:
+    0 0 8px #00ff66,
+    0 0 18px #00ff66,
+    0 0 35px #00ff66;
+}
+
+.title span{
+    margin-left:10px;
+    filter:drop-shadow(0 0 12px #ff00ff);
+}
+
+.subtitle{
+    text-align:center;
+    color:#6b6b6b;
+    font-size:1rem;
+    letter-spacing:3px;
+    margin-bottom:40px;
+}
+
+/* INPUT */
+
+.input-box{
+    position:relative;
+    margin-bottom:28px;
+}
+
+.input-box input{
+    width:100%;
+    height:78px;
+
+    border-radius:24px;
+
+    border:2px solid #00ff66;
+
+    background:#020202;
+
+    color:#00ff66;
+
+    font-size:1.5rem;
+
+    padding:0 24px;
+
+    outline:none;
+
+    transition:.3s;
+
+    box-shadow:
+    inset 0 0 15px rgba(0,255,100,.12),
+    0 0 12px rgba(0,255,100,.15);
+}
+
+.input-box input:focus{
+
+    transform:scale(1.015);
+
+    box-shadow:
+    0 0 22px rgba(0,255,100,.45),
+    inset 0 0 15px rgba(0,255,100,.18);
+}
+
+/* BUTTON */
+
+.btn{
+    width:100%;
+    height:95px;
+
+    border:none;
+
+    border-radius:26px;
+
+    background:linear-gradient(
+        90deg,
+        #c43cff,
+        #ff00d9,
+        #b67cff
+    );
+
+    color:#000;
+
+    font-size:2rem;
+    font-weight:bold;
+
+    cursor:pointer;
+
+    letter-spacing:2px;
+
+    transition:.25s;
+
+    box-shadow:
+    0 0 25px rgba(255,0,255,.35),
+    inset 0 0 20px rgba(255,255,255,.15);
+}
+
+.btn:hover{
+    transform:translateY(-4px) scale(1.01);
+
+    box-shadow:
+    0 0 35px rgba(255,0,255,.5);
+}
+
+/* STATUS */
+
+.status{
+    margin-top:30px;
+
+    height:82px;
+
+    border-radius:24px;
+
+    border:1px solid #00ff66;
+
+    background:rgba(0,255,80,.08);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:#00ff66;
+
+    font-size:1.25rem;
+
+    text-shadow:0 0 10px #00ff66;
+
+    box-shadow:
+    inset 0 0 15px rgba(0,255,100,.12),
+    0 0 15px rgba(0,255,100,.12);
+}
+
+/* FOOTER */
+
+.footer{
+    margin-top:34px;
+    text-align:center;
+
+    color:#4f4f4f;
+
+    font-size:1rem;
+
+    letter-spacing:2px;
+}
+
+/* MOBILE */
+
+@media(max-width:480px){
+
+    .title h1{
+        font-size:2.3rem;
     }
 
-    .title h1 { font-size:2.1rem; color:#00ff66; text-shadow:0 0 20px #00ff66; }
-    .subtitle { color:#777; margin-bottom:30px; font-size:.9rem; letter-spacing:1px; }
-
-    .input-box input {
-        width:100%; height:65px; border-radius:20px; border:2px solid #00ff66;
-        background:#030303; color:#00ff66; font-size:1.1rem; padding:0 20px; outline:none;
-        box-shadow: 0 0 10px rgba(0,255,100,0.2); margin-bottom:20px;
+    .btn{
+        font-size:1.5rem;
+        height:82px;
     }
 
-    .btn-login {
-        width:100%; height:75px; border:none; border-radius:20px; cursor:pointer;
-        font-size:1.2rem; font-weight:bold; color:#000;
-        background: linear-gradient(90deg, #bb33ff, #ff00c8); box-shadow: 0 0 25px rgba(255,0,200,0.4);
+    .input-box input{
+        font-size:1.2rem;
     }
 
-    /* Interface do Menu de Hacks */
-    #menu-ui { display: none; }
-    .row { 
-        display:flex; justify-content:space-between; align-items:center; 
-        background:rgba(0,255,100,0.08); padding:15px; border-radius:18px; margin-bottom:12px;
+    .status{
+        font-size:1rem;
     }
 
-    /* Switch Estilizado */
-    .switch { position:relative; width:48px; height:24px; }
-    .switch input { opacity:0; width:0; height:0; }
-    .slider { position:absolute; inset:0; background:#333; border-radius:30px; cursor:pointer; transition:.3s; }
-    .slider:before { content:""; position:absolute; height:18px; width:18px; left:3px; bottom:3px; background:white; transition:.3s; border-radius:50%; }
-    input:checked + .slider { background:#00ff66; box-shadow: 0 0 10px #00ff66; }
-    input:checked + .slider:before { transform:translateX(24px); }
+}
+
 </style>
 </head>
 <body>
 
+<!-- MATRIX -->
 <div class="matrix" id="matrix"></div>
 
-<div class="border-glow">
-    <div class="panel">
-        <div id="login-ui">
-            <div class="title"><h1>NEXUS XITER 😈</h1></div>
-            <div class="subtitle">SECURE LOGIN SYSTEM</div>
-            <div class="input-box"><input type="text" id="key" placeholder="NX-ERBZ-XI9O"></div>
-            <button class="btn-login" onclick="validar()">ACCESS GRANTED</button>
-            <div style="color:#555; font-size:.8rem; margin-top:25px;">PROTECTED LOGIN SYSTEM v5.0</div>
-        </div>
+<!-- PANEL -->
+<div class="panel">
 
-        <div id="menu-ui">
-            <h2 style="color:#00ff66; margin-bottom:20px;">MENU VIP OB53</h2>
-            <div class="row"><span>FLY HEIGHT</span><label class="switch"><input type="checkbox" onchange="patch('FLY','0x5ff59f4',this)"><span class="slider"></span></label></div>
-            <div class="row"><span>NO RECOIL</span><label class="switch"><input type="checkbox" onchange="patch('RECOIL','0x6accffc',this)"><span class="slider"></span></label></div>
-            <button class="btn-login" style="background:#ffea00; height:60px; margin-top:10px;" onclick="Android.openGame()">ABRIR FREE FIRE</button>
-        </div>
+    <div class="title">
+        <h1>NEXUS XITER <span>😈</span></h1>
     </div>
+
+    <div class="subtitle">
+        SECURE LOGIN SYSTEM
+    </div>
+
+    <div class="input-box">
+        <input type="text" placeholder="NX-ERBZ-XI9O">
+    </div>
+
+    <button class="btn">
+        ACCESS GRANTED
+    </button>
+
+    <div class="status">
+        LOGIN SUCCESSFUL • ACCESS GRANTED
+    </div>
+
+    <div class="footer">
+        PROTECTED LOGIN SYSTEM v5.0
+    </div>
+
 </div>
 
 <script>
-    // Gerador de caracteres Matrix
-    const m = document.getElementById("matrix");
-    for(let i=0; i<100; i++){
-        let s = document.createElement("span");
-        s.innerText = "01XSUENO"[Math.floor(Math.random()*8)];
-        s.style.left = Math.random()*100 + "vw";
-        s.style.animationDuration = (Math.random()*5+3) + "s";
-        m.appendChild(s);
+
+/* MATRIX EFFECT */
+
+const matrix = document.getElementById("matrix");
+
+const chars = "01XSUENO";
+
+for(let i = 0; i < 55; i++){
+
+    const column = document.createElement("div");
+
+    column.classList.add("column");
+
+    let text = "";
+
+    for(let j = 0; j < 35; j++){
+
+        text += chars[Math.floor(Math.random()*chars.length)] + "\n";
     }
 
-    async function validar() {
-        const key = document.getElementById('key').value.trim();
-        const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "WEB";
-        
-        try {
-            const response = await fetch("https://qudbsaujvnvwoybxarhp.supabase.co/functions/v1/validate-key", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "apikey": "SUA_API_KEY_AQUI" },
-                body: JSON.stringify({ key, hwid })
-            });
-            const data = await response.json();
-            if (data.status === "valida") {
-                document.getElementById('login-ui').style.display='none';
-                document.getElementById('menu-ui').style.display='block';
-            } else { alert("KEY INVÁLIDA!"); }
-        } catch(e) { alert("ERRO DE REDE!"); }
-    }
+    column.innerText = text;
 
-    function patch(n, o, el) {
-        let hex = el.checked ? "20 00 80 D2 C0 03 5F D6" : "00 00 80 D2 C0 03 5F D6";
-        if(typeof Android !== 'undefined') Android.inject(n, o, hex);
-    }
+    column.style.left = Math.random()*100 + "vw";
+
+    column.style.animationDuration = (Math.random()*8 + 7) + "s";
+
+    column.style.animationDelay = (Math.random()*5) + "s";
+
+    matrix.appendChild(column);
+}
+
 </script>
+
 </body>
 </html>
