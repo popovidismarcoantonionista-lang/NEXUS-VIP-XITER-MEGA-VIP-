@@ -4,52 +4,61 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family: 'Courier New', Courier, monospace; }
+    * { margin:0; padding:0; box-sizing:border-box; font-family: 'Courier New', monospace; }
     body { height:100vh; background:#000; display:flex; justify-content:center; align-items:center; overflow:hidden; position:relative; }
 
-    /* Matrix Canvas Background */
+    /* Matrix Fluído de Fundo */
     #m { position:absolute; inset:0; z-index:0; }
 
-    /* Card Principal - Fiel à Foto */
+    /* Card com Borda RGB Animada */
     .panel {
         position:relative; z-index:10; width:90%; max-width:380px;
         background: rgba(10, 10, 10, 0.95);
-        border: 2px solid #00ff66; /* Borda verde neon fixa */
         border-radius: 35px;
         padding: 30px;
-        box-shadow: 0 0 25px #00ff66; /* Brilho externo verde */
         text-align:center;
+        /* A mágica do RGB está aqui */
+        border: 3px solid transparent;
+        background-image: linear-gradient(rgba(10,10,10,0.95), rgba(10,10,10,0.95)), 
+                          linear-gradient(135deg, #00ff88, #00aaff, #a855ff, #ff00cc, #00ff88);
+        background-origin: border-box;
+        background-clip: content-box, border-box;
+        background-size: 400% 400%;
+        animation: rgbBorder 6s linear infinite;
+        box-shadow: 0 0 20px rgba(0, 255, 102, 0.3);
     }
 
-    .logo h1 { color:#00ff66; font-size:2rem; font-weight:bold; text-shadow: 0 0 10px #00ff66; }
-    .logo span { color: #ff00ff; filter: drop-shadow(0 0 5px #ff00ff); } /* Emoji roxo/rosa */
+    @keyframes rgbBorder {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 400% 50%; }
+    }
+
+    .logo h1 { color:#00ff66; font-size:2rem; text-shadow: 0 0 10px #00ff66; }
+    .logo span { color: #ff00ff; filter: drop-shadow(0 0 5px #ff00ff); }
     .sub { color:#666; font-size:0.7rem; letter-spacing:3px; margin: 10px 0 30px 0; }
 
-    /* Input Estilo Foto */
+    /* Inputs e Botões */
     .input-box input {
-        width:100%; height:65px; background: transparent; border: 1px solid #00ff66;
-        border-radius: 20px; color:#00ff66; padding:0 20px; outline:none; font-size:1rem;
-        margin-bottom:20px; box-shadow: inset 0 0 5px rgba(0,255,102,0.1);
+        width:100%; height:60px; background: transparent; border: 1px solid #00ff66;
+        border-radius: 20px; color:#00ff66; padding:0 20px; outline:none; margin-bottom:20px;
     }
 
-    /* Botão Gradiente Metálico da Foto */
     .btn {
         width:100%; height:75px; border:none; border-radius:22px;
-        background: linear-gradient(to right, #9d50bb, #ff00cc); /* Roxo para Rosa */
+        background: linear-gradient(to right, #9d50bb, #ff00cc);
         color:#000; font-weight:bold; font-size:1.3rem; cursor:pointer;
-        box-shadow: 0 5px 15px rgba(157, 80, 187, 0.4);
-        margin-bottom:20px; text-transform: uppercase;
+        box-shadow: 0 5px 15px rgba(157, 80, 187, 0.4); margin-bottom:20px;
     }
 
-    /* Caixa de Status Verde */
     .status {
-        border: 1px solid #004422; border-radius: 18px; padding: 18px;
-        color:#00ff66; font-size:0.85rem; background: rgba(0,255,102,0.05);
+        border: 1px solid #004422; border-radius: 18px; padding: 15px;
+        color:#00ff66; font-size:0.8rem; background: rgba(0,255,102,0.05);
     }
 
-    /* Menu de Hacks */
     #menu-ui { display: none; }
     .row { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; color:#00ff66; }
+    
+    /* Switch */
     .switch { position:relative; width:40px; height:20px; }
     .switch input { opacity:0; }
     .slider { position:absolute; inset:0; background:#333; border-radius:20px; cursor:pointer; }
@@ -64,26 +73,25 @@
 
 <div class="panel">
     <div id="login-ui">
-        <div class="logo"><h1>NEXUS XITER <span>😈</span></h1></div>
+        <div class="logo"><h1>NEXUS RGB <span>😈</span></h1></div>
         <div class="sub">SECURE LOGIN SYSTEM</div>
-        <div class="input-box"><input type="text" id="key" placeholder="NX-ERBZ-XI9O"></div>
-        <button class="btn" onclick="logar()">LOGIN MOD</button>
-        <div class="status">LOGIN SUCCESSFUL • ACCESS GRANTED</div>
+        <div class="input-box"><input type="text" id="key" placeholder="DIGITE SUA KEY"></div>
+        <button class="btn" onclick="logar()">ENTRAR</button>
+        <div class="status">SISTEMA PROTEGIDO v5.0</div>
     </div>
 
     <div id="menu-ui">
         <div class="logo"><h1>MOD MENU</h1></div>
-        <div class="sub">HACKS ATIVOS</div>
-        <div class="row"><span>AIMBOT 100%</span><label class="switch"><input type="checkbox" onchange="patch('AIM','0x123',this)"><span class="slider"></span></label></div>
-        <div class="row"><span>FLY HACK</span><label class="switch"><input type="checkbox" onchange="patch('FLY','0x5ff59f4',this)"><span class="slider"></span></label></div>
+        <div class="sub">FUNÇÕES ATIVAS</div>
+        <div class="row"><span>ANTENA HEAD</span><label class="switch"><input type="checkbox" onchange="patch('ANTENA','0x5ff59f4',this)"><span class="slider"></span></label></div>
+        <div class="row"><span>AIMBOT FIX</span><label class="switch"><input type="checkbox" onchange="patch('AIM','0x6accffc',this)"><span class="slider"></span></label></div>
         <button class="btn" style="height:55px; font-size:1rem;" onclick="Android.openGame()">ABRIR JOGO</button>
     </div>
 </div>
 
 <script>
-    // Matrix Effect fluído (Canvas)
-    const c = document.getElementById('m');
-    const q = c.getContext('2d');
+    // Matrix Effect
+    const c = document.getElementById('m'); const q = c.getContext('2d');
     c.width = window.innerWidth; c.height = window.innerHeight;
     const s = 16; const d = Array(Math.ceil(c.width/s)).fill(1);
     function draw() {
@@ -91,23 +99,21 @@
         q.fillStyle = "#00ff66"; q.font = s+"px monospace";
         d.forEach((y, i) => {
             q.fillText("01XSUENO"[Math.floor(Math.random()*8)], i*s, y*s);
-            if (y*s > c.height && Math.random() > 0.975) d[i] = 0;
-            d[i]++;
+            if (y*s > c.height && Math.random() > 0.975) d[i] = 0; d[i]++;
         });
     }
     setInterval(draw, 35);
 
-    async function logar() {
-        const btn = document.querySelector('.btn');
-        btn.innerText = "WAIT...";
-        // Simulação de login - após 1s libera o menu
-        setTimeout(() => {
+    function logar() {
+        const key = document.getElementById('key').value;
+        if(key.length > 2) {
             document.getElementById('login-ui').style.display='none';
             document.getElementById('menu-ui').style.display='block';
-        }, 1000);
+        }
     }
 
     function patch(n, o, el) {
+        // Envia o comando de injeção para o Java
         let hex = el.checked ? "20 00 80 D2 C0 03 5F D6" : "00 00 80 D2 C0 03 5F D6";
         if(typeof Android !== 'undefined') Android.inject(n, o, hex);
     }
