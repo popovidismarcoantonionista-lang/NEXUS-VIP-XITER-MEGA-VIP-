@@ -3,79 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS VIP LOGIN</title>
+    <title>NEXUS VIP UNIFICADO</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: #000; height: 100vh; display: flex; justify-content: center; align-items: center; color: #0f6; overflow: hidden; }
         
-        .card { 
-            width: 85%; 
-            max-width: 320px; 
-            padding: 35px 25px; 
-            background: rgba(10, 10, 10, 0.95); 
-            border: 2px solid #0f6; 
-            border-radius: 20px; 
-            text-align: center; 
-            box-shadow: 0 0 25px rgba(0, 255, 102, 0.3); 
-        }
+        /* CONTAINER PRINCIPAL */
+        #main-container { width: 90%; max-width: 340px; padding: 25px; background: #0a0a0a; border: 2px solid #0f6; border-radius: 20px; box-shadow: 0 0 25px #0f63; text-align: center; }
+        
+        /* TELAS */
+        #login-screen { display: block; }
+        #menu-screen { display: none; height: 80vh; flex-direction: column; }
 
-        h2 { margin-bottom: 25px; text-shadow: 0 0 12px #0f6; letter-spacing: 2px; }
-
-        input { 
-            width: 100%; 
-            padding: 14px; 
-            margin-bottom: 20px; 
-            background: #111; 
-            border: 1px solid #0f6; 
-            border-radius: 10px; 
-            color: #fff; 
-            text-align: center; 
-            font-size: 16px; 
-            outline: none; 
-        }
-
-        .btn { 
-            width: 100%; 
-            padding: 15px; 
-            background: #0f6; 
-            color: #000; 
-            border: none; 
-            border-radius: 10px; 
-            font-weight: bold; 
-            font-size: 16px; 
-            cursor: pointer; 
-            text-transform: uppercase;
-            transition: 0.3s;
-        }
-
+        /* INPUTS E BOTÕES */
+        input { width: 100%; padding: 14px; margin: 20px 0; background: #111; border: 1px solid #0f6; border-radius: 10px; color: #fff; text-align: center; outline: none; font-size: 16px; }
+        .btn { width: 100%; padding: 15px; background: #0f6; color: #000; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
         .btn:active { transform: scale(0.95); }
-        .btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+        .btn:disabled { background: #333; color: #666; }
 
-        .status-msg { margin-top: 15px; font-size: 12px; color: #555; }
+        /* LISTA DE OFFSETS */
+        .offset-list { overflow-y: auto; flex-grow: 1; margin: 15px 0; padding-right: 5px; text-align: left; }
+        .offset-item { background: #111; border: 1px solid #222; padding: 12px; margin-bottom: 10px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* SWITCHES */
+        .switch { position: relative; width: 44px; height: 22px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 20px; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .4s; }
+        input:checked + .slider { background: #0f6; }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        .inject-btn { background: #0088ff; color: #fff; margin-top: 5px; font-size: 12px; }
+        
+        /* SCROLL */
+        .offset-list::-webkit-scrollbar { width: 3px; }
+        .offset-list::-webkit-scrollbar-thumb { background: #0f6; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>NEXUS VIP</h2>
-    <input type="text" id="keyInput" placeholder="DIGITE SUA CHAVE">
-    <button class="btn" id="btnEntrar" onclick="autenticar()">ENTRAR NO MOD</button>
-    <p class="status-msg">v2.0 Unificado</p>
+<div id="main-container">
+    <div id="login-screen">
+        <h2 style="text-shadow: 0 0 10px #0f6;">NEXUS VIP</h2>
+        <p style="font-size: 11px; color: #555;">SISTEMA DE SEGURANÇA</p>
+        <input type="text" id="keyField" placeholder="COLE SUA KEY">
+        <button class="btn" id="loginBtn" onclick="fazerLogin()">ENTRAR NO MOD</button>
+    </div>
+
+    <div id="menu-screen">
+        <h3 style="border-bottom: 1px solid #0f6; padding-bottom: 10px;">PAINEL DE OFFSETS</h3>
+        
+        <div class="offset-list">
+            <div class="offset-item"><span>Aimbot 360°</span><label class="switch"><input type="checkbox" onchange="setOff('aim', this.checked)"><span class="slider"></span></label></div>
+            <div class="offset-item"><span>HS Aura</span><label class="switch"><input type="checkbox" onchange="setOff('hs', this.checked)"><span class="slider"></span></label></div>
+            <div class="offset-item"><span>Antena 100%</span><label class="switch"><input type="checkbox" onchange="setOff('ant', this.checked)"><span class="slider"></span></label></div>
+            <div class="offset-item"><span>Speed Run</span><label class="switch"><input type="checkbox" onchange="setOff('spd', this.checked)"><span class="slider"></span></label></div>
+            <div class="offset-item"><span>No Recoil</span><label class="switch"><input type="checkbox" onchange="setOff('rec', this.checked)"><span class="slider"></span></label></div>
+            
+            <button class="btn inject-btn" onclick="startInject()">INJETAR VIA SHIZUKU</button>
+        </div>
+
+        <button class="btn" style="background:#f33; color:#fff;" onclick="sair()">FECHAR</button>
+    </div>
 </div>
 
 <script>
-async function autenticar() {
-    const keyInput = document.getElementById('keyInput');
-    const btn = document.getElementById('btnEntrar');
-    
-    const key = keyInput.value.trim().toUpperCase();
+async function fazerLogin() {
+    const key = document.getElementById('keyField').value.trim().toUpperCase();
+    const btn = document.getElementById('loginBtn');
     const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "PC_TESTE";
 
-    if (!key) {
-        alert("⚠️ Insira uma chave válida!");
-        return;
-    }
-
+    if(!key) return alert("Digite a Key!");
+    
     btn.disabled = true;
     btn.innerText = "AUTENTICANDO...";
 
@@ -86,27 +85,38 @@ async function autenticar() {
             body: JSON.stringify({ key, hwid })
         });
 
-        const result = await response.json();
+        const data = await response.json();
 
-        if (result && result.status === "valida") {
-            // --- REDIRECIONAMENTO PARA O MOD MENU ---
-            if (typeof Android !== 'undefined') {
-                // Chama a função Java no Sketchware que abre o menu flutuante
-                Android.onLoginSuccess(); 
-            } else {
-                alert("✅ SUCESSO! No App, o menu abriria agora.");
-            }
+        if (data.status === "valida") {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('menu-screen').style.display = 'flex';
+            if (typeof Android !== 'undefined') Android.onLoginSuccess();
         } else {
-            alert("❌ ACESSO NEGADO: " + (result.message || "Key Inválida"));
+            alert("NEGADO: " + (data.message || "Key Inválida"));
             btn.disabled = false;
             btn.innerText = "ENTRAR NO MOD";
         }
-
     } catch (e) {
-        alert("🚨 ERRO DE CONEXÃO: Verifique sua internet ou a Vercel.");
+        alert("ERRO DE CONEXÃO COM O SERVIDOR");
         btn.disabled = false;
-        btn.innerText = "ENTRAR NO MOD";
     }
+}
+
+// Ponte para o Android (Sketchware/Shizuku)
+function setOff(func, status) {
+    if (typeof Android !== 'undefined') Android.setOffset(func, status);
+}
+
+function startInject() {
+    if (typeof Android !== 'undefined') {
+        Android.startInjection(); 
+    } else {
+        alert("Injeção disponível apenas no APK.");
+    }
+}
+
+function sair() {
+    if (typeof Android !== 'undefined') Android.finish();
 }
 </script>
 
