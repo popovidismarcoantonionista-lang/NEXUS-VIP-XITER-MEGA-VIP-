@@ -15,7 +15,7 @@
         .btn { width: 100%; padding: 12px; background: #0f6; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 5px; }
         .btn:disabled { background: #333; color: #666; }
 
-        .list { overflow-y: auto; flex-grow: 1; margin: 10px 0; }
+        .list { overflow-y: auto; flex-grow: 1; margin: 10px 0; padding-right: 5px; }
         .item { background: #111; padding: 10px; margin-bottom: 8px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; font-size: 13px; }
 
         .switch { position: relative; width: 38px; height: 18px; }
@@ -36,19 +36,19 @@
 
 <div id="login-screen">
     <h2>NEXUS VIP</h2>
-    <input type="text" id="keyField" placeholder="INSIRA SUA KEY">
-    <button class="btn" id="loginBtn" onclick="auth()">ENTRAR</button>
+    <input type="text" id="keyField" placeholder="COLE SUA KEY AQUI">
+    <button class="btn" id="loginBtn" onclick="auth()">ENTRAR NO PAINEL</button>
 </div>
 
 <div id="menu-screen">
-    <h3 style="text-align:center; border-bottom:1px solid #0f6; padding-bottom:5px; margin-bottom:10px;">MENU NEXUS</h3>
+    <h3 style="text-align:center; border-bottom:1px solid #0f6; padding-bottom:5px; margin-bottom:10px;">MENU NEXUS VIP</h3>
     <button class="btn btn-launch" onclick="launchGame()">🚀 ABRIR FREE FIRE</button>
 
     <div class="list">
         <div class="item"><span>Aimbot 360</span><label class="switch"><input type="checkbox" onchange="send('aim', this.checked)"><span class="slider"></span></label></div>
         <div class="item"><span>Aura HS</span><label class="switch"><input type="checkbox" onchange="send('hs', this.checked)"><span class="slider"></span></label></div>
         <div class="item"><span>Antena Fina</span><label class="switch"><input type="checkbox" onchange="send('ant', this.checked)"><span class="slider"></span></label></div>
-        <div class="item"><span>Speed x10</span><label class="switch"><input type="checkbox" onchange="send('spd', this.checked)"><span class="slider"></span></label></div>
+        <div class="item"><span>Speed Run x10</span><label class="switch"><input type="checkbox" onchange="send('spd', this.checked)"><span class="slider"></span></label></div>
         <div class="item"><span>No Recoil</span><label class="switch"><input type="checkbox" onchange="send('rec', this.checked)"><span class="slider"></span></label></div>
         <div class="item"><span>Medkit Correndo</span><label class="switch"><input type="checkbox" onchange="send('med', this.checked)"><span class="slider"></span></label></div>
         <div class="item"><span>Visão Ipad</span><label class="switch"><input type="checkbox" onchange="send('ipad', this.checked)"><span class="slider"></span></label></div>
@@ -56,7 +56,7 @@
         <button class="btn btn-inject" onclick="inject()">INJETAR VIA SHIZUKU</button>
     </div>
     
-    <button class="btn" style="background:#f33; color:#fff;" onclick="exitApp()">SAIR</button>
+    <button class="btn" style="background:#f33; color:#fff;" onclick="exitApp()">SAIR DO APP</button>
 </div>
 
 <script>
@@ -65,8 +65,9 @@ async function auth() {
     const btn = document.getElementById('loginBtn');
     const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "PC_TESTE";
 
-    if(!key) return alert("Digite a Key!");
-    btn.disabled = true; btn.innerText = "CHAVEANDO...";
+    if(!key) return alert("Por favor, digite a Key!");
+    btn.disabled = true; 
+    btn.innerText = "VALIDANDO...";
 
     try {
         const res = await fetch("https://nexus-vip-key.vercel.app/api/verify", {
@@ -78,17 +79,19 @@ async function auth() {
         const data = await res.json();
 
         if (data.status === "valida") {
-            // SÓ LIBERA O MENU SE FOR VÁLIDA
+            // ORDEM CORRETA: Só esconde o login se a API confirmar
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('menu-screen').style.display = 'flex';
             if (typeof Android !== 'undefined') Android.onLoginSuccess();
         } else {
-            alert("NEGADO: " + (data.message || "Key Inválida"));
-            btn.disabled = false; btn.innerText = "ENTRAR";
+            alert("ACESSO NEGADO: " + (data.message || "Key Incorreta"));
+            btn.disabled = false; 
+            btn.innerText = "ENTRAR NO PAINEL";
         }
     } catch (e) {
-        alert("SERVIDOR OFFLINE OU ERRO DE REDE");
-        btn.disabled = false; btn.innerText = "ENTRAR";
+        alert("ERRO DE CONEXÃO: Servidor Vercel Offline");
+        btn.disabled = false; 
+        btn.innerText = "ENTRAR NO PAINEL";
     }
 }
 
