@@ -8,8 +8,11 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: #000; height: 100vh; display: flex; justify-content: center; align-items: center; color: #0f6; overflow: hidden; }
         
+        /* TELA DE LOGIN */
         #login-screen { width: 85%; max-width: 320px; padding: 30px; background: #0a0a0a; border: 2px solid #0f6; border-radius: 20px; text-align: center; box-shadow: 0 0 20px #0f63; }
-        #menu-screen { display: none; width: 90%; max-width: 350px; height: 90vh; background: #0a0a0a; border: 2px solid #0f6; border-radius: 15px; flex-direction: column; padding: 15px; border: 1px solid #0f6; }
+        
+        /* TELA DO MENU (INVISÍVEL ATÉ LOGAR) */
+        #menu-screen { display: none; width: 90%; max-width: 350px; height: 90vh; background: #0a0a0a; border: 2px solid #0f6; border-radius: 15px; flex-direction: column; padding: 15px; }
 
         input { width: 100%; padding: 12px; margin: 15px 0; background: #111; border: 1px solid #0f6; border-radius: 8px; color: #fff; text-align: center; outline: none; }
         .btn { width: 100%; padding: 12px; background: #0f6; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 5px; }
@@ -18,6 +21,7 @@
         .list { overflow-y: auto; flex-grow: 1; margin: 10px 0; padding-right: 5px; }
         .item { background: #111; padding: 10px; margin-bottom: 8px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; font-size: 13px; }
 
+        /* SWITCHESTYLE */
         .switch { position: relative; width: 38px; height: 18px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 20px; transition: .4s; }
@@ -25,8 +29,8 @@
         input:checked + .slider { background: #0f6; }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        .btn-launch { background: #ffae00; color: #000; }
-        .btn-inject { background: #0088ff; color: #fff; font-size: 11px; }
+        .btn-launch { background: #ffae00; color: #000; margin-bottom: 15px; }
+        .btn-inject { background: #0088ff; color: #fff; font-size: 11px; margin-top: 10px; }
         
         .list::-webkit-scrollbar { width: 3px; }
         .list::-webkit-scrollbar-thumb { background: #0f6; }
@@ -35,13 +39,15 @@
 <body>
 
 <div id="login-screen">
-    <h2>NEXUS VIP</h2>
-    <input type="text" id="keyField" placeholder="COLE SUA KEY AQUI">
-    <button class="btn" id="loginBtn" onclick="auth()">ENTRAR NO PAINEL</button>
+    <h2 style="margin-bottom:10px;">NEXUS VIP</h2>
+    <p style="font-size: 10px; color: #888;">VERIFICAÇÃO DE SEGURANÇA</p>
+    <input type="text" id="keyField" placeholder="INSIRA SUA KEY">
+    <button class="btn" id="loginBtn" onclick="auth()">ENTRAR</button>
 </div>
 
 <div id="menu-screen">
     <h3 style="text-align:center; border-bottom:1px solid #0f6; padding-bottom:5px; margin-bottom:10px;">MENU NEXUS VIP</h3>
+    
     <button class="btn btn-launch" onclick="launchGame()">🚀 ABRIR FREE FIRE</button>
 
     <div class="list">
@@ -53,6 +59,7 @@
         <div class="item"><span>Medkit Correndo</span><label class="switch"><input type="checkbox" onchange="send('med', this.checked)"><span class="slider"></span></label></div>
         <div class="item"><span>Visão Ipad</span><label class="switch"><input type="checkbox" onchange="send('ipad', this.checked)"><span class="slider"></span></label></div>
         <div class="item"><span>Atravessar Gelo</span><label class="switch"><input type="checkbox" onchange="send('wall', this.checked)"><span class="slider"></span></label></div>
+        
         <button class="btn btn-inject" onclick="inject()">INJETAR VIA SHIZUKU</button>
     </div>
     
@@ -60,14 +67,18 @@
 </div>
 
 <script>
+// FUNÇÃO DE LOGIN COM TRAVA
 async function auth() {
     const key = document.getElementById('keyField').value.trim().toUpperCase();
     const btn = document.getElementById('loginBtn');
-    const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "PC_TESTE";
+    
+    // Pega o ID do dispositivo via Java
+    const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "TESTE_PC";
 
-    if(!key) return alert("Por favor, digite a Key!");
+    if(!key) return alert("Digite a sua Key!");
+    
     btn.disabled = true; 
-    btn.innerText = "VALIDANDO...";
+    btn.innerText = "CHAVEANDO...";
 
     try {
         const res = await fetch("https://nexus-vip-key.vercel.app/api/verify", {
@@ -79,26 +90,43 @@ async function auth() {
         const data = await res.json();
 
         if (data.status === "valida") {
-            // ORDEM CORRETA: Só esconde o login se a API confirmar
+            // SUCESSO: Libera o menu e esconde o login
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('menu-screen').style.display = 'flex';
             if (typeof Android !== 'undefined') Android.onLoginSuccess();
         } else {
-            alert("ACESSO NEGADO: " + (data.message || "Key Incorreta"));
+            alert("ERRO: " + (data.message || "Key Inválida"));
             btn.disabled = false; 
-            btn.innerText = "ENTRAR NO PAINEL";
+            btn.innerText = "ENTRAR";
         }
     } catch (e) {
-        alert("ERRO DE CONEXÃO: Servidor Vercel Offline");
+        alert("SERVIDOR OFFLINE: Verifique a Vercel.");
         btn.disabled = false; 
-        btn.innerText = "ENTRAR NO PAINEL";
+        btn.innerText = "ENTRAR";
     }
 }
 
-function send(f, s) { if (typeof Android !== 'undefined') Android.setOffset(f, s); }
-function inject() { if (typeof Android !== 'undefined') Android.startInjection(); }
-function launchGame() { if (typeof Android !== 'undefined') Android.launchGame(); }
-function exitApp() { if (typeof Android !== 'undefined') Android.finish(); }
+// FUNÇÕES DE COMANDO PARA O ANDROID
+function send(feature, state) {
+    if (typeof Android !== 'undefined') Android.setOffset(feature, state);
+}
+
+function launchGame() {
+    if (typeof Android !== 'undefined') {
+        Android.launchGame();
+    } else {
+        alert("Função disponível apenas no celular!");
+    }
+}
+
+function inject() {
+    if (typeof Android !== 'undefined') Android.startInjection();
+}
+
+function exitApp() {
+    if (typeof Android !== 'undefined') Android.finish();
+}
 </script>
+
 </body>
 </html>
