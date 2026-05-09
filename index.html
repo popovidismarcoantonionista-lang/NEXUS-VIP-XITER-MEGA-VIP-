@@ -3,70 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS VIP LOGIN</title>
+    <title>NEXUS VIP - LOGIN</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-        body { background: #000; height: 100vh; display: flex; justify-content: center; align-items: center; color: #0f6; }
-        .card { width: 85%; max-width: 320px; padding: 30px; background: #0a0a0a; border: 2px solid #0f6; border-radius: 15px; text-align: center; box-shadow: 0 0 20px #0f64; }
-        h2 { margin-bottom: 20px; text-shadow: 0 0 10px #0f6; }
-        input { width: 100%; padding: 12px; margin-bottom: 15px; background: #111; border: 1px solid #0f6; border-radius: 8px; color: #fff; text-align: center; outline: none; }
-        .btn { width: 100%; padding: 12px; background: #0f6; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn:disabled { background: #444; }
+        
+        body { 
+            background: #000; 
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            color: #0f6;
+        }
+
+        .login-card {
+            width: 85%;
+            max-width: 320px;
+            padding: 30px;
+            background: rgba(0,0,0,0.9);
+            border: 2px solid #0f6;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.3);
+        }
+
+        h2 { margin-bottom: 25px; text-shadow: 0 0 10px #0f6; letter-spacing: 1px; }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            background: #111;
+            border: 1px solid #0f6;
+            border-radius: 8px;
+            color: #fff;
+            text-align: center;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #0f6;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .btn:disabled { background: #333; color: #666; }
     </style>
 </head>
 <body>
 
-<div class="card">
+<div class="login-card">
     <h2>NEXUS VIP</h2>
     <input type="text" id="keyInput" placeholder="INSIRA SUA KEY">
-    <button class="btn" id="btnEntrar" onclick="autenticar()">ENTRAR</button>
+    <button class="btn" id="btnEntrar" onclick="autenticar()">Entrar</button>
 </div>
 
 <script>
 async function autenticar() {
-    const key = document.getElementById('keyInput').value.trim().toUpperCase();
+    const keyField = document.getElementById('keyInput');
     const btn = document.getElementById('btnEntrar');
     
-    // Captura o HWID real do celular via ponte Java do Sketchware
+    const key = keyField.value.trim().toUpperCase();
     const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "Navegador_Teste";
 
-    if (!key) return alert("Digite uma Key!");
+    if (!key) {
+        alert("Por favor, digite a sua Key!");
+        return;
+    }
 
     btn.disabled = true;
     btn.innerText = "VERIFICANDO...";
 
     try {
-        // Envia para a sua API na Vercel que criamos acima
-        const response = await fetch("https://nexus-vip-key.vercel.app/api", {
+        // ATENÇÃO: Link atualizado para /api/verify porque o seu arquivo se chama verify.js
+        const response = await fetch("https://nexus-vip-key.vercel.app/api/verify", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ key, hwid })
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ key: key, hwid: hwid })
         });
 
         const result = await response.json();
 
-        // Verifica o campo 'status' que vem do Supabase via Vercel
         if (result && result.status) {
             if (result.status === "valida") {
                 if (typeof Android !== 'undefined') {
-                    Android.onLoginSuccess(); // Abre o menu no Sketchware
+                    Android.onLoginSuccess();
                 } else {
-                    alert("LOGIN REALIZADO!");
+                    alert("LOGIN COM SUCESSO!");
                 }
             } else if (result.status === "expirada") {
-                alert("KEY EXPIRADA!");
+                alert("❌ ESTA KEY EXPIROU!");
             } else {
-                alert("KEY INVÁLIDA OU HWID JÁ VINCULADO!");
+                alert("❌ " + (result.message || "KEY INVÁLIDA OU HWID VINCULADO"));
             }
         } else {
-            alert("ERRO NA RESPOSTA: " + JSON.stringify(result));
+            alert("RESPOSTA DO SERVIDOR: " + JSON.stringify(result));
         }
 
     } catch (e) {
-        alert("ERRO DE CONEXÃO: Verifique a Vercel.");
+        alert("ERRO DE CONEXÃO: Verifique se a API na Vercel está online.");
+        console.error(e);
     } finally {
         btn.disabled = false;
-        btn.innerText = "ENTRAR";
+        btn.innerText = "Entrar";
     }
 }
 </script>
