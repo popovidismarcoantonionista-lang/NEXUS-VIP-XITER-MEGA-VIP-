@@ -5,120 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NEXUS VIP UNIFICADO</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: #000; height: 100vh; display: flex; justify-content: center; align-items: center; color: #0f6; overflow: hidden; }
         
-        /* CONTAINER PRINCIPAL */
-        #main-container { width: 90%; max-width: 340px; padding: 25px; background: #0a0a0a; border: 2px solid #0f6; border-radius: 20px; box-shadow: 0 0 25px #0f63; text-align: center; }
-        
-        /* TELAS */
-        #login-screen { display: block; }
-        #menu-screen { display: none; height: 80vh; flex-direction: column; }
+        #login-screen { width: 85%; max-width: 320px; padding: 30px; background: #0a0a0a; border: 2px solid #0f6; border-radius: 20px; text-align: center; box-shadow: 0 0 20px #0f63; }
+        #menu-screen { display: none; width: 90%; max-width: 350px; height: 85vh; background: #0a0a0a; border: 2px solid #0f6; border-radius: 15px; flex-direction: column; padding: 15px; }
 
-        /* INPUTS E BOTÕES */
-        input { width: 100%; padding: 14px; margin: 20px 0; background: #111; border: 1px solid #0f6; border-radius: 10px; color: #fff; text-align: center; outline: none; font-size: 16px; }
-        .btn { width: 100%; padding: 15px; background: #0f6; color: #000; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
-        .btn:active { transform: scale(0.95); }
-        .btn:disabled { background: #333; color: #666; }
+        input { width: 100%; padding: 12px; margin: 15px 0; background: #111; border: 1px solid #0f6; border-radius: 8px; color: #fff; text-align: center; outline: none; }
+        .btn { width: 100%; padding: 14px; background: #0f6; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .btn:disabled { background: #333; }
 
-        /* LISTA DE OFFSETS */
-        .offset-list { overflow-y: auto; flex-grow: 1; margin: 15px 0; padding-right: 5px; text-align: left; }
-        .offset-item { background: #111; border: 1px solid #222; padding: 12px; margin-bottom: 10px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
-        
-        /* SWITCHES */
-        .switch { position: relative; width: 44px; height: 22px; }
+        .list { overflow-y: auto; flex-grow: 1; margin: 15px 0; }
+        .item { background: #111; padding: 12px; margin-bottom: 8px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; }
+
+        /* Switch Estilo */
+        .switch { position: relative; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 20px; transition: .4s; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .4s; }
         input:checked + .slider { background: #0f6; }
-        input:checked + .slider:before { transform: translateX(22px); }
-
-        .inject-btn { background: #0088ff; color: #fff; margin-top: 5px; font-size: 12px; }
-        
-        /* SCROLL */
-        .offset-list::-webkit-scrollbar { width: 3px; }
-        .offset-list::-webkit-scrollbar-thumb { background: #0f6; }
+        input:checked + .slider:before { transform: translateX(20px); }
     </style>
 </head>
 <body>
 
-<div id="main-container">
-    <div id="login-screen">
-        <h2 style="text-shadow: 0 0 10px #0f6;">NEXUS VIP</h2>
-        <p style="font-size: 11px; color: #555;">SISTEMA DE SEGURANÇA</p>
-        <input type="text" id="keyField" placeholder="COLE SUA KEY">
-        <button class="btn" id="loginBtn" onclick="fazerLogin()">ENTRAR NO MOD</button>
-    </div>
+<div id="login-screen">
+    <h2>NEXUS VIP</h2>
+    <input type="text" id="keyField" placeholder="INSIRA SUA KEY">
+    <button class="btn" id="loginBtn" onclick="auth()">LOGAR NO PAINEL</button>
+</div>
 
-    <div id="menu-screen">
-        <h3 style="border-bottom: 1px solid #0f6; padding-bottom: 10px;">PAINEL DE OFFSETS</h3>
-        
-        <div class="offset-list">
-            <div class="offset-item"><span>Aimbot 360°</span><label class="switch"><input type="checkbox" onchange="setOff('aim', this.checked)"><span class="slider"></span></label></div>
-            <div class="offset-item"><span>HS Aura</span><label class="switch"><input type="checkbox" onchange="setOff('hs', this.checked)"><span class="slider"></span></label></div>
-            <div class="offset-item"><span>Antena 100%</span><label class="switch"><input type="checkbox" onchange="setOff('ant', this.checked)"><span class="slider"></span></label></div>
-            <div class="offset-item"><span>Speed Run</span><label class="switch"><input type="checkbox" onchange="setOff('spd', this.checked)"><span class="slider"></span></label></div>
-            <div class="offset-item"><span>No Recoil</span><label class="switch"><input type="checkbox" onchange="setOff('rec', this.checked)"><span class="slider"></span></label></div>
-            
-            <button class="btn inject-btn" onclick="startInject()">INJETAR VIA SHIZUKU</button>
-        </div>
-
-        <button class="btn" style="background:#f33; color:#fff;" onclick="sair()">FECHAR</button>
+<div id="menu-screen">
+    <h3 style="text-align:center; border-bottom:1px solid #0f6; padding-bottom:10px;">OFFSETS & INJEÇÃO</h3>
+    <div class="list">
+        <div class="item"><span>Aimbot 360</span><label class="switch"><input type="checkbox" onchange="sendOff('aim', this.checked)"><span class="slider"></span></label></div>
+        <div class="item"><span>Aura HS</span><label class="switch"><input type="checkbox" onchange="sendOff('hs', this.checked)"><span class="slider"></span></label></div>
+        <div class="item"><span>Antena Fina</span><label class="switch"><input type="checkbox" onchange="sendOff('ant', this.checked)"><span class="slider"></span></label></div>
+        <div class="item"><span>Speed Run</span><label class="switch"><input type="checkbox" onchange="sendOff('spd', this.checked)"><span class="slider"></span></label></div>
+        <button class="btn" style="background:#0088ff; color:#fff; font-size:12px; margin-top:10px;" onclick="inject()">INJETAR VIA SHIZUKU</button>
     </div>
+    <button class="btn" style="background:#f33; color:#fff;" onclick="exitApp()">SAIR</button>
 </div>
 
 <script>
-async function fazerLogin() {
+async function auth() {
     const key = document.getElementById('keyField').value.trim().toUpperCase();
     const btn = document.getElementById('loginBtn');
-    const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "PC_TESTE";
+    const hwid = (typeof Android !== 'undefined') ? Android.getDeviceId() : "TESTE";
 
     if(!key) return alert("Digite a Key!");
-    
-    btn.disabled = true;
-    btn.innerText = "AUTENTICANDO...";
+    btn.disabled = true; btn.innerText = "VERIFICANDO...";
 
     try {
-        const response = await fetch("https://nexus-vip-key.vercel.app/api/verify", {
+        const res = await fetch("https://nexus-vip-key.vercel.app/api/verify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ key, hwid })
         });
+        const data = await res.json();
 
-        const data = await response.json();
-
-        if (data.status === "valida") {
+        if(data.status === "valida") {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('menu-screen').style.display = 'flex';
-            if (typeof Android !== 'undefined') Android.onLoginSuccess();
+            if(typeof Android !== 'undefined') Android.onLoginSuccess();
         } else {
-            alert("NEGADO: " + (data.message || "Key Inválida"));
-            btn.disabled = false;
-            btn.innerText = "ENTRAR NO MOD";
+            alert("ERRO: " + data.message);
+            btn.disabled = false; btn.innerText = "LOGAR NO PAINEL";
         }
-    } catch (e) {
-        alert("ERRO DE CONEXÃO COM O SERVIDOR");
-        btn.disabled = false;
-    }
+    } catch(e) { alert("ERRO DE CONEXÃO"); btn.disabled = false; }
 }
 
-// Ponte para o Android (Sketchware/Shizuku)
-function setOff(func, status) {
-    if (typeof Android !== 'undefined') Android.setOffset(func, status);
-}
-
-function startInject() {
-    if (typeof Android !== 'undefined') {
-        Android.startInjection(); 
-    } else {
-        alert("Injeção disponível apenas no APK.");
-    }
-}
-
-function sair() {
-    if (typeof Android !== 'undefined') Android.finish();
-}
+function sendOff(f, s) { if(typeof Android !== 'undefined') Android.setOffset(f, s); }
+function inject() { if(typeof Android !== 'undefined') Android.startInjection(); }
+function exitApp() { if(typeof Android !== 'undefined') Android.finish(); }
 </script>
-
 </body>
 </html>
